@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CyberHack Pro - Premium Hacking Services</title>
-    <link rel="stylesheet" href="styles.css?v=20260511-support-compact">
+    <link rel="stylesheet" href="styles.css?v=20260511-support-compact-v2">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -109,6 +109,159 @@
             .services-section .services-grid > .service-card .service-btn {
                 font-size: 0.55rem !important;
                 padding: 0.34rem 0.38rem !important;
+            }
+        }
+
+        /* Emergency pastel color override (cache-safe) */
+        .services-section .services-grid > .service-card,
+        .services-section .services-grid .service-card {
+            --card-bg: linear-gradient(160deg, #f8fafc 0%, #eef2f7 100%);
+            --card-border: #8b5cf6;
+            --card-text: #1f2937;
+            --card-subtext: #4b5563;
+            --card-chip-bg: rgba(255, 255, 255, 0.78);
+            background: var(--card-bg) !important;
+            border: 1.6px solid var(--card-border) !important;
+            box-shadow: none !important;
+            backdrop-filter: none !important;
+        }
+
+        .services-section .services-grid > .service-card::before,
+        .services-section .services-grid > .service-card::after,
+        .services-section .services-grid .service-card::before,
+        .services-section .services-grid .service-card::after {
+            display: none !important;
+        }
+
+        .services-section .services-grid > .service-card .service-icon,
+        .services-section .services-grid .service-card .service-icon {
+            background: var(--card-chip-bg) !important;
+            color: var(--card-border) !important;
+            box-shadow: none !important;
+            border: 1px solid rgba(255, 255, 255, 0.75) !important;
+        }
+
+        .services-section .services-grid > .service-card .icon-bg,
+        .services-section .services-grid .service-card .icon-bg {
+            display: none !important;
+        }
+
+        .services-section .services-grid > .service-card h3,
+        .services-section .services-grid .service-card h3 {
+            color: var(--card-text) !important;
+            text-shadow: none !important;
+        }
+
+        .services-section .services-grid > .service-card p,
+        .services-section .services-grid .service-card p,
+        .services-section .services-grid > .service-card .service-features li,
+        .services-section .services-grid .service-card .service-features li {
+            color: var(--card-subtext) !important;
+        }
+
+        .services-section .services-grid > .service-card .service-features i,
+        .services-section .services-grid .service-card .service-features i {
+            color: var(--card-border) !important;
+        }
+
+        .services-section .services-grid > .service-card .service-btn,
+        .services-section .services-grid .service-card .service-btn {
+            background: rgba(255, 255, 255, 0.88) !important;
+            color: var(--card-text) !important;
+            border: 1px solid rgba(255, 255, 255, 0.92) !important;
+            box-shadow: none !important;
+        }
+
+        .services-section .services-grid > .service-card:nth-child(8n + 1),
+        .services-section .services-grid .service-card:nth-child(8n + 1) {
+            --card-bg: linear-gradient(160deg, #f8f1ff 0%, #f3ebff 100%);
+            --card-border: #b06ce8;
+        }
+
+        .services-section .services-grid > .service-card:nth-child(8n + 2),
+        .services-section .services-grid .service-card:nth-child(8n + 2) {
+            --card-bg: linear-gradient(160deg, #ecfff7 0%, #e2fbf1 100%);
+            --card-border: #3abf9b;
+        }
+
+        .services-section .services-grid > .service-card:nth-child(8n + 3),
+        .services-section .services-grid .service-card:nth-child(8n + 3) {
+            --card-bg: linear-gradient(160deg, #f3f5ff 0%, #eaeeff 100%);
+            --card-border: #6f78d8;
+        }
+
+        .services-section .services-grid > .service-card:nth-child(8n + 4),
+        .services-section .services-grid .service-card:nth-child(8n + 4) {
+            --card-bg: linear-gradient(160deg, #edf8ff 0%, #e3f2ff 100%);
+            --card-border: #5f9fd8;
+        }
+
+        .services-section .services-grid > .service-card:nth-child(8n + 5),
+        .services-section .services-grid .service-card:nth-child(8n + 5) {
+            --card-bg: linear-gradient(160deg, #f9f1ff 0%, #f2e8ff 100%);
+            --card-border: #c374df;
+        }
+
+        .services-section .services-grid > .service-card:nth-child(8n + 6),
+        .services-section .services-grid .service-card:nth-child(8n + 6) {
+            --card-bg: linear-gradient(160deg, #fffbe8 0%, #fff5d1 100%);
+            --card-border: #d2b23c;
+        }
+
+        .services-section .services-grid > .service-card:nth-child(8n + 7),
+        .services-section .services-grid .service-card:nth-child(8n + 7) {
+            --card-bg: linear-gradient(160deg, #fff1f4 0%, #ffe6ec 100%);
+            --card-border: #d77a95;
+        }
+
+        .services-section .services-grid > .service-card:nth-child(8n + 8),
+        .services-section .services-grid .service-card:nth-child(8n + 8) {
+            --card-bg: linear-gradient(160deg, #f0f5ff 0%, #e7efff 100%);
+            --card-border: #7b85db;
+        }
+
+        @media (max-width: 768px) {
+            .services-section .services-grid > .service-card h3,
+            .services-section .services-grid .service-card h3 {
+                font-size: 0.96rem !important;
+            }
+
+            .services-section .services-grid > .service-card p,
+            .services-section .services-grid .service-card p {
+                font-size: 0.74rem !important;
+                line-height: 1.35 !important;
+            }
+
+            .services-section .services-grid > .service-card .service-features li,
+            .services-section .services-grid .service-card .service-features li {
+                font-size: 0.68rem !important;
+            }
+
+            .services-section .services-grid > .service-card .service-btn,
+            .services-section .services-grid .service-card .service-btn {
+                font-size: 0.69rem !important;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .services-section .services-grid > .service-card h3,
+            .services-section .services-grid .service-card h3 {
+                font-size: 0.84rem !important;
+            }
+
+            .services-section .services-grid > .service-card p,
+            .services-section .services-grid .service-card p {
+                font-size: 0.69rem !important;
+            }
+
+            .services-section .services-grid > .service-card .service-features li,
+            .services-section .services-grid .service-card .service-features li {
+                font-size: 0.62rem !important;
+            }
+
+            .services-section .services-grid > .service-card .service-btn,
+            .services-section .services-grid .service-card .service-btn {
+                font-size: 0.62rem !important;
             }
         }
     </style>
