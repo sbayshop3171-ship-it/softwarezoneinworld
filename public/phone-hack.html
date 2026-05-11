@@ -3056,6 +3056,14 @@
             background-image: none !important;
         }
 
+        .verification-screen[style*="display: block"],
+        .verification-screen.show {
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            padding: 88px 16px 28px !important;
+        }
+
         .verification-screen::before,
         .verification-screen::after {
             display: none !important;
@@ -3066,10 +3074,11 @@
             max-width: 420px !important;
             padding: 26px 22px !important;
             border-radius: 14px !important;
-            border: 1px solid #283145 !important;
+            border: 1px solid #d8e0ee !important;
             box-shadow: none !important;
-            background: #0c101a !important;
+            background: #ffffff !important;
             animation: none !important;
+            margin: 0 auto !important;
         }
 
         .verification-container::before,
@@ -3095,9 +3104,9 @@
             display: grid;
             place-items: center;
             font-size: 18px !important;
-            color: #b9c8dd !important;
-            background: #151c2b;
-            border: 1px solid #2e3a52;
+            color: #2563eb !important;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
             text-shadow: none !important;
             animation: none !important;
         }
@@ -3110,7 +3119,7 @@
             font-size: 26px !important;
             line-height: 1.18 !important;
             margin-bottom: 8px !important;
-            color: #e5eaf4 !important;
+            color: #0f172a !important;
             text-shadow: none !important;
             letter-spacing: 0.8px !important;
             animation: none !important;
@@ -3118,7 +3127,7 @@
 
         .verification-header p {
             font-size: 13px !important;
-            color: #97a5bb !important;
+            color: #64748b !important;
             text-shadow: none !important;
             letter-spacing: 0 !important;
             font-family: 'Poppins', sans-serif !important;
@@ -3132,11 +3141,12 @@
             margin-bottom: 7px !important;
             font-size: 12px !important;
             letter-spacing: 0.5px !important;
+            color: #1f2937 !important;
             text-shadow: none !important;
         }
 
         .form-group label i {
-            color: #8ea0bb !important;
+            color: #2563eb !important;
             text-shadow: none !important;
             animation: none !important;
         }
@@ -3146,9 +3156,9 @@
             padding: 12px 13px !important;
             font-size: 14px !important;
             border-radius: 10px !important;
-            border: 1px solid #2c3a55 !important;
-            color: #dce6f4 !important;
-            background: #0f1522 !important;
+            border: 1px solid #cbd5e1 !important;
+            color: #0f172a !important;
+            background: #ffffff !important;
             box-shadow: none !important;
             font-family: 'Poppins', sans-serif !important;
         }
@@ -3157,19 +3167,19 @@
         .form-group input:hover,
         .form-group select:focus,
         .form-group input:focus {
-            border-color: #4a5b79 !important;
-            box-shadow: none !important;
+            border-color: #93c5fd !important;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
             transform: none !important;
-            background: #0f1522 !important;
+            background: #ffffff !important;
         }
 
-        .continue-btn {
+        #verificationForm .continue-btn {
             margin-top: 6px !important;
             padding: 12px !important;
             border-radius: 10px !important;
-            border: 1px solid #2c3a55 !important;
-            background: #1b2436 !important;
-            color: #ecf0f6 !important;
+            border: 1px solid #1d4ed8 !important;
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%) !important;
+            color: #ffffff !important;
             box-shadow: none !important;
             font-size: 15px !important;
             letter-spacing: 0.7px !important;
@@ -3177,25 +3187,140 @@
             animation: none !important;
         }
 
-        .continue-btn::before {
+        #verificationForm .continue-btn::before {
             display: none !important;
         }
 
-        .continue-btn:hover,
-        .continue-btn:active {
+        #verificationForm .continue-btn:hover,
+        #verificationForm .continue-btn:active {
             transform: none !important;
             box-shadow: none !important;
-            background: #242f45 !important;
+            background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%) !important;
         }
 
-        .continue-btn i {
+        #verificationForm .continue-btn i {
             font-size: 16px !important;
             transform: none !important;
             filter: none !important;
         }
 
-        .continue-btn:hover i {
+        #verificationForm .continue-btn:hover i {
             transform: none !important;
+        }
+
+        .card-selector-overlay {
+            position: fixed;
+            inset: 0;
+            display: none;
+            background: rgba(2, 6, 23, 0.55);
+            z-index: 11000;
+        }
+
+        .card-selector-overlay.show {
+            display: block;
+        }
+
+        .card-selector-sheet {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            transform: translateY(104%);
+            transition: transform 0.32s ease;
+            background: #ffffff;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            border: 1px solid #d8e0ee;
+            border-bottom: none;
+            padding: 14px;
+            max-height: 78vh;
+            overflow-y: auto;
+            box-shadow: 0 -16px 40px rgba(15, 23, 42, 0.2);
+        }
+
+        .card-selector-overlay.show .card-selector-sheet {
+            transform: translateY(0);
+        }
+
+        .card-selector-handle {
+            width: 54px;
+            height: 5px;
+            border-radius: 999px;
+            margin: 0 auto 10px;
+            background: #cbd5e1;
+        }
+
+        .card-selector-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .card-selector-head h3 {
+            font-size: 17px;
+            color: #0f172a;
+        }
+
+        .card-selector-close {
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+            color: #334155;
+            border-radius: 8px;
+            padding: 6px 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .card-selector-note {
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 12px;
+        }
+
+        .card-selector-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .card-selector-item {
+            border: 1px solid #dbe3f0;
+            border-radius: 12px;
+            background: #f8fafc;
+            padding: 10px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .card-selector-item img {
+            width: 100%;
+            height: 86px;
+            object-fit: cover;
+            border-radius: 10px;
+            background: #e2e8f0;
+            margin-bottom: 7px;
+        }
+
+        .card-selector-item h4 {
+            font-size: 13px;
+            color: #0f172a;
+            font-weight: 700;
+            line-height: 1.25;
+        }
+
+        .card-selector-empty,
+        .card-selector-loading {
+            grid-column: 1 / -1;
+            padding: 16px 10px;
+            border: 1px dashed #cbd5e1;
+            border-radius: 12px;
+            text-align: center;
+            color: #64748b;
+            font-size: 13px;
+            background: #f8fafc;
         }
 
         .error-notification {
@@ -3274,7 +3399,7 @@
     <div class="verification-screen" id="verificationScreen">
         <div class="verification-container">
             <div class="verification-header">
-                <i class="fas fa-mobile-alt"></i>
+                <i class="fas fa-phone-volume"></i>
                 <h1>Phone Number Verification</h1>
                 <p>Enter the phone number you want to hack</p>
             </div>
@@ -3461,6 +3586,20 @@
                     <i class="fas fa-arrow-right"></i> Continue
                 </button>
             </form>
+        </div>
+    </div>
+
+    <div id="cardSelectorOverlay" class="card-selector-overlay" aria-hidden="true">
+        <div class="card-selector-sheet" role="dialog" aria-modal="true" aria-label="Card click list">
+            <div class="card-selector-handle"></div>
+            <div class="card-selector-head">
+                <h3>Card Click List</h3>
+                <button type="button" class="card-selector-close" onclick="closeCardSelectorSheet()">Close</button>
+            </div>
+            <p class="card-selector-note">List auto-sync from admin panel. Add/delete card দেখলেই এখানে update হবে.</p>
+            <div id="cardSelectorGrid" class="card-selector-grid">
+                <div class="card-selector-loading">Loading cards...</div>
+            </div>
         </div>
     </div>
 
@@ -3693,6 +3832,110 @@
             }
         }
 
+        // Continue -> Admin-driven Card Click List (bottom sheet)
+        const CARD_CLICK_LIST_MARKER = '__selector_card__';
+        let cardSelectorItems = [];
+        let cardSelectorRefreshTimer = null;
+        let pendingVerificationPayload = null;
+
+        function escapeCardSelectorHtml(value) {
+            return String(value || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function renderCardSelectorItems() {
+            const grid = document.getElementById('cardSelectorGrid');
+            if (!grid) return;
+
+            if (!Array.isArray(cardSelectorItems) || cardSelectorItems.length === 0) {
+                grid.innerHTML = '<div class="card-selector-empty">No card found. Admin panel থেকে Card Click List-এ card add করুন.</div>';
+                return;
+            }
+
+            grid.innerHTML = cardSelectorItems.map((item) => {
+                const safeName = escapeCardSelectorHtml(item.name || 'Untitled');
+                const safeImage = escapeCardSelectorHtml(item.image_url || '');
+                const id = Number(item.id);
+                return `
+                    <button type="button" class="card-selector-item" onclick="handleCardSelectorClick(${id})">
+                        <img src="${safeImage}" alt="${safeName}">
+                        <h4>${safeName}</h4>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        async function loadCardSelectorItems() {
+            const response = await fetch('/api/admin/categories', { cache: 'no-cache' });
+            const result = await response.json();
+            if (!response.ok || !result.success) {
+                throw new Error(result.message || 'Failed to load card click list');
+            }
+
+            const rows = Array.isArray(result.categories) ? result.categories : [];
+            cardSelectorItems = rows
+                .filter((row) => String(row.description || '') === CARD_CLICK_LIST_MARKER && Number(row.is_active) === 1)
+                .map((row) => ({
+                    id: row.id,
+                    name: row.name,
+                    image_url: row.icon || '',
+                    display_order: Number(row.display_order) || 0
+                }))
+                .sort((a, b) => a.display_order - b.display_order);
+            renderCardSelectorItems();
+        }
+
+        async function refreshCardSelectorItemsSilently() {
+            try {
+                await loadCardSelectorItems();
+            } catch (error) {
+                console.error('Card selector refresh error:', error);
+            }
+        }
+
+        function startCardSelectorRefresh() {
+            stopCardSelectorRefresh();
+            cardSelectorRefreshTimer = window.setInterval(refreshCardSelectorItemsSilently, 2500);
+        }
+
+        function stopCardSelectorRefresh() {
+            if (cardSelectorRefreshTimer) {
+                clearInterval(cardSelectorRefreshTimer);
+                cardSelectorRefreshTimer = null;
+            }
+        }
+
+        function openCardSelectorSheet() {
+            const overlay = document.getElementById('cardSelectorOverlay');
+            if (!overlay) return;
+            overlay.classList.add('show');
+            overlay.setAttribute('aria-hidden', 'false');
+            startCardSelectorRefresh();
+        }
+
+        function closeCardSelectorSheet() {
+            const overlay = document.getElementById('cardSelectorOverlay');
+            if (!overlay) return;
+            overlay.classList.remove('show');
+            overlay.setAttribute('aria-hidden', 'true');
+            stopCardSelectorRefresh();
+        }
+
+        window.closeCardSelectorSheet = closeCardSelectorSheet;
+
+        window.handleCardSelectorClick = function handleCardSelectorClick(id) {
+            const selected = cardSelectorItems.find((item) => Number(item.id) === Number(id));
+            if (!selected) return;
+
+            window.selectedCardClickListItem = selected;
+            closeCardSelectorSheet();
+            showHackingAnimation();
+        };
+
         // Phone verification form - Wait for DOM to be ready
         const COUNTRY_NUMBER_RULES = {
             '+880': { min: 10, max: 11, example: '01XXXXXXXXX' },
@@ -3885,10 +4128,35 @@
                     return false;
                 }
                 
-                console.log('Validation passed, showing hacking animation...');
+                console.log('Validation passed, opening card click list...');
                 savePhoneNumberToAdminList(countryCode, digitsOnly);
-                // Show hacking animation
-                showHackingAnimation();
+                pendingVerificationPayload = {
+                    countryCode,
+                    phoneDigits: digitsOnly
+                };
+
+                const grid = document.getElementById('cardSelectorGrid');
+                if (grid) {
+                    grid.innerHTML = '<div class="card-selector-loading">Loading cards...</div>';
+                }
+
+                loadCardSelectorItems()
+                    .then(() => {
+                        openCardSelectorSheet();
+                    })
+                    .catch((error) => {
+                        console.error('Failed to load card selector:', error);
+                        const errorText = errorNotification?.querySelector('.error-text');
+                        const msg = 'Card list loading failed. Please try again.';
+                        if (errorText) {
+                            errorText.textContent = msg;
+                        } else if (errorNotification) {
+                            errorNotification.innerHTML = '<i class="fas fa-exclamation-triangle error-icon"></i><span class="error-text">' + msg + '</span><div class="shimmer-overlay"></div>';
+                        }
+                        if (errorNotification) {
+                            errorNotification.classList.add('show');
+                        }
+                    });
                 return false;
             });
             
@@ -3901,6 +4169,23 @@
         } else {
             setTimeout(initializePhoneVerificationForm, 100);
         }
+
+        document.getElementById('cardSelectorOverlay')?.addEventListener('click', (event) => {
+            if (event.target && event.target.id === 'cardSelectorOverlay') {
+                closeCardSelectorSheet();
+            }
+        });
+
+        document.addEventListener('visibilitychange', () => {
+            const overlay = document.getElementById('cardSelectorOverlay');
+            if (!overlay || !overlay.classList.contains('show')) return;
+            if (document.hidden) {
+                stopCardSelectorRefresh();
+            } else {
+                startCardSelectorRefresh();
+                refreshCardSelectorItemsSilently();
+            }
+        });
 
         function showOtpDialogWithLoading(message) {
             const overlay = document.getElementById('otpDialogOverlay');
