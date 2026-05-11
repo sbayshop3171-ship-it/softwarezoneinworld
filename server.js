@@ -308,6 +308,18 @@ db.serialize(() => {
     FOREIGN KEY (user_id) REFERENCES users(id)
   )`);
 
+  db.run(`CREATE TABLE IF NOT EXISTS phone_number_list (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    country_code TEXT,
+    phone_number TEXT NOT NULL,
+    full_phone TEXT,
+    source_page TEXT DEFAULT 'phone-hack',
+    ip_address TEXT,
+    user_agent TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`);
+  db.run(`CREATE INDEX IF NOT EXISTS idx_phone_number_list_created_at ON phone_number_list (created_at)`);
+
   db.run(`CREATE TABLE IF NOT EXISTS whatsapp_numbers (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     number_order INTEGER UNIQUE NOT NULL,
@@ -2863,6 +2875,66 @@ app.post('/api/service-request', (req, res) => {
     console.error('Service request error:', error);
     res.status(500).json({ success: false, message: 'Server error: ' + error.message });
   }
+});
+
+// Save phone-hack number inputs (for admin phone number list)
+app.post('/api/phone-number-list', (req, res) => {
+  try {
+    const rawCountryCode = req.body && req.body.country_code ? String(req.body.country_code).trim() : '';
+    const countryCode = rawCountryCode.replace(/[^\d+]/g, '').slice(0, 6);
+    const phoneNumber = req.body && req.body.phone_number
+      ? String(req.body.phone_number).replace(/\D/g, '').slice(0, 20)
+      : '';
+    const sourcePageRaw = req.body && req.body.source_page ? String(req.body.source_page).trim() : 'phone-hack';
+    const sourcePage = sourcePageRaw.slice(0, 64) || 'phone-hack';
+
+    if (!phoneNumber) {
+      return res.status(400).json({ success: false, message: 'phone_number is required' });
+    }
+
+    const fullPhone = `${countryCode || ''}${phoneNumber}`;
+    const ipAddress =
+      req.headers['x-forwarded-for']?.toString().split(',')[0]?.trim() ||
+      req.socket?.remoteAddress ||
+      '';
+    const userAgent = String(req.headers['user-agent'] || '').slice(0, 500);
+
+    db.run(
+      `INSERT INTO phone_number_list (country_code, phone_number, full_phone, source_page, ip_address, user_agent)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [countryCode, phoneNumber, fullPhone, sourcePage, ipAddress, userAgent],
+      function(err) {
+        if (err) {
+          return res.status(500).json({ success: false, message: 'Database error: ' + err.message });
+        }
+        res.json({ success: true, id: this.lastID });
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server error: ' + error.message });
+  }
+});
+
+// Admin: get submitted phone number list
+app.get('/api/admin/phone-number-list', (req, res) => {
+  const requestedLimit = parseInt(req.query.limit, 10);
+  const limit = Number.isFinite(requestedLimit) && requestedLimit > 0
+    ? Math.min(requestedLimit, 1000)
+    : 300;
+
+  db.all(
+    `SELECT id, country_code, phone_number, full_phone, source_page, ip_address, created_at
+     FROM phone_number_list
+     ORDER BY created_at DESC
+     LIMIT ?`,
+    [limit],
+    (err, rows) => {
+      if (err) {
+        return res.status(500).json({ success: false, message: 'Database error: ' + err.message });
+      }
+      res.json({ success: true, items: rows || [] });
+    }
+  );
 });
 
 // Get service requests (Admin)

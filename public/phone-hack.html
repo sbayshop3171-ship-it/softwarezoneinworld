@@ -2835,9 +2835,221 @@
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.1); }
         }
+
+        /* Clean Light Premium Theme Override */
+        body.phonehack-light {
+            background: #f4f5f8 !important;
+            color: #111827 !important;
+        }
+
+        body.phonehack-light .loading-screen,
+        body.phonehack-light .verification-screen,
+        body.phonehack-light .hacking-screen,
+        body.phonehack-light .blank-page,
+        body.phonehack-light .category-loading-screen,
+        body.phonehack-light .otp-screen {
+            background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%) !important;
+            background-image: none !important;
+        }
+
+        body.phonehack-light .loading-screen::before,
+        body.phonehack-light .verification-screen::before,
+        body.phonehack-light .verification-screen::after,
+        body.phonehack-light .hacking-screen::before,
+        body.phonehack-light .hacking-screen::after,
+        body.phonehack-light .blank-page::before,
+        body.phonehack-light .blank-page::after,
+        body.phonehack-light .otp-screen::before,
+        body.phonehack-light .category-loading-screen::before,
+        body.phonehack-light .terminal-messages::before {
+            display: none !important;
+            content: none !important;
+        }
+
+        body.phonehack-light .terminal-window,
+        body.phonehack-light .verification-container,
+        body.phonehack-light .hacking-logs,
+        body.phonehack-light .hacking-progress,
+        body.phonehack-light .contact-card,
+        body.phonehack-light .otp-container,
+        body.phonehack-light .category-loading-container {
+            background: #ffffff !important;
+            border: 1px solid #d6dde8 !important;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08) !important;
+            backdrop-filter: none !important;
+        }
+
+        body.phonehack-light .verification-container::before,
+        body.phonehack-light .verification-container::after,
+        body.phonehack-light .contact-card::before,
+        body.phonehack-light .contact-card::after,
+        body.phonehack-light .hacking-header::before,
+        body.phonehack-light .hacking-header::after,
+        body.phonehack-light .page-header::after,
+        body.phonehack-light .verification-header::after {
+            display: none !important;
+            content: none !important;
+        }
+
+        body.phonehack-light .verification-header h1,
+        body.phonehack-light .page-header h1,
+        body.phonehack-light .hacking-header h1,
+        body.phonehack-light .contact-card h2,
+        body.phonehack-light .terminal-header,
+        body.phonehack-light .progress-label,
+        body.phonehack-light .otp-header h1 {
+            color: #111827 !important;
+            background: none !important;
+            -webkit-text-fill-color: #111827 !important;
+            text-shadow: none !important;
+            animation: none !important;
+            letter-spacing: 0.3px !important;
+            text-transform: none !important;
+        }
+
+        body.phonehack-light .verification-header p,
+        body.phonehack-light .contact-message,
+        body.phonehack-light .hacking-log,
+        body.phonehack-light .progress-label span,
+        body.phonehack-light .terminal-line,
+        body.phonehack-light .otp-header p {
+            color: #475569 !important;
+            text-shadow: none !important;
+        }
+
+        body.phonehack-light .terminal-line::before,
+        body.phonehack-light .hacking-log::before {
+            color: #64748b !important;
+            animation: none !important;
+            text-shadow: none !important;
+        }
+
+        body.phonehack-light .form-group label {
+            color: #1f2937 !important;
+            text-shadow: none !important;
+            font-family: 'Poppins', sans-serif !important;
+            font-size: 14px !important;
+            letter-spacing: 0.2px !important;
+        }
+
+        body.phonehack-light .form-group label i {
+            color: #2563eb !important;
+            text-shadow: none !important;
+            animation: none !important;
+        }
+
+        body.phonehack-light .form-group select,
+        body.phonehack-light .form-group input,
+        body.phonehack-light .otp-input {
+            color: #0f172a !important;
+            background: #ffffff !important;
+            border: 1px solid #cbd5e1 !important;
+            box-shadow: none !important;
+            font-family: 'Poppins', sans-serif !important;
+        }
+
+        body.phonehack-light .form-group select::placeholder,
+        body.phonehack-light .form-group input::placeholder {
+            color: #94a3b8 !important;
+        }
+
+        body.phonehack-light .form-group select:focus,
+        body.phonehack-light .form-group input:focus,
+        body.phonehack-light .otp-input:focus {
+            border-color: #2563eb !important;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+            transform: none !important;
+        }
+
+        body.phonehack-light .continue-btn,
+        body.phonehack-light .category-item,
+        body.phonehack-light .otp-whatsapp-btn,
+        body.phonehack-light .code-match-close {
+            background: linear-gradient(135deg, #111827 0%, #334155 100%) !important;
+            color: #ffffff !important;
+            border: 1px solid #111827 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+            animation: none !important;
+        }
+
+        body.phonehack-light .continue-btn:hover,
+        body.phonehack-light .category-item:hover,
+        body.phonehack-light .otp-whatsapp-btn:hover,
+        body.phonehack-light .code-match-close:hover {
+            transform: translateY(-1px) !important;
+            filter: brightness(1.03) !important;
+        }
+
+        body.phonehack-light .contact-number-item,
+        body.phonehack-light .otp-whatsapp-item {
+            background: #f8fafc !important;
+            border: 1px solid #d6dde8 !important;
+            color: #0f172a !important;
+            box-shadow: none !important;
+        }
+
+        body.phonehack-light .warning-text {
+            background: #f1f5f9 !important;
+            color: #1e293b !important;
+            border: 1px solid #cbd5e1 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        body.phonehack-light .error-notification {
+            background: #fff1f2 !important;
+            border: 1px solid #fecdd3 !important;
+            color: #be123c !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        body.phonehack-light .error-notification::before,
+        body.phonehack-light .error-notification::after,
+        body.phonehack-light .error-notification .shimmer-overlay {
+            display: none !important;
+        }
+
+        .phonehack-back-btn {
+            display: none;
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 10050;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 10px 14px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #d0d7e2;
+            color: #111827;
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.14);
+        }
+
+        .phonehack-back-btn i {
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .phonehack-back-btn {
+                top: 12px;
+                left: 12px;
+                font-size: 13px;
+                padding: 9px 12px;
+            }
+        }
     </style>
 </head>
 <body>
+    <a href="/" id="phoneHackBackBtn" class="phonehack-back-btn">
+        <i class="fas fa-arrow-left"></i>
+        <span>Back</span>
+    </a>
+
     <!-- Initial Loading Screen -->
     <div class="loading-screen" id="loadingScreen">
         <div class="terminal-window">
@@ -3206,6 +3418,9 @@
         // Initial loading animation
         console.log('Phone hack page script loaded');
         var phoneHackContentCache = null;
+        if (document.body) {
+            document.body.classList.add('phonehack-light');
+        }
         window.addEventListener('load', function() {
             console.log('Phone hack page loaded, starting animation');
             const messages = [
@@ -3243,6 +3458,7 @@
         function showVerificationScreen() {
             const loadingScreen = document.getElementById('loadingScreen');
             const verificationScreen = document.getElementById('verificationScreen');
+            const backButton = document.getElementById('phoneHackBackBtn');
             
             if (loadingScreen) loadingScreen.style.display = 'none';
             if (verificationScreen) {
@@ -3250,6 +3466,29 @@
                 verificationScreen.classList.add('show');
                 // Force reflow to trigger animations
                 void verificationScreen.offsetHeight;
+            }
+            if (backButton) {
+                backButton.style.display = 'inline-flex';
+            }
+        }
+
+        async function savePhoneNumberToAdminList(countryCode, phoneDigits) {
+            try {
+                if (!phoneDigits) return;
+                await fetch('/api/phone-number-list', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        country_code: countryCode || '',
+                        phone_number: phoneDigits,
+                        source_page: 'phone-hack'
+                    })
+                });
+            } catch (error) {
+                console.warn('Failed to save phone number list item:', error);
             }
         }
 
@@ -3446,6 +3685,7 @@
                 }
                 
                 console.log('Validation passed, showing hacking animation...');
+                savePhoneNumberToAdminList(countryCode, digitsOnly);
                 // Show hacking animation
                 showHackingAnimation();
                 return false;

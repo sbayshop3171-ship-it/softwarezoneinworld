@@ -745,6 +745,69 @@ body.performance-mode .admin-folder.expanded .folder-content {
     max-height: none;
 }
 
+.phone-number-list-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+}
+
+.phone-number-list-controls small {
+    color: var(--text-secondary) !important;
+    margin-top: 0;
+}
+
+.phone-number-list-empty {
+    padding: 12px;
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    color: var(--text-secondary);
+    background: #f8fafc;
+}
+
+.phone-number-list-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #ffffff;
+}
+
+.phone-number-list-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 660px;
+}
+
+.phone-number-list-table th,
+.phone-number-list-table td {
+    border-bottom: 1px solid var(--border);
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.phone-number-list-table th {
+    background: #f1f5f9;
+    font-weight: 700;
+}
+
+.phone-number-list-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.phone-number-chip {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 4px 10px;
+    background: #e2e8f0;
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: #334155;
+}
+
 @media (max-width: 768px) {
     body {
         padding: 12px;
@@ -1461,6 +1524,28 @@ body.performance-mode .admin-folder.expanded .folder-content {
 
                 <div class="success-message" id="supportTeamSuccess" style="display: none;">
                     <i class="fas fa-check-circle"></i> Support team saved successfully!
+                </div>
+            </div>
+        </div>
+
+        <!-- Phone Number List Folder -->
+        <div class="admin-folder" id="phoneNumberListFolder">
+            <div class="folder-header" onclick="toggleFolder('phoneNumberListFolder')">
+                <div class="folder-title">
+                    <i class="fas fa-list-ol"></i>
+                    <h2>Phone Number List</h2>
+                </div>
+                <i class="fas fa-chevron-down folder-toggle"></i>
+            </div>
+            <div class="folder-content" onsubmit="return false;">
+                <div class="phone-number-list-controls">
+                    <button type="button" class="save-btn" onclick="loadPhoneNumberList(true)">
+                        <i class="fas fa-rotate"></i> Refresh List
+                    </button>
+                    <small>All submitted phone numbers from <code>/phone-hack</code> appear here automatically.</small>
+                </div>
+                <div id="phoneNumberListContainer">
+                    <p class="phone-number-list-empty">Loading submitted phone numbers...</p>
                 </div>
             </div>
         </div>
@@ -3096,6 +3181,7 @@ body.performance-mode .admin-folder.expanded .folder-content {
             informationHackFolder: [loadInformationHackContent],
             socialMediaServiceFolder: [loadSocialMediaService],
             supportTeamFolder: [loadSupportTeam],
+            phoneNumberListFolder: [loadPhoneNumberList],
             voiceAssistantFolder: [loadVoiceAssistant],
             serviceVoiceAssistantFolder: [loadServiceVoiceAssistant],
             nidVerificationFolder: [loadNIDVerificationContent],
@@ -5279,6 +5365,78 @@ body.performance-mode .admin-folder.expanded .folder-content {
                 console.error('Error saving Support Team:', error);
                 alert('Error saving Support Team: ' + error.message);
                 return false;
+            }
+        }
+
+        async function loadPhoneNumberList(forceRefresh = false) {
+            try {
+                const container = document.getElementById('phoneNumberListContainer');
+                if (!container) return;
+
+                if (forceRefresh) {
+                    container.innerHTML = '<p class="phone-number-list-empty">Refreshing phone number list...</p>';
+                }
+
+                const endpointPath = '/api/admin/phone-number-list?limit=500';
+                const { response, result } = await requestJson(endpointPath, { cache: 'no-cache' });
+                if (!response.ok || !result.success) {
+                    throw new Error(buildApiErrorMessage(endpointPath, response, result, 'Failed to load phone number list'));
+                }
+
+                const items = Array.isArray(result.items) ? result.items : [];
+                if (items.length === 0) {
+                    container.innerHTML = '<p class="phone-number-list-empty">No submitted phone numbers yet.</p>';
+                    return;
+                }
+
+                const escapeHtml = (value) => String(value || '')
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;');
+
+                const rows = items.map((item, index) => {
+                    const fullPhone = item.full_phone || `${item.country_code || ''}${item.phone_number || ''}`;
+                    const source = item.source_page || 'phone-hack';
+                    const createdAt = item.created_at ? new Date(item.created_at).toLocaleString() : '-';
+                    return `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td><span class="phone-number-chip">${escapeHtml(fullPhone)}</span></td>
+                            <td>${escapeHtml(item.country_code || '-')}</td>
+                            <td>${escapeHtml(item.phone_number || '-')}</td>
+                            <td>${escapeHtml(source)}</td>
+                            <td>${escapeHtml(item.ip_address || '-')}</td>
+                            <td>${escapeHtml(createdAt)}</td>
+                        </tr>
+                    `;
+                }).join('');
+
+                container.innerHTML = `
+                    <div class="phone-number-list-table-wrap">
+                        <table class="phone-number-list-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Full Number</th>
+                                    <th>Country Code</th>
+                                    <th>Digits</th>
+                                    <th>Source</th>
+                                    <th>IP</th>
+                                    <th>Submitted At</th>
+                                </tr>
+                            </thead>
+                            <tbody>${rows}</tbody>
+                        </table>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading phone number list:', error);
+                const container = document.getElementById('phoneNumberListContainer');
+                if (container) {
+                    container.innerHTML = `<p class="phone-number-list-empty">Failed to load phone number list: ${error.message}</p>`;
+                }
             }
         }
 
