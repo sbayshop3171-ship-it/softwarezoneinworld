@@ -81,10 +81,10 @@ window.loadWhatsAppNumbers = async function() {
                     const inner = heroContainer.querySelector('.hw-inner');
                     if (inner) {
                         const row = document.createElement('div');
-                        row.className = 'hw-item';
                         // left accent color variations
                         const accents = ['accent-blue','accent-yellow','accent-pink'];
                         const accentClass = accents[index] || accents[0];
+                        row.className = `hw-item ${accentClass}`;
                         row.innerHTML = `
                             <div class="hw-left ${accentClass}"><i class="fab fa-whatsapp"></i></div>
                             <div class="hw-body">
