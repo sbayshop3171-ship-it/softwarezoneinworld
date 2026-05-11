@@ -4,11 +4,14 @@
 window.loadWhatsAppNumbers = async function() {
     console.log('loadWhatsAppNumbers called');
     const container = document.getElementById('whatsappCardsContainer');
-    if (!container) {
-        console.error('WhatsApp container not found');
+    const heroContainer = document.getElementById('heroWhatsAppContainer');
+    if (!container && !heroContainer) {
+        console.log('WhatsApp UI blocks are not present on this page. Skipping render.');
         return;
     }
-    console.log('WhatsApp container found:', container);
+    if (container) {
+        console.log('WhatsApp container found:', container);
+    }
     
     try {
         const timestamp = new Date().getTime();
@@ -31,9 +34,10 @@ window.loadWhatsAppNumbers = async function() {
             const cardClasses = ['whatsapp-card-1', 'whatsapp-card-2', 'whatsapp-card-3'];
             const numbersToShow = result.numbers.slice(0, 3);
             
-            container.innerHTML = '';
+            if (container) {
+                container.innerHTML = '';
+            }
             // Also populate hero widget if available (vertical stacked cards)
-            const heroContainer = document.getElementById('heroWhatsAppContainer');
             if (heroContainer) {
                 heroContainer.innerHTML = '';
                 // header inside hero widget
@@ -69,7 +73,9 @@ window.loadWhatsAppNumbers = async function() {
                     <a href="https://wa.me/${cleanNumber}" target="_blank" class="whatsapp-btn" onclick="if(typeof window.openWhatsApp === 'function') { window.openWhatsApp('${cleanNumber}'); } else { window.open('https://wa.me/${cleanNumber}', '_blank'); } return false;">WhatsApp Now</a>
                 `;
                 
-                container.appendChild(card);
+                if (container) {
+                    container.appendChild(card);
+                }
                 // hero widget stacked row
                 if (heroContainer) {
                     const inner = heroContainer.querySelector('.hw-inner');
@@ -92,7 +98,9 @@ window.loadWhatsAppNumbers = async function() {
                 }
             });
         } else {
-            container.innerHTML = '<div style="text-align: center; color: var(--text-gray); padding: 2rem;">No WhatsApp numbers available</div>';
+            if (container) {
+                container.innerHTML = '<div style="text-align: center; color: var(--text-gray); padding: 2rem;">No WhatsApp numbers available</div>';
+            }
         }
     } catch (error) {
         console.error('Error loading WhatsApp numbers:', error);
