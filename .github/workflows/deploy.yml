@@ -13,6 +13,33 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Resolve active deploy directory
+        id: resolve_dir
+        shell: bash
+        run: |
+          set -euo pipefail
+          LIVE_URL="${{ secrets.LIVE_URL }}"
+          DEPLOY_DIR=""
+
+          if [ -n "${LIVE_URL}" ]; then
+            RUNTIME_JSON="$(curl -fsSL "${LIVE_URL}/api/runtime-health" || true)"
+            FILE_PATH="$(printf '%s' "${RUNTIME_JSON}" | sed -n 's/.*"file_path":"\([^"]*\)".*/\1/p')"
+            if [ -n "${FILE_PATH}" ]; then
+              DEPLOY_DIR="${FILE_PATH%/server.js}"
+            fi
+          fi
+
+          if [ -z "${DEPLOY_DIR}" ]; then
+            DEPLOY_DIR="${{ secrets.APP_DIR }}"
+          fi
+
+          if [ -z "${DEPLOY_DIR}" ]; then
+            DEPLOY_DIR="/var/www/mehedi123/data/www/softwarezoneinworld.store"
+          fi
+
+          echo "Resolved deploy dir: ${DEPLOY_DIR}"
+          echo "deploy_dir=${DEPLOY_DIR}" >> "${GITHUB_OUTPUT}"
+
       - name: Upload project files to server
         uses: appleboy/scp-action@v1
         with:
@@ -22,7 +49,7 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
           source: "server.js,package.json,package-lock.json,public,scripts,LIVE_DEPLOY_CHECKLIST.md"
-          target: ${{ secrets.APP_DIR }}
+          target: ${{ steps.resolve_dir.outputs.deploy_dir }}
 
       - name: Install deps and restart app
         uses: appleboy/ssh-action@v1
@@ -34,15 +61,14 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             set -e
-            cd "${{ secrets.APP_DIR }}"
+            DEPLOY_DIR="${{ steps.resolve_dir.outputs.deploy_dir }}"
+            cd "${DEPLOY_DIR}"
             npm install --omit=dev
 
-            if [ -n "${{ secrets.RESTART_CMD }}" ]; then
-              bash -lc "${{ secrets.RESTART_CMD }}"
-            else
-              pm2 restart softwarezoneinworld || pm2 start server.js --name softwarezoneinworld
-              pm2 save
-            fi
+            pkill -f "node server.js" || true
+            nohup node server.js > .server.log 2>&1 &
+            sleep 2
+            pgrep -af "node server.js" || true
 
       - name: Verify live API
         uses: appleboy/ssh-action@v1
@@ -59,6 +85,26 @@ jobs:
               echo "LIVE_URL secret is empty; skipping verify step."
               exit 0
             fi
-            cd "${{ secrets.APP_DIR }}"
+            cd "${{ steps.resolve_dir.outputs.deploy_dir }}"
             chmod +x ./scripts/verify-live-api.sh
             ./scripts/verify-live-api.sh "${LIVE_URL}"
+
+      - name: Verify homepage no longer has removed blocks
+        shell: bash
+        run: |
+          set -euo pipefail
+          LIVE_URL="${{ secrets.LIVE_URL }}"
+          if [ -z "${LIVE_URL}" ]; then
+            echo "LIVE_URL secret is empty; skipping homepage content check."
+            exit 0
+          fi
+          HTML="$(curl -fsSL "${LIVE_URL}/?v=${GITHUB_SHA}")"
+          if echo "${HTML}" | grep -q "Explore Services"; then
+            echo "FAIL: Old hero CTA still present on live homepage."
+            exit 1
+          fi
+          if echo "${HTML}" | grep -q "heroWhatsAppContainer"; then
+            echo "FAIL: Old hero WhatsApp widget still present on live homepage."
+            exit 1
+          fi
+          echo "PASS: removed homepage blocks are not present."
