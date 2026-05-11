@@ -1578,10 +1578,17 @@ app.get('/api/support-team', (req, res) => {
         telegram_username: ''
       });
     }
+    const whatsappNumber = String(row.whatsapp_number || '').trim();
+    const whatsappDigits = whatsappNumber.replace(/\D/g, '');
+    let whatsappGroupLink = String(row.whatsapp_group_link || '').trim();
+    // Backward-compatible fallback: ensure group button can appear even if admin didn't set group link yet.
+    if (!whatsappGroupLink && whatsappDigits) {
+      whatsappGroupLink = `https://wa.me/${whatsappDigits}`;
+    }
     res.json({
       success: true,
-      whatsapp_number: row.whatsapp_number || '',
-      whatsapp_group_link: row.whatsapp_group_link || '',
+      whatsapp_number: whatsappNumber,
+      whatsapp_group_link: whatsappGroupLink,
       call_number: row.call_number || '',
       messenger_link: row.messenger_link || '',
       telegram_username: row.telegram_username || ''
