@@ -1181,6 +1181,47 @@
         #categoryManagerModal > div {
             box-shadow: 0 0 50px rgba(0, 255, 65, 0.3);
         }
+
+        /* Performance mode: reduce repaint/reflow load for this large admin page */
+        body.performance-mode::before {
+            animation: none !important;
+            opacity: 0.08;
+        }
+
+        body.performance-mode .admin-folder,
+        body.performance-mode .admin-section {
+            content-visibility: auto;
+            contain: layout paint style;
+            contain-intrinsic-size: 1px 700px;
+        }
+
+        body.performance-mode *,
+        body.performance-mode *::before,
+        body.performance-mode *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+
+        body.performance-mode .admin-header,
+        body.performance-mode .admin-folder,
+        body.performance-mode .admin-section,
+        body.performance-mode .folder-header,
+        body.performance-mode .notification-toast,
+        body.performance-mode .success-message,
+        body.performance-mode .terminal-output,
+        body.performance-mode #categoryManagerModal {
+            backdrop-filter: none !important;
+            box-shadow: none !important;
+        }
+
+        body.performance-mode .folder-content {
+            transition: none !important;
+        }
+
+        body.performance-mode .admin-folder.expanded .folder-content {
+            max-height: none;
+        }
     </style>
 </head>
 <body>
@@ -2862,6 +2903,18 @@
             console.warn('Admin session token missing. Re-login may be required for protected APIs.');
         }
 
+        const ADMIN_PERFORMANCE_MODE_KEY = 'adminPerformanceMode';
+        const adminPerformanceMode = (() => {
+            try {
+                return localStorage.getItem(ADMIN_PERFORMANCE_MODE_KEY) || 'on';
+            } catch (error) {
+                return 'on';
+            }
+        })();
+        if (adminPerformanceMode !== 'off' && document.body) {
+            document.body.classList.add('performance-mode');
+        }
+
         // Load Welcome Lines
         async function loadWelcomeLines() {
             try {
@@ -3378,6 +3431,57 @@
             window.location.href = '/admin-login';
         }
 
+        const folderLoadState = new Set();
+        const folderDataLoaders = {
+            whatsappFolder: [loadWhatsAppNumbers],
+            welcomeSettingsFolder: [loadWelcomeLines],
+            advancedToolsFolder: [loadAdvancedToolsContent],
+            phoneHackFolder: [loadPhoneHackContent],
+            facebookHackFolder: [loadFacebookHackContent],
+            informationHackFolder: [loadInformationHackContent],
+            socialMediaServiceFolder: [loadSocialMediaService],
+            supportTeamFolder: [loadSupportTeam],
+            voiceAssistantFolder: [loadVoiceAssistant],
+            serviceVoiceAssistantFolder: [loadServiceVoiceAssistant],
+            nidVerificationFolder: [loadNIDVerificationContent],
+            emailHackFolder: [loadEmailHackContent],
+            codeFolder: [loadCodes],
+            reviewsFolder: [loadReviews, loadCategories],
+            reviewStatsFolder: [loadReviewStatsSettings],
+            serviceTitlesFolder: [loadServiceTitlesSettings],
+            appDownloadFolder: [loadAppDownloadSettings],
+            broadcastNotificationFolder: [loadBroadcastNotificationHistory],
+            contentWithFilesFolder: [loadContentWithFiles],
+            paymentProofFolder: [loadProofSectionSettings, loadPaymentProofMedia]
+        };
+
+        function loadFolderData(folderId, forceReload = false) {
+            const loaders = folderDataLoaders[folderId];
+            if (!Array.isArray(loaders) || loaders.length === 0) {
+                return;
+            }
+
+            if (!forceReload && folderLoadState.has(folderId)) {
+                return;
+            }
+
+            folderLoadState.add(folderId);
+            loaders.forEach((loader, index) => {
+                window.setTimeout(() => {
+                    try {
+                        const result = loader();
+                        if (result && typeof result.catch === 'function') {
+                            result.catch((error) => {
+                                console.error(`Error loading data for ${folderId}:`, error);
+                            });
+                        }
+                    } catch (error) {
+                        console.error(`Error loading data for ${folderId}:`, error);
+                    }
+                }, index * 80);
+            });
+        }
+
         // Toggle folder expand/collapse
         function toggleFolder(folderId) {
             const folder = document.getElementById(folderId);
@@ -3386,92 +3490,13 @@
                 return;
             }
 
-            const isExpanded = folder.classList.contains('expanded');
-            
-            if (isExpanded) {
+            if (folder.classList.contains('expanded')) {
                 folder.classList.remove('expanded');
-            } else {
-                folder.classList.add('expanded');
-                
-                // Load data when folder is expanded
-                if (folderId === 'whatsappFolder') {
-                    console.log('WhatsApp folder expanded, loading numbers...');
-                    setTimeout(() => {
-                        loadWhatsAppNumbers();
-                    }, 300);
-                } else if (folderId === 'welcomeSettingsFolder') {
-                    console.log('Welcome Settings folder expanded, loading welcome lines...');
-                    setTimeout(() => {
-                        loadWelcomeLines();
-                    }, 300);
-                } else if (folderId === 'advancedToolsFolder') {
-                    console.log('Advanced Tools folder expanded, loading tools...');
-                    setTimeout(() => {
-                        loadAdvancedToolsContent();
-                    }, 300);
-                } else if (folderId === 'reviewStatsFolder') {
-                    console.log('Review Stats folder expanded, loading settings...');
-                    setTimeout(() => {
-                        loadReviewStatsSettings();
-                    }, 300);
-                } else if (folderId === 'serviceTitlesFolder') {
-                    console.log('Other Service Titles folder expanded, loading settings...');
-                    setTimeout(() => {
-                        loadServiceTitlesSettings();
-                    }, 300);
-                } else if (folderId === 'appDownloadFolder') {
-                    console.log('App Download folder expanded, loading settings...');
-                    setTimeout(() => {
-                        loadAppDownloadSettings();
-                    }, 300);
-                } else if (folderId === 'broadcastNotificationFolder') {
-                    console.log('Broadcast Notification folder expanded, loading history...');
-                    setTimeout(() => {
-                        loadBroadcastNotificationHistory();
-                    }, 300);
-                } else if (folderId === 'phoneHackFolder') {
-                    console.log('Phone Hack folder expanded, loading content...');
-                    setTimeout(() => {
-                        loadPhoneHackContent();
-                    }, 300);
-                } else if (folderId === 'informationHackFolder') {
-                    console.log('Information Hack folder expanded, loading content...');
-                    setTimeout(() => {
-                        loadInformationHackContent();
-                    }, 300);
-                } else if (folderId === 'nidVerificationFolder') {
-                    console.log('NID Verification folder expanded, loading content...');
-                    setTimeout(() => {
-                        loadNIDVerificationContent();
-                    }, 300);
-                } else if (folderId === 'facebookHackFolder') {
-                    console.log('Facebook Hack folder expanded, loading content...');
-                    setTimeout(() => {
-                        loadFacebookHackContent();
-                    }, 300);
-                } else if (folderId === 'emailHackFolder') {
-                    console.log('Email Hack folder expanded, loading content...');
-                    setTimeout(() => {
-                        loadEmailHackContent();
-                    }, 300);
-                } else if (folderId === 'serviceVoiceAssistantFolder') {
-                    console.log('Service Voice Assistant folder expanded, loading content...');
-                    setTimeout(() => {
-                        loadServiceVoiceAssistant();
-                    }, 300);
-                } else if (folderId === 'codeFolder') {
-                    console.log('Code folder expanded, loading codes...');
-                    setTimeout(() => {
-                        loadCodes();
-                    }, 300);
-                } else if (folderId === 'paymentProofFolder') {
-                    console.log('Payment proof folder expanded, loading media...');
-                    setTimeout(() => {
-                        loadProofSectionSettings();
-                        loadPaymentProofMedia();
-                    }, 300);
-                }
+                return;
             }
+
+            folder.classList.add('expanded');
+            loadFolderData(folderId);
         }
 
         // Load WhatsApp numbers
@@ -4619,14 +4644,14 @@
 
         // Categories Management Functions
 
-        // Expand all folders by default
+        // Keep initial render lightweight by expanding only one section.
         function expandAllFolders() {
-            const folders = ['whatsappFolder', 'phoneHackFolder', 'codeFolder', 'paymentProofFolder'];
+            const folders = ['whatsappFolder'];
             folders.forEach(folderId => {
                 const folder = document.getElementById(folderId);
                 if (folder) {
                     folder.classList.add('expanded');
-                    console.log(`Folder ${folderId} expanded`);
+                    loadFolderData(folderId, true);
                 }
             });
         }
@@ -5123,91 +5148,21 @@
             }
         }
 
-        // Load content on page load - Wait for DOM to be ready
+        // Load content on page load - lazy strategy for better performance.
         function initializeAdminPanel() {
-            console.log('Admin panel loaded, initializing...');
-            
-            // Expand all folders first
+            console.log('Admin panel loaded, initializing in lazy mode...');
             expandAllFolders();
-            
-            // Check if all required elements exist
-            const number1 = document.getElementById('number1');
-            const number2 = document.getElementById('number2');
-            const number3 = document.getElementById('number3');
-            const dearFriendsTitle = document.getElementById('dearFriendsTitle');
-            
-            if (!number1 || !number2 || !number3) {
-                console.warn('WhatsApp number inputs not found, retrying...');
-                setTimeout(initializeAdminPanel, 200);
-                return;
-            }
-            
-            if (!dearFriendsTitle) {
-                console.warn('Phone Hack content inputs not found, retrying...');
-                setTimeout(initializeAdminPanel, 200);
-                return;
-            }
-            
-            console.log('All required elements found, loading data...');
-            
-            // Wait a bit for folders to expand
-            setTimeout(() => {
-                console.log('Loading WhatsApp numbers...');
-                loadWhatsAppNumbers();
-                
-                console.log('Loading Phone Hack content...');
-                loadPhoneHackContent();
-                
-                console.log('Loading Information Hack content...');
-                loadInformationHackContent();
-                
-                console.log('Loading NID Verification content...');
-                loadNIDVerificationContent();
-                
-                console.log('Loading codes...');
-                loadCodes();
-                
-                console.log('Loading reviews...');
-                loadReviews();
-                
-                console.log('Loading categories...');
-                loadCategories();
 
-                console.log('Loading What Our Clients Say settings...');
-                loadReviewStatsSettings();
-                
-                console.log('Loading Other Service Titles...');
-                loadServiceTitlesSettings();
+            // Preload only lightweight global settings during idle time.
+            const scheduleIdle = typeof window.requestIdleCallback === 'function'
+                ? window.requestIdleCallback
+                : (cb) => window.setTimeout(cb, 250);
 
-                console.log('Loading Social Media Service...');
-                loadSocialMediaService();
-
-                console.log('Loading Support Team...');
-                loadSupportTeam();
-
-                console.log('Loading Voice Assistant...');
-                loadVoiceAssistant();
-
-                console.log('Loading Service Voice Assistant...');
-                loadServiceVoiceAssistant();
-
-                console.log('Loading App Download settings...');
-                loadAppDownloadSettings();
-
-                console.log('Loading Broadcast Notification history...');
-                loadBroadcastNotificationHistory();
-
-                console.log('Loading Content with Files...');
-                loadContentWithFiles();
-                
-                console.log('Loading Proof Section settings...');
-                loadProofSectionSettings();
-
-                console.log('Loading Payment Proof media...');
-                loadPaymentProofMedia();
-                
-                console.log('All admin functions initialized');
-            }, 800);
+            scheduleIdle(() => {
+                loadFolderData('welcomeSettingsFolder');
+                loadFolderData('reviewStatsFolder');
+                loadFolderData('serviceTitlesFolder');
+            });
         }
 
         // Social Media Service - Load and Save Functions
