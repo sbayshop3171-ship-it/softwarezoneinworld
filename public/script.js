@@ -142,8 +142,10 @@ window.loadSupportTeam = async function() {
         };
 
         const whatsappNumber = (result.whatsapp_number || '').trim();
+        let primaryWhatsAppClean = '';
         if (whatsappNumber) {
             const clean = whatsappNumber.replace(/[^0-9]/g, '');
+            primaryWhatsAppClean = clean;
             if (clean) {
                 items.push({
                     key: 'whatsapp',
@@ -155,12 +157,17 @@ window.loadSupportTeam = async function() {
         }
 
         const whatsappGroupRaw = (result.whatsapp_group_link || '').trim();
-        if (whatsappGroupRaw) {
+        let whatsappGroupLink = normalizeHttpUrl(whatsappGroupRaw);
+        if (!whatsappGroupLink && primaryWhatsAppClean) {
+            // Fallback so "WhatsApp Group" button is still visible until admin sets group invite link.
+            whatsappGroupLink = `https://wa.me/${primaryWhatsAppClean}`;
+        }
+        if (whatsappGroupLink) {
             items.push({
                 key: 'whatsapp-group',
                 label: 'WhatsApp Group',
-                icon: 'fas fa-users',
-                href: normalizeHttpUrl(whatsappGroupRaw)
+                icon: 'fab fa-whatsapp',
+                href: whatsappGroupLink
             });
         }
 
