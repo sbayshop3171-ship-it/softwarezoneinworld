@@ -70,6 +70,16 @@ git push origin main
 
 push হলেই GitHub Action auto deploy করবে।
 
+## 7) 1-command update (সহজ উপায়)
+
+আরও সহজভাবে (commit + push একসাথে):
+
+```bash
+bash scripts/update-and-deploy.sh "your update message"
+```
+
+message না দিলে current date-time দিয়ে commit করবে।
+
 ## Notes
 
 - `.gitignore` এ `database.db` ignore করা আছে (ডাটা leak না করার জন্য)।
