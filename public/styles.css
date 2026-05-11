@@ -9106,3 +9106,113 @@ iframe {
         scroll-behavior: auto !important;
     }
 }
+
+/* Force mobile service cards layout (2 cards per row + compact size) */
+@media (max-width: 768px) {
+    .services-section .services-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 0.65rem !important;
+    }
+
+    .services-section .services-grid > .service-card {
+        padding: 0.9rem 0.68rem !important;
+        border-radius: 12px !important;
+    }
+
+    .services-section .services-grid > .service-card .service-icon-wrapper {
+        width: 46px !important;
+        height: 46px !important;
+        margin: 0 auto 0.55rem !important;
+    }
+
+    .services-section .services-grid > .service-card .service-icon {
+        width: 46px !important;
+        height: 46px !important;
+        font-size: 1.1rem !important;
+    }
+
+    .services-section .services-grid > .service-card .icon-bg {
+        width: 58px !important;
+        height: 58px !important;
+    }
+
+    .services-section .services-grid > .service-card h3 {
+        font-size: 0.84rem !important;
+        line-height: 1.22 !important;
+        margin-bottom: 0.35rem !important;
+    }
+
+    .services-section .services-grid > .service-card p {
+        font-size: 0.69rem !important;
+        line-height: 1.28 !important;
+        margin-bottom: 0.45rem !important;
+    }
+
+    .services-section .services-grid > .service-card .service-features {
+        margin-bottom: 0.45rem !important;
+    }
+
+    .services-section .services-grid > .service-card .service-features li {
+        font-size: 0.62rem !important;
+        line-height: 1.2 !important;
+        gap: 0.35rem !important;
+        margin-bottom: 0.24rem !important;
+    }
+
+    .services-section .services-grid > .service-card .service-btn {
+        font-size: 0.62rem !important;
+        padding: 0.42rem 0.48rem !important;
+        border-radius: 7px !important;
+        gap: 0.26rem !important;
+    }
+}
+
+@media (max-width: 560px) {
+    .services-section .services-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 0.52rem !important;
+    }
+
+    .services-section .services-grid > .service-card {
+        padding: 0.76rem 0.54rem !important;
+        border-radius: 10px !important;
+    }
+
+    .services-section .services-grid > .service-card .service-icon-wrapper {
+        width: 40px !important;
+        height: 40px !important;
+        margin-bottom: 0.44rem !important;
+    }
+
+    .services-section .services-grid > .service-card .service-icon {
+        width: 40px !important;
+        height: 40px !important;
+        font-size: 0.95rem !important;
+    }
+
+    .services-section .services-grid > .service-card .icon-bg {
+        width: 50px !important;
+        height: 50px !important;
+    }
+
+    .services-section .services-grid > .service-card h3 {
+        font-size: 0.76rem !important;
+        margin-bottom: 0.32rem !important;
+    }
+
+    .services-section .services-grid > .service-card p {
+        font-size: 0.62rem !important;
+        margin-bottom: 0.38rem !important;
+    }
+
+    .services-section .services-grid > .service-card .service-features li {
+        font-size: 0.55rem !important;
+        margin-bottom: 0.2rem !important;
+    }
+
+    .services-section .services-grid > .service-card .service-btn {
+        font-size: 0.55rem !important;
+        padding: 0.34rem 0.38rem !important;
+    }
+}
