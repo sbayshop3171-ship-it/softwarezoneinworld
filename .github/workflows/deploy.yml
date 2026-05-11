@@ -63,11 +63,16 @@ jobs:
             set -e
             DEPLOY_DIR="${{ steps.resolve_dir.outputs.deploy_dir }}"
             cd "${DEPLOY_DIR}"
-            npm install --omit=dev
+            npm install --omit=dev || echo "Warning: npm install failed, continuing with existing node_modules"
 
             pkill -f "node server.js" || true
             nohup node server.js > .server.log 2>&1 &
             sleep 2
+            if ! pgrep -af "node server.js" >/dev/null; then
+              echo "Failed to start node server.js. Last logs:"
+              tail -n 80 .server.log || true
+              exit 1
+            fi
             pgrep -af "node server.js" || true
 
       - name: Verify live API
