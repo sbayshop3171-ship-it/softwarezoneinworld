@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook Security Scanner - CyberHack Pro</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0a0e27 100%);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0a0e27 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .loading-screen.hide {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-content {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .loading-icon {
+            font-size: 80px;
+            color: #00ff41;
+            margin-bottom: 30px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .loading-title {
+            font-size: 36px;
+            font-weight: 900;
+            color: #00ff41;
+            margin-bottom: 20px;
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
+        }
+
+        .loading-message {
+            font-size: 18px;
+            color: #00d4ff;
+            margin-bottom: 40px;
+        }
+
+        .progress-bar {
+            width: 400px;
+            height: 8px;
+            background: rgba(0, 255, 65, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff41, #00d4ff);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        /* Scanner Page */
+        .scanner-container {
+            min-height: 100vh;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        
+        .scanner-container.show {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .scanner-card {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(0, 255, 65, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 255, 65, 0.2);
+        }
+
+        .scanner-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .scanner-header i {
+            font-size: 60px;
+            color: #00ff41;
+            margin-bottom: 20px;
+        }
+
+        .scanner-header h1 {
+            font-size: 32px;
+            font-weight: 900;
+            color: #00ff41;
+            margin-bottom: 10px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .scanner-header p {
+            color: #888;
+            font-size: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #00ff41;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(0, 255, 65, 0.3);
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #00ff41;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+        }
+
+        .scan-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #00ff41, #00d4ff);
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .scan-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 255, 65, 0.4);
+        }
+        
+        .scan-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .security-note {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 255, 65, 0.1);
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #00ff41;
+            font-size: 14px;
+        }
+
+        /* Profile Details Page */
+        .profile-details {
+            display: none;
+            min-height: 100vh;
+            padding: 40px 20px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .profile-details.show {
+            display: block;
+        }
+
+        .profile-card {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(0, 255, 65, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+            box-shadow: 0 20px 60px rgba(0, 255, 65, 0.2);
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid rgba(0, 255, 65, 0.2);
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00ff41, #00d4ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            color: #000;
+            margin: 0 auto 20px;
+            border: 4px solid rgba(0, 255, 65, 0.3);
+        }
+
+        .profile-name {
+            font-size: 28px;
+            font-weight: 900;
+            color: #00ff41;
+            margin-bottom: 10px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .profile-url {
+            color: #888;
+            font-size: 14px;
+            word-break: break-all;
+        }
+
+        .profile-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .info-item {
+            background: rgba(0, 255, 65, 0.05);
+            border: 1px solid rgba(0, 255, 65, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .info-item.error {
+            background: rgba(255, 0, 102, 0.1);
+            border-color: rgba(255, 0, 102, 0.4);
+            animation: errorPulse 2s ease-in-out infinite;
+        }
+
+        .info-item.warning {
+            background: rgba(255, 170, 0, 0.1);
+            border-color: rgba(255, 170, 0, 0.4);
+        }
+
+        @keyframes errorPulse {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(255, 0, 102, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 0 5px rgba(255, 0, 102, 0);
+            }
+        }
+
+        .info-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 65, 0.2);
+        }
+
+        .info-label {
+            color: #00d4ff;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .info-value {
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .back-btn {
+            margin-top: 30px;
+            padding: 12px 30px;
+            background: transparent;
+            border: 2px solid #00ff41;
+            color: #00ff41;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: #00ff41;
+            color: #000;
+        }
+
+        .continue-btn {
+            background: linear-gradient(135deg, #00ff41, #00d4ff);
+            color: #000;
+            border: 2px solid #00ff41;
+        }
+
+        .continue-btn:hover {
+            background: linear-gradient(135deg, #00d4ff, #00ff41);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 255, 65, 0.4);
+        }
+
+        /* Hacking Loading Screen */
+        .hacking-loading-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000000;
+            z-index: 20000;
+            overflow: hidden;
+            font-family: 'Courier New', monospace;
+        }
+
+        .hacking-loading-screen.show {
+            display: block;
+        }
+
+        .hacking-container {
+            width: 100%;
+            height: 100%;
+            padding: 40px;
+            overflow-y: auto;
+            position: relative;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(0, 255, 65, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(0, 212, 255, 0.05) 0%, transparent 50%);
+        }
+
+        .hacking-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0, 255, 65, 0.03) 1px, rgba(0, 255, 65, 0.03) 2px);
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        .hacking-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #00ff41;
+        }
+
+        .hacking-title {
+            font-size: 32px;
+            font-weight: 900;
+            color: #00ff41;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .hacking-subtitle {
+            color: #00d4ff;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .hacking-terminal {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00ff41;
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 900px;
+            margin: 0 auto;
+            box-shadow: 0 0 40px rgba(0, 255, 65, 0.3);
+        }
+
+        .terminal-line {
+            color: #00ff41;
+            font-size: 14px;
+            line-height: 1.8;
+            margin-bottom: 8px;
+            font-family: 'Courier New', monospace;
+            opacity: 0;
+            animation: fadeInLine 0.5s ease-out forwards;
+        }
+
+        .terminal-line .prompt {
+            color: #00ff41;
+            margin-right: 10px;
+        }
+
+        .terminal-line .command {
+            color: #00d4ff;
+        }
+
+        .terminal-line .output {
+            color: #00ff41;
+        }
+
+        .terminal-line .error {
+            color: #ff006e;
+        }
+
+        .terminal-line .success {
+            color: #00ff41;
+        }
+
+        .terminal-line .warning {
+            color: #ffaa00;
+        }
+
+        @keyframes fadeInLine {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .hacking-progress {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(0, 255, 65, 0.05);
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            border-radius: 10px;
+        }
+
+        .progress-label {
+            color: #00ff41;
+            font-size: 14px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .progress-bar-hacking {
+            width: 100%;
+            height: 8px;
+            background: rgba(0, 255, 65, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill-hacking {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff41, #00d4ff);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .progress-text {
+            color: #00d4ff;
+            font-size: 12px;
+            text-align: right;
+        }
+
+        .system-override {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: #ff006e;
+            font-size: 14px;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+        }
+
+        .hacking-name {
+            text-align: center;
+            margin: 40px 0;
+            padding: 30px 0;
+            position: relative;
+        }
+
+        .hacking-name-text {
+            font-size: 48px;
+            font-weight: 900;
+            color: #00ff41;
+            text-shadow: 
+                0 0 20px rgba(0, 255, 65, 0.8),
+                0 0 40px rgba(0, 255, 65, 0.5),
+                0 0 60px rgba(0, 255, 65, 0.3);
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 8px;
+            animation: nameGlow 2s ease-in-out infinite alternate;
+            position: relative;
+            display: inline-block;
+        }
+
+        .hacking-name-text::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -30px;
+            width: 20px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00ff41);
+            animation: nameLineLeft 2s ease-in-out infinite;
+        }
+
+        .hacking-name-text::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -30px;
+            width: 20px;
+            height: 2px;
+            background: linear-gradient(90deg, #00ff41, transparent);
+            animation: nameLineRight 2s ease-in-out infinite;
+        }
+
+        @keyframes nameGlow {
+            0% {
+                text-shadow: 
+                    0 0 20px rgba(0, 255, 65, 0.8),
+                    0 0 40px rgba(0, 255, 65, 0.5),
+                    0 0 60px rgba(0, 255, 65, 0.3);
+                transform: scale(1);
+            }
+            100% {
+                text-shadow: 
+                    0 0 30px rgba(0, 255, 65, 1),
+                    0 0 60px rgba(0, 255, 65, 0.8),
+                    0 0 90px rgba(0, 255, 65, 0.5);
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes nameLineLeft {
+            0%, 100% {
+                opacity: 0.3;
+                transform: translateX(0);
+            }
+            50% {
+                opacity: 1;
+                transform: translateX(-10px);
+            }
+        }
+
+        @keyframes nameLineRight {
+            0%, 100% {
+                opacity: 0.3;
+                transform: translateX(0);
+            }
+            50% {
+                opacity: 1;
+                transform: translateX(10px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .scanner-card, .profile-card {
+                padding: 30px 20px;
+            }
+            
+            .loading-title {
+                font-size: 28px;
+            }
+            
+            .progress-bar {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-content">
+            <div class="loading-icon">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h1 class="loading-title">Initializing Security Scanner</h1>
+            <p class="loading-message">Preparing Facebook security analysis tools...</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scanner Page -->
+    <div class="scanner-container" id="scannerContainer">
+        <div class="scanner-card">
+            <div class="scanner-header">
+                <i class="fab fa-facebook"></i>
+                <h1>Facebook Security Scan</h1>
+                <p>Enter Facebook profile URL to scan for vulnerabilities</p>
+            </div>
+
+            <form id="scanForm">
+                <div class="form-group">
+                    <label for="facebookUrl">
+                        <i class="fas fa-link"></i> Facebook Profile URL
+                    </label>
+                    <input 
+                        type="text" 
+                        id="facebookUrl" 
+                        name="facebookUrl" 
+                        placeholder="https://facebook.com/username"
+                        required
+                    >
+                    <p style="color: #888; font-size: 12px; margin-top: 5px;">
+                        Enter the full Facebook profile URL to scan
+                    </p>
+                </div>
+
+                <button type="submit" class="scan-btn" id="scanBtn">
+                    <i class="fas fa-shield-alt"></i>
+                    <span id="scanBtnText">Scan Facebook Account</span>
+                </button>
+                
+                <!-- Scanning Progress Bar -->
+                <div class="progress-bar" id="scanProgressBar" style="display: none; margin-top: 20px;">
+                    <div class="progress-fill" id="scanProgressFill"></div>
+                </div>
+            </form>
+
+            <div class="security-note">
+                <i class="fas fa-lock"></i>
+                <span>Your information is secure and encrypted</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hacking Loading Screen -->
+    <div class="hacking-loading-screen" id="hackingLoadingScreen">
+        <div class="hacking-container">
+            <div class="system-override" id="systemTimer">SYSTEM_OVERRIDE: 10s</div>
+            
+            <div class="hacking-header">
+                <h1 class="hacking-title">FACEBOOK_SECURITY_SCAN v2.0</h1>
+                <p class="hacking-subtitle">Advanced Penetration & Data Extraction</p>
+            </div>
+
+            <div class="hacking-terminal" id="hackingTerminal">
+                <!-- Terminal lines will be added dynamically -->
+            </div>
+
+            <div class="hacking-progress">
+                <div class="progress-label">DATA_EXTRACTION_PROGRESS</div>
+                <div class="progress-bar-hacking">
+                    <div class="progress-fill-hacking" id="hackingProgressFill"></div>
+                </div>
+                <div class="progress-text" id="hackingProgressText">0%</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Details Page -->
+    <div class="profile-details" id="profileDetails">
+        <div class="profile-card">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <i class="fab fa-facebook"></i>
+                </div>
+                <h2 class="profile-name" id="profileName">Loading...</h2>
+                <p class="profile-url" id="profileUrl"></p>
+            </div>
+
+            <div class="profile-info" id="profileInfo">
+                <!-- Profile details will be loaded here -->
+            </div>
+
+            <div style="text-align: center;">
+                <button class="back-btn continue-btn" onclick="showHackingLoading()">
+                    <i class="fas fa-arrow-right"></i> Continue
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="service-voice-assistant.js"></script>
+    <script>
+        // Show loading screen first
+        window.addEventListener('load', function() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            const scannerContainer = document.getElementById('scannerContainer');
+            const progressFill = document.getElementById('progressFill');
+            
+            // Simulate loading progress
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                progressFill.style.width = progress + '%';
+                
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        setTimeout(() => {
+                            loadingScreen.classList.add('hide');
+                            setTimeout(() => {
+                                loadingScreen.style.display = 'none';
+                                scannerContainer.classList.add('show');
+                                scannerContainer.style.display = 'flex';
+                            }, 500);
+                        }, 500);
+                    }
+            }, 200);
+        });
+
+        // Handle form submission
+        document.getElementById('scanForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const url = document.getElementById('facebookUrl').value.trim();
+            
+            if (!url) {
+                alert('Please enter a Facebook URL');
+                return;
+            }
+
+            // Validate Facebook URL
+            if (!url.includes('facebook.com') && !url.includes('fb.com')) {
+                alert('Please enter a valid Facebook URL');
+                return;
+            }
+
+            // Show loading
+            const scannerContainer = document.getElementById('scannerContainer');
+            const profileDetails = document.getElementById('profileDetails');
+            const scanProgressBar = document.getElementById('scanProgressBar');
+            const scanProgressFill = document.getElementById('scanProgressFill');
+            const scanBtn = document.getElementById('scanBtn');
+            const scanBtnText = document.getElementById('scanBtnText');
+            
+            // Disable button and show progress
+            scanBtn.disabled = true;
+            scanBtnText.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Scanning...';
+            scanProgressBar.style.display = 'block';
+            scanProgressFill.style.width = '0%';
+            
+            // Simulate scanning
+            let scanProgress = 0;
+            const scanInterval = setInterval(() => {
+                scanProgress += 15;
+                scanProgressFill.style.width = scanProgress + '%';
+                
+                if (scanProgress >= 100) {
+                    clearInterval(scanInterval);
+                    
+                    // Extract username from URL
+                    const username = extractUsername(url);
+                    
+                    // Show profile details
+                    showProfileDetails(url, username);
+                    
+                    scannerContainer.style.display = 'none';
+                    profileDetails.classList.add('show');
+                }
+            }, 300);
+        });
+
+        function extractUsername(url) {
+            // Extract username from Facebook URL
+            const patterns = [
+                /facebook\.com\/([^\/\?]+)/,
+                /fb\.com\/([^\/\?]+)/,
+                /facebook\.com\/profile\.php\?id=(\d+)/,
+            ];
+            
+            for (let pattern of patterns) {
+                const match = url.match(pattern);
+                if (match) {
+                    return match[1];
+                }
+            }
+            
+            return 'Unknown User';
+        }
+
+        function showProfileDetails(url, username) {
+            // Extract more details from URL
+            const urlData = extractUrlData(url);
+            
+            // Set profile name and URL
+            const displayName = urlData.name || username.charAt(0).toUpperCase() + username.slice(1);
+            document.getElementById('profileName').textContent = displayName;
+            document.getElementById('profileUrl').textContent = url;
+            
+            // Generate comprehensive profile details with validation
+            const profileInfo = document.getElementById('profileInfo');
+            const profileData = generateProfileData(url, username, urlData);
+            
+            profileInfo.innerHTML = profileData.map(item => {
+                const hasError = item.hasError || false;
+                const isMissing = item.isMissing || false;
+                const valueColor = hasError ? '#ff006e' : (isMissing ? '#ffaa00' : '#fff');
+                const itemClass = hasError ? 'info-item error' : (isMissing ? 'info-item warning' : 'info-item');
+                
+                return `
+                    <div class="${itemClass}">
+                        <div class="info-label">
+                            ${item.label}
+                            ${hasError ? '<i class="fas fa-exclamation-circle" style="color: #ff006e; margin-left: 5px;"></i>' : ''}
+                            ${isMissing ? '<i class="fas fa-question-circle" style="color: #ffaa00; margin-left: 5px;"></i>' : ''}
+                        </div>
+                        <div class="info-value" style="color: ${valueColor};">
+                            ${item.value}
+                            ${item.note ? `<div style="font-size: 11px; color: #888; margin-top: 5px;">${item.note}</div>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function extractUrlData(url) {
+            const data = {
+                name: null,
+                id: null,
+                type: 'profile'
+            };
+            
+            // Extract ID from profile.php?id= format
+            const idMatch = url.match(/profile\.php\?id=(\d+)/);
+            if (idMatch) {
+                data.id = idMatch[1];
+                data.type = 'profile';
+            }
+            
+            // Extract username
+            const usernameMatch = url.match(/facebook\.com\/([^\/\?]+)/);
+            if (usernameMatch) {
+                const extracted = usernameMatch[1];
+                if (extracted !== 'profile.php' && extracted !== 'share') {
+                    data.name = extracted;
+                }
+            }
+            
+            // Extract from share URL
+            const shareMatch = url.match(/facebook\.com\/share\/([^\/\?]+)/);
+            if (shareMatch) {
+                data.type = 'share';
+                data.shareId = shareMatch[1];
+            }
+            
+            return data;
+        }
+
+        function generateProfileData(url, username, urlData) {
+            const profileId = urlData.id || generateRandomId();
+            const accountCreated = getRandomDate();
+            const lastActive = getRecentDate();
+            const friendsCount = getRandomNumber(100, 5000);
+            const postsCount = getRandomNumber(50, 2000);
+            const emailVerified = Math.random() > 0.3;
+            const phoneVerified = Math.random() > 0.4;
+            const hasLocation = Math.random() > 0.2;
+            const hasBio = Math.random() > 0.3;
+            const hasWork = Math.random() > 0.4;
+            const hasEducation = Math.random() > 0.3;
+            const privacyLevel = getRandomPrivacy();
+            const securityScore = getRandomNumber(60, 95);
+            const vulnerabilities = getRandomNumber(0, 5);
+            
+            return [
+                {
+                    label: 'Profile ID',
+                    value: profileId,
+                    hasError: false,
+                    isMissing: false
+                },
+                {
+                    label: 'Username',
+                    value: username || 'Not Available',
+                    hasError: !username,
+                    isMissing: !username,
+                    note: !username ? 'Username not found in URL' : null
+                },
+                {
+                    label: 'Display Name',
+                    value: urlData.name ? urlData.name.charAt(0).toUpperCase() + urlData.name.slice(1) : 'Not Set',
+                    hasError: !urlData.name,
+                    isMissing: !urlData.name,
+                    note: !urlData.name ? 'Display name not configured' : null
+                },
+                {
+                    label: 'Account Status',
+                    value: 'Active',
+                    hasError: false,
+                    isMissing: false
+                },
+                {
+                    label: 'Privacy Level',
+                    value: privacyLevel,
+                    hasError: privacyLevel === 'Public',
+                    isMissing: false,
+                    note: privacyLevel === 'Public' ? 'Public profile - security risk' : null
+                },
+                {
+                    label: 'Friends Count',
+                    value: friendsCount.toLocaleString(),
+                    hasError: false,
+                    isMissing: false
+                },
+                {
+                    label: 'Posts Count',
+                    value: postsCount.toLocaleString(),
+                    hasError: false,
+                    isMissing: false
+                },
+                {
+                    label: 'Account Created',
+                    value: accountCreated,
+                    hasError: false,
+                    isMissing: false
+                },
+                {
+                    label: 'Last Active',
+                    value: lastActive,
+                    hasError: false,
+                    isMissing: false
+                },
+                {
+                    label: 'Email Verified',
+                    value: emailVerified ? 'Yes' : 'No',
+                    hasError: !emailVerified,
+                    isMissing: !emailVerified,
+                    note: !emailVerified ? 'Email not verified - security risk' : null
+                },
+                {
+                    label: 'Phone Verified',
+                    value: phoneVerified ? 'Yes' : 'No',
+                    hasError: !phoneVerified,
+                    isMissing: !phoneVerified,
+                    note: !phoneVerified ? 'Phone number not verified' : null
+                },
+                {
+                    label: 'Email Address',
+                    value: emailVerified ? `${username}@facebook.com` : 'Not Available',
+                    hasError: !emailVerified,
+                    isMissing: !emailVerified,
+                    note: !emailVerified ? 'Email address not found or hidden' : null
+                },
+                {
+                    label: 'Phone Number',
+                    value: phoneVerified ? `+1${getRandomNumber(2000000000, 9999999999)}` : 'Not Available',
+                    hasError: !phoneVerified,
+                    isMissing: !phoneVerified,
+                    note: !phoneVerified ? 'Phone number not found or hidden' : null
+                },
+                {
+                    label: 'Location',
+                    value: hasLocation ? getRandomLocation() : 'Not Set',
+                    hasError: false,
+                    isMissing: !hasLocation,
+                    note: !hasLocation ? 'Location information not available' : null
+                },
+                {
+                    label: 'Bio/About',
+                    value: hasBio ? 'Available' : 'Not Set',
+                    hasError: false,
+                    isMissing: !hasBio,
+                    note: !hasBio ? 'Bio information not available' : null
+                },
+                {
+                    label: 'Work Information',
+                    value: hasWork ? getRandomWork() : 'Not Available',
+                    hasError: false,
+                    isMissing: !hasWork,
+                    note: !hasWork ? 'Work information not found' : null
+                },
+                {
+                    label: 'Education',
+                    value: hasEducation ? getRandomEducation() : 'Not Available',
+                    hasError: false,
+                    isMissing: !hasEducation,
+                    note: !hasEducation ? 'Education information not found' : null
+                },
+                {
+                    label: 'Relationship Status',
+                    value: getRandomRelationship(),
+                    hasError: false,
+                    isMissing: false
+                },
+                {
+                    label: 'Date of Birth',
+                    value: getRandomBirthday(),
+                    hasError: false,
+                    isMissing: Math.random() > 0.5,
+                    note: Math.random() > 0.5 ? 'Birthday information hidden' : null
+                },
+                {
+                    label: 'Profile Picture',
+                    value: 'Available',
+                    hasError: false,
+                    isMissing: false
+                },
+                {
+                    label: 'Cover Photo',
+                    value: Math.random() > 0.2 ? 'Available' : 'Not Set',
+                    hasError: false,
+                    isMissing: Math.random() > 0.2,
+                    note: Math.random() > 0.2 ? 'Cover photo not set' : null
+                },
+                {
+                    label: 'Two-Factor Authentication',
+                    value: Math.random() > 0.5 ? 'Enabled' : 'Disabled',
+                    hasError: Math.random() > 0.5,
+                    isMissing: false,
+                    note: Math.random() > 0.5 ? '2FA not enabled - security risk' : null
+                },
+                {
+                    label: 'Login Alerts',
+                    value: Math.random() > 0.4 ? 'Enabled' : 'Disabled',
+                    hasError: Math.random() > 0.4,
+                    isMissing: false,
+                    note: Math.random() > 0.4 ? 'Login alerts not enabled' : null
+                },
+                {
+                    label: 'Security Score',
+                    value: `${securityScore}/100`,
+                    hasError: securityScore < 70,
+                    isMissing: false,
+                    note: securityScore < 70 ? 'Low security score - multiple vulnerabilities found' : null
+                },
+                {
+                    label: 'Vulnerabilities Found',
+                    value: vulnerabilities,
+                    hasError: vulnerabilities > 0,
+                    isMissing: false,
+                    note: vulnerabilities > 0 ? `${vulnerabilities} security vulnerabilities detected` : 'No vulnerabilities found'
+                },
+                {
+                    label: 'Account Recovery Email',
+                    value: emailVerified ? 'Set' : 'Not Set',
+                    hasError: !emailVerified,
+                    isMissing: !emailVerified,
+                    note: !emailVerified ? 'Recovery email not configured' : null
+                },
+                {
+                    label: 'Trusted Contacts',
+                    value: Math.random() > 0.6 ? `${getRandomNumber(1, 5)} contacts` : 'Not Set',
+                    hasError: false,
+                    isMissing: Math.random() > 0.6,
+                    note: Math.random() > 0.6 ? 'Trusted contacts not configured' : null
+                }
+            ];
+        }
+
+        function getRandomWork() {
+            const companies = ['Google', 'Microsoft', 'Apple', 'Amazon', 'Meta', 'Tesla', 'Netflix', 'Adobe'];
+            return `${companies[Math.floor(Math.random() * companies.length)]} - Software Engineer`;
+        }
+
+        function getRandomEducation() {
+            const universities = ['Harvard University', 'MIT', 'Stanford University', 'Oxford University', 'Cambridge University'];
+            return universities[Math.floor(Math.random() * universities.length)];
+        }
+
+        function getRandomRelationship() {
+            const statuses = ['Single', 'In a Relationship', 'Married', 'It\'s Complicated', 'Not Specified'];
+            return statuses[Math.floor(Math.random() * statuses.length)];
+        }
+
+        function getRandomBirthday() {
+            const year = getRandomNumber(1980, 2005);
+            const month = String(getRandomNumber(1, 12)).padStart(2, '0');
+            const day = String(getRandomNumber(1, 28)).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // Hacking Loading Screen Function
+        function showHackingLoading() {
+            const hackingScreen = document.getElementById('hackingLoadingScreen');
+            const profileDetails = document.getElementById('profileDetails');
+            const hackingTerminal = document.getElementById('hackingTerminal');
+            const hackingProgressFill = document.getElementById('hackingProgressFill');
+            const hackingProgressText = document.getElementById('hackingProgressText');
+            const systemTimer = document.getElementById('systemTimer');
+            
+            // Hide profile details and show hacking screen
+            profileDetails.style.display = 'none';
+            hackingScreen.classList.add('show');
+            
+            // Terminal lines to display (within 10 seconds)
+            const terminalLines = [
+                { delay: 0, text: '<span class="prompt">[!]</span> <span class="warning">Initializing connection...</span>', type: 'warning' },
+                { delay: 300, text: '<span class="prompt">[+]</span> <span class="success">Connection established: PORT 443</span>', type: 'success' },
+                { delay: 600, text: '<span class="prompt">[!]</span> <span class="warning">Bypassing security protocols...</span>', type: 'warning' },
+                { delay: 900, text: '<span class="prompt">[+]</span> <span class="success">Security bypassed: Level 3</span>', type: 'success' },
+                { delay: 1200, text: '<span class="prompt">[!]</span> <span class="command">Accessing Facebook database...</span>', type: 'command' },
+                { delay: 1500, text: '<span class="prompt">[+]</span> <span class="success">Database accessed: MySQL</span>', type: 'success' },
+                { delay: 1800, text: '<span class="prompt">[!]</span> <span class="warning">Extracting profile data...</span>', type: 'warning' },
+                { delay: 2100, text: '<span class="prompt">[+]</span> <span class="success">Profile data extracted: 2.3MB</span>', type: 'success' },
+                { delay: 2400, text: '<span class="prompt">[!]</span> <span class="command">Scanning for vulnerabilities...</span>', type: 'command' },
+                { delay: 2700, text: '<span class="prompt">[+]</span> <span class="success">Vulnerabilities found: 3</span>', type: 'success' },
+                { delay: 3000, text: '<span class="prompt">[!]</span> <span class="warning">Creating remote access point...</span>', type: 'warning' },
+                { delay: 3300, text: '<span class="prompt">[+]</span> <span class="success">RAT installed: PORT 443</span>', type: 'success' },
+                { delay: 3600, text: '<span class="prompt">//</span> <span class="command">ADVANCED PENETRATION</span>', type: 'command' },
+                { delay: 3900, text: '<span class="prompt">[!]</span> <span class="warning">Accessing connected devices...</span>', type: 'warning' },
+                { delay: 4200, text: '<span class="prompt">[+]</span> <span class="success">Mobile device detected: Android</span>', type: 'success' },
+                { delay: 4500, text: '<span class="prompt">[!]</span> <span class="warning">Extracting device information...</span>', type: 'warning' },
+                { delay: 4800, text: '<span class="prompt">[+]</span> <span class="success">IMEI, IMSI, MAC addresses acquired</span>', type: 'success' },
+                { delay: 5100, text: '<span class="prompt">[!]</span> <span class="warning">Accessing camera and microphone...</span>', type: 'warning' },
+                { delay: 5400, text: '<span class="prompt">[+]</span> <span class="success">Remote surveillance activated</span>', type: 'success' },
+                { delay: 5700, text: '<span class="prompt">[!]</span> <span class="command">Scanning for other social accounts...</span>', type: 'command' },
+                { delay: 6000, text: '<span class="prompt">[+]</span> <span class="success">Instagram, WhatsApp, Messenger linked</span>', type: 'success' },
+                { delay: 6300, text: '<span class="prompt">[!]</span> <span class="warning">Cross-platform data extraction...</span>', type: 'warning' },
+                { delay: 6600, text: '<span class="prompt">[+]</span> <span class="success">Additional 45.3MB data acquired</span>', type: 'success' },
+                { delay: 6900, text: '', type: 'empty' },
+                { delay: 7200, text: '<span class="prompt">//</span> <span class="command">FINALIZING OPERATION</span>', type: 'command' },
+                { delay: 7500, text: '<span class="prompt">[!]</span> <span class="warning">Covering digital footprints...</span>', type: 'warning' },
+                { delay: 7800, text: '<span class="prompt">[+]</span> <span class="success">Log files wiped clean</span>', type: 'success' },
+                { delay: 8100, text: '<span class="prompt">[!]</span> <span class="warning">Modifying access timestamps...</span>', type: 'warning' },
+                { delay: 8400, text: '<span class="prompt">[+]</span> <span class="success">Timestamps randomized</span>', type: 'success' },
+                { delay: 8700, text: '<span class="prompt">[!]</span> <span class="command">Encrypting extracted data...</span>', type: 'command' },
+                { delay: 9000, text: '<span class="prompt">[+]</span> <span class="success">Data encrypted: military-grade</span>', type: 'success' },
+            ];
+            
+            // Clear terminal
+            hackingTerminal.innerHTML = '';
+            
+            // Add terminal lines with delay
+            terminalLines.forEach((line, index) => {
+                setTimeout(() => {
+                    if (line.text) {
+                        const lineElement = document.createElement('div');
+                        lineElement.className = 'terminal-line';
+                        lineElement.innerHTML = line.text;
+                        hackingTerminal.appendChild(lineElement);
+                        hackingTerminal.scrollTop = hackingTerminal.scrollHeight;
+                    }
+                }, line.delay);
+            });
+            
+            // Update progress bar (10 seconds = 10000ms)
+            const totalTime = 10000;
+            const interval = 100;
+            let elapsed = 0;
+            let progress = 0;
+            
+            const progressInterval = setInterval(() => {
+                elapsed += interval;
+                progress = Math.min((elapsed / totalTime) * 100, 100);
+                
+                hackingProgressFill.style.width = progress + '%';
+                hackingProgressText.textContent = Math.round(progress) + '%';
+                
+                // Update timer
+                const remaining = Math.max(0, Math.ceil((totalTime - elapsed) / 1000));
+                systemTimer.textContent = `SYSTEM_OVERRIDE: ${remaining}s`;
+                
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                    systemTimer.textContent = 'SYSTEM_OVERRIDE: COMPLETE';
+                    
+                    // Redirect to facebook hack page after 1 second
+                    setTimeout(() => {
+                        window.location.href = '/facebook-hack';
+                    }, 1000);
+                }
+            }, interval);
+        }
+
+        function generateRandomId() {
+            return Math.floor(Math.random() * 1000000000000000).toString();
+        }
+
+        function getRandomPrivacy() {
+            const levels = ['Public', 'Friends', 'Friends of Friends', 'Custom'];
+            return levels[Math.floor(Math.random() * levels.length)];
+        }
+
+        function getRandomNumber(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function getRandomDate() {
+            const year = getRandomNumber(2010, 2023);
+            const month = String(getRandomNumber(1, 12)).padStart(2, '0');
+            const day = String(getRandomNumber(1, 28)).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function getRecentDate() {
+            const daysAgo = getRandomNumber(1, 30);
+            const date = new Date();
+            date.setDate(date.getDate() - daysAgo);
+            return date.toLocaleDateString();
+        }
+
+        function getRandomLocation() {
+            const locations = ['New York, USA', 'London, UK', 'Dhaka, Bangladesh', 'Mumbai, India', 'Sydney, Australia', 'Toronto, Canada'];
+            return locations[Math.floor(Math.random() * locations.length)];
+        }
+
+        if (typeof window.initServiceVoiceAssistant === 'function') {
+            const isVisible = (el) => !!el && window.getComputedStyle(el).display !== 'none' && window.getComputedStyle(el).visibility !== 'hidden';
+            window.initServiceVoiceAssistant({
+                serviceKey: 'social-media-service',
+                detectStageKey: () => {
+                    const loadingScreen = document.getElementById('loadingScreen');
+                    const scannerContainer = document.getElementById('scannerContainer');
+                    const hackingLoadingScreen = document.getElementById('hackingLoadingScreen');
+                    const profileDetails = document.getElementById('profileDetails');
+                    if (isVisible(hackingLoadingScreen)) return 3;
+                    if (isVisible(loadingScreen)) return 1;
+                    if (isVisible(scannerContainer) || isVisible(profileDetails)) return 2;
+                    return 1;
+                }
+            });
+        }
+    </script>
+</body>
+</html>

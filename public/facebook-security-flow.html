@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook Security Flow - CyberHack Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #030b15;
+            --bg-secondary: #041324;
+            --panel-bg: rgba(5, 14, 26, 0.88);
+            --panel-bg-strong: rgba(1, 10, 18, 0.96);
+            --border: rgba(0, 255, 136, 0.45);
+            --border-soft: rgba(0, 255, 136, 0.22);
+            --green: #00ff88;
+            --cyan: #41d9ff;
+            --text: #dbffe9;
+            --text-dim: #92d4b7;
+            --danger: #ff6f7d;
+            --warning: #ffd166;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 12% 18%, rgba(0, 255, 136, 0.16), transparent 40%),
+                radial-gradient(circle at 88% 78%, rgba(65, 217, 255, 0.12), transparent 40%),
+                linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+            padding: 26px 14px 48px;
+        }
+
+        .flow-shell {
+            width: min(1020px, 100%);
+            margin: 0 auto;
+            border: 1px solid var(--border-soft);
+            border-radius: 18px;
+            background: var(--panel-bg);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.14);
+            overflow: hidden;
+        }
+
+        .topbar {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-soft);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--green);
+            font-weight: 800;
+            letter-spacing: 0.7px;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+
+        .brand i {
+            font-size: 18px;
+        }
+
+        .disclaimer-chip {
+            border: 1px solid rgba(255, 209, 102, 0.45);
+            color: var(--warning);
+            background: rgba(255, 209, 102, 0.08);
+            border-radius: 999px;
+            padding: 7px 11px;
+            font-size: 12px;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+        }
+
+        .flow-content {
+            padding: 24px 20px 26px;
+        }
+
+        .flow-title {
+            text-align: center;
+            margin-bottom: 18px;
+        }
+
+        .flow-title h1 {
+            color: var(--green);
+            font-size: clamp(28px, 4.4vw, 50px);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 0 0 16px rgba(0, 255, 136, 0.48);
+            margin-bottom: 6px;
+        }
+
+        .flow-title p {
+            color: var(--text-dim);
+            font-size: 15px;
+        }
+
+        .step-indicator {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 22px;
+        }
+
+        .step-pill {
+            border: 1px solid var(--border-soft);
+            color: var(--text-dim);
+            border-radius: 999px;
+            padding: 7px 12px;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+        }
+
+        .step-pill.active {
+            border-color: var(--green);
+            color: var(--green);
+            box-shadow: 0 0 14px rgba(0, 255, 136, 0.22);
+            background: rgba(0, 255, 136, 0.07);
+        }
+
+        .step-panel {
+            display: none;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: var(--panel-bg-strong);
+            padding: 20px;
+            min-height: 360px;
+        }
+
+        .step-panel.active {
+            display: block;
+        }
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            color: var(--green);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            font-size: 22px;
+        }
+
+        .panel-subtitle {
+            color: var(--text-dim);
+            margin-bottom: 16px;
+            line-height: 1.5;
+            font-size: 15px;
+        }
+
+        .scan-progress-wrap {
+            width: min(620px, 100%);
+            margin: 24px auto 14px;
+        }
+
+        .scan-progress {
+            width: 100%;
+            height: 11px;
+            border-radius: 999px;
+            background: rgba(0, 255, 136, 0.18);
+            overflow: hidden;
+            border: 1px solid var(--border-soft);
+        }
+
+        .scan-progress > div {
+            width: 0;
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88 0%, #41d9ff 100%);
+            transition: width 0.12s linear;
+        }
+
+        .scan-timer {
+            margin-top: 10px;
+            color: var(--cyan);
+            text-align: center;
+            font-family: monospace;
+            font-size: 14px;
+        }
+
+        .status-log {
+            margin-top: 18px;
+            border: 1px solid var(--border-soft);
+            border-radius: 12px;
+            background: rgba(2, 13, 24, 0.8);
+            padding: 12px;
+            min-height: 110px;
+            font-family: monospace;
+            font-size: 13px;
+            color: #a9efd0;
+            white-space: pre-line;
+            line-height: 1.45;
+        }
+
+        .input-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .input-label {
+            color: var(--green);
+            letter-spacing: 0.7px;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .scan-input {
+            flex: 1;
+            min-width: 260px;
+            height: 50px;
+            border-radius: 12px;
+            border: 1px solid var(--border-soft);
+            background: rgba(2, 15, 26, 0.9);
+            color: #fff;
+            padding: 0 14px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .scan-input:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.15);
+        }
+
+        .scan-btn,
+        .continue-btn {
+            height: 50px;
+            border: none;
+            border-radius: 12px;
+            padding: 0 22px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            transition: transform 0.2s ease, filter 0.2s ease;
+        }
+
+        .scan-btn {
+            background: linear-gradient(135deg, #00ff88 0%, #1ec8ff 100%);
+            color: #021217;
+            min-width: 146px;
+        }
+
+        .continue-btn {
+            background: linear-gradient(135deg, #1ec8ff 0%, #00ff88 100%);
+            color: #04121a;
+            min-width: 170px;
+        }
+
+        .scan-btn:hover,
+        .continue-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.05);
+        }
+
+        .scan-btn:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+            transform: none;
+            filter: none;
+        }
+
+        .error-text {
+            color: var(--danger);
+            min-height: 20px;
+            font-size: 13px;
+            margin-top: 2px;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .result-card {
+            border: 1px solid var(--border-soft);
+            border-radius: 12px;
+            padding: 12px;
+            background: rgba(1, 15, 23, 0.78);
+        }
+
+        .result-label {
+            color: var(--green);
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.6px;
+            margin-bottom: 6px;
+        }
+
+        .result-value {
+            color: #e5fff4;
+            font-size: 16px;
+            word-break: break-word;
+        }
+
+        .result-note {
+            margin-top: 14px;
+            color: var(--warning);
+            font-size: 13px;
+            line-height: 1.4;
+            border: 1px solid rgba(255, 209, 102, 0.35);
+            background: rgba(255, 209, 102, 0.08);
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .continue-wrap {
+            margin-top: 16px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .link-preview {
+            margin-top: 12px;
+            color: var(--cyan);
+            font-family: monospace;
+            font-size: 13px;
+            word-break: break-all;
+            border: 1px dashed rgba(65, 217, 255, 0.45);
+            border-radius: 10px;
+            padding: 10px;
+            background: rgba(65, 217, 255, 0.08);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 760px) {
+            .flow-content {
+                padding: 20px 14px 18px;
+            }
+
+            .step-panel {
+                padding: 14px;
+            }
+
+            .panel-title {
+                font-size: 18px;
+            }
+
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .continue-wrap {
+                justify-content: stretch;
+            }
+
+            .continue-btn,
+            .scan-btn {
+                width: 100%;
+            }
+
+            .input-row {
+                flex-direction: column;
+            }
+
+            .scan-input {
+                min-width: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="flow-shell">
+        <div class="topbar">
+            <div class="brand"><i class="fas fa-shield-alt"></i> Facebook Security Flow</div>
+            <div class="disclaimer-chip">No account access or hacking performed</div>
+        </div>
+
+        <div class="flow-content">
+            <header class="flow-title">
+                <h1>Security Scan Flow</h1>
+                <p id="flowSubtitle">Public profile safety workflow powered by admin-configured content.</p>
+            </header>
+
+            <div class="step-indicator">
+                <div class="step-pill active" data-step-pill="1">Step 1: Initialize</div>
+                <div class="step-pill" data-step-pill="2">Step 2: Input</div>
+                <div class="step-pill" data-step-pill="3">Step 3: Review</div>
+                <div class="step-pill" data-step-pill="4">Step 4: Finalize</div>
+            </div>
+
+            <section class="step-panel active" id="step1Panel" data-step-panel="1">
+                <h2 class="panel-title"><i class="fas fa-spinner"></i> Security Scan Initializing</h2>
+                <p class="panel-subtitle">Preparing scan environment and validating available tools. This step runs for approximately 5 seconds.</p>
+
+                <div class="scan-progress-wrap">
+                    <div class="scan-progress"><div id="step1Progress"></div></div>
+                    <div class="scan-timer" id="step1Timer">00:05</div>
+                </div>
+
+                <div class="status-log" id="step1Log">Starting security initialization...</div>
+            </section>
+
+            <section class="step-panel" id="step2Panel" data-step-panel="2">
+                <h2 class="panel-title"><i class="fas fa-link"></i> Profile URL Scan</h2>
+                <p class="panel-subtitle">Enter a valid Facebook profile URL for a public-demo scan preview.</p>
+
+                <div class="input-grid">
+                    <label class="input-label" for="profileUrlInput">Facebook Profile URL</label>
+                    <div class="input-row">
+                        <input id="profileUrlInput" class="scan-input" type="url" placeholder="https://www.facebook.com/username" autocomplete="off" />
+                        <button id="scanProfileBtn" class="scan-btn" type="button"><i class="fas fa-search"></i> Scan</button>
+                    </div>
+                    <div class="error-text" id="urlErrorText"></div>
+                </div>
+
+                <div class="status-log" id="step2Log">Waiting for URL input...</div>
+            </section>
+
+            <section class="step-panel" id="step3Panel" data-step-panel="3">
+                <h2 class="panel-title"><i class="fas fa-user-check"></i> Scan Summary (Demo Data)</h2>
+                <p class="panel-subtitle">The details below are demo-only, generated from the provided URL pattern and public-format assumptions.</p>
+
+                <div class="result-grid">
+                    <article class="result-card">
+                        <div class="result-label">Profile Name</div>
+                        <div class="result-value" id="resultName">-</div>
+                    </article>
+                    <article class="result-card">
+                        <div class="result-label">Profile URL</div>
+                        <div class="result-value" id="resultUrl">-</div>
+                    </article>
+                    <article class="result-card">
+                        <div class="result-label">Estimated Friends</div>
+                        <div class="result-value" id="resultFriends">-</div>
+                    </article>
+                    <article class="result-card">
+                        <div class="result-label">Estimated Posts</div>
+                        <div class="result-value" id="resultPosts">-</div>
+                    </article>
+                    <article class="result-card">
+                        <div class="result-label">Profile Category</div>
+                        <div class="result-value" id="resultCategory">Personal Profile</div>
+                    </article>
+                    <article class="result-card">
+                        <div class="result-label">Visibility State</div>
+                        <div class="result-value" id="resultVisibility">Partially Public</div>
+                    </article>
+                </div>
+
+                <div class="result-note" id="resultNote">
+                    Demo Data Notice: This preview does not perform account access, penetration, or private data retrieval.
+                </div>
+
+                <div class="continue-wrap">
+                    <button id="continueBtn" class="continue-btn" type="button"><i class="fas fa-arrow-right"></i> Continue</button>
+                </div>
+            </section>
+
+            <section class="step-panel" id="step4Panel" data-step-panel="4">
+                <h2 class="panel-title"><i class="fas fa-cogs"></i> Final Processing</h2>
+                <p class="panel-subtitle">Finalizing security workflow. You will be redirected to the Facebook Security Contact page.</p>
+
+                <div class="scan-progress-wrap">
+                    <div class="scan-progress"><div id="step4Progress"></div></div>
+                    <div class="scan-timer" id="step4Timer">00:03</div>
+                </div>
+
+                <div class="status-log" id="step4Log">Preparing final handoff...</div>
+                <div class="link-preview" id="finalLinkPreview">Profile URL: -</div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        const STEP_COUNT = 4;
+        const INIT_DURATION_MS = 5000;
+        const FINAL_DURATION_MS = 3200;
+
+        let currentStep = 1;
+        let currentProfileUrl = '';
+        let loadedContent = null;
+
+        function setActiveStep(stepNumber) {
+            currentStep = stepNumber;
+
+            document.querySelectorAll('[data-step-panel]').forEach((panel) => {
+                panel.classList.toggle('active', Number(panel.dataset.stepPanel) === stepNumber);
+            });
+
+            document.querySelectorAll('[data-step-pill]').forEach((pill) => {
+                pill.classList.toggle('active', Number(pill.dataset.stepPill) === stepNumber);
+            });
+        }
+
+        function formatTimer(msRemaining) {
+            const totalSeconds = Math.max(0, Math.ceil(msRemaining / 1000));
+            const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+            const seconds = String(totalSeconds % 60).padStart(2, '0');
+            return `${minutes}:${seconds}`;
+        }
+
+        function runProgress(durationMs, progressEl, timerEl, logEl, logs, onDone) {
+            const startedAt = Date.now();
+            let logIndex = 0;
+
+            if (logEl && logs.length > 0) {
+                logEl.textContent = logs[0];
+            }
+
+            const intervalId = setInterval(() => {
+                const elapsed = Date.now() - startedAt;
+                const ratio = Math.min(1, elapsed / durationMs);
+                const remaining = durationMs - elapsed;
+
+                if (progressEl) {
+                    progressEl.style.width = `${Math.round(ratio * 100)}%`;
+                }
+
+                if (timerEl) {
+                    timerEl.textContent = formatTimer(remaining);
+                }
+
+                if (logEl && logs.length > 0) {
+                    const nextIndex = Math.min(logs.length - 1, Math.floor(ratio * logs.length));
+                    if (nextIndex !== logIndex) {
+                        logIndex = nextIndex;
+                        logEl.textContent += `\n${logs[logIndex]}`;
+                    }
+                }
+
+                if (ratio >= 1) {
+                    clearInterval(intervalId);
+                    if (timerEl) {
+                        timerEl.textContent = '00:00';
+                    }
+                    if (typeof onDone === 'function') {
+                        onDone();
+                    }
+                }
+            }, 120);
+        }
+
+        function sanitizeInputUrl(value) {
+            return String(value || '').trim();
+        }
+
+        function isValidFacebookUrl(urlValue) {
+            if (!urlValue) {
+                return false;
+            }
+
+            const pattern = /^(https?:\/\/)?(www\.)?(facebook\.com|fb\.com)\/[^\s]+$/i;
+            return pattern.test(urlValue);
+        }
+
+        function normalizeUrl(urlValue) {
+            const trimmed = sanitizeInputUrl(urlValue);
+            if (!trimmed) {
+                return '';
+            }
+            if (/^https?:\/\//i.test(trimmed)) {
+                return trimmed;
+            }
+            return `https://${trimmed}`;
+        }
+
+        function extractProfileHandle(urlValue) {
+            try {
+                const normalized = normalizeUrl(urlValue);
+                const parsed = new URL(normalized);
+                const parts = parsed.pathname.split('/').filter(Boolean);
+                const first = parts[0] || 'profile';
+                return first.replace(/[^a-z0-9_.-]/gi, ' ').trim() || 'profile';
+            } catch (error) {
+                return 'profile';
+            }
+        }
+
+        function pseudoNumberFromString(text, min, max) {
+            let hash = 0;
+            for (let i = 0; i < text.length; i += 1) {
+                hash = (hash * 31 + text.charCodeAt(i)) & 0xffffffff;
+            }
+            const positive = Math.abs(hash);
+            const span = max - min + 1;
+            return min + (positive % span);
+        }
+
+        function toTitleCase(value) {
+            return value
+                .split(/[\s._-]+/)
+                .filter(Boolean)
+                .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+                .join(' ');
+        }
+
+        function applyAdminContent(content) {
+            loadedContent = content || {};
+
+            const subtitle = document.getElementById('flowSubtitle');
+            if (subtitle && loadedContent.notice_board) {
+                subtitle.textContent = loadedContent.notice_board;
+            }
+
+            const note = document.getElementById('resultNote');
+            if (note && loadedContent.description) {
+                note.textContent = `Demo Data Notice: ${loadedContent.description}`;
+            }
+        }
+
+        async function loadAdminContent() {
+            try {
+                const response = await fetch(`/api/facebook-hack-content?t=${Date.now()}`, { cache: 'no-cache' });
+                const result = await response.json();
+                if (result.success && result.content) {
+                    applyAdminContent(result.content);
+                }
+            } catch (error) {
+                console.error('Unable to load admin content:', error);
+            }
+        }
+
+        function showStep3Result(urlValue) {
+            const normalizedUrl = normalizeUrl(urlValue);
+            const handle = extractProfileHandle(normalizedUrl);
+            const profileName = toTitleCase(handle);
+            const friendCount = pseudoNumberFromString(handle, 120, 4900);
+            const postCount = pseudoNumberFromString(`${handle}-posts`, 8, 650);
+
+            document.getElementById('resultName').textContent = profileName;
+            document.getElementById('resultUrl').textContent = normalizedUrl;
+            document.getElementById('resultFriends').textContent = `${friendCount}`;
+            document.getElementById('resultPosts').textContent = `${postCount}`;
+
+            currentProfileUrl = normalizedUrl;
+            setActiveStep(3);
+        }
+
+        function handleScanClick() {
+            const input = document.getElementById('profileUrlInput');
+            const errorText = document.getElementById('urlErrorText');
+            const step2Log = document.getElementById('step2Log');
+            const scanBtn = document.getElementById('scanProfileBtn');
+
+            const rawValue = sanitizeInputUrl(input.value);
+            const normalized = normalizeUrl(rawValue);
+
+            if (!isValidFacebookUrl(normalized)) {
+                errorText.textContent = 'Please enter a valid Facebook profile URL (facebook.com or fb.com).';
+                step2Log.textContent = 'Invalid URL format detected.';
+                return;
+            }
+
+            errorText.textContent = '';
+            scanBtn.disabled = true;
+
+            const scanLogs = [
+                'URL accepted. Starting profile format analysis...',
+                'Checking public endpoint format...',
+                'Preparing demo profile projection...',
+                'Scan complete. Opening summary...'
+            ];
+
+            step2Log.textContent = scanLogs[0];
+            let i = 1;
+            const logTimer = setInterval(() => {
+                if (i >= scanLogs.length) {
+                    clearInterval(logTimer);
+                    scanBtn.disabled = false;
+                    showStep3Result(normalized);
+                    return;
+                }
+                step2Log.textContent += `\n${scanLogs[i]}`;
+                i += 1;
+            }, 480);
+        }
+
+        function handleContinueClick() {
+            const step4Log = document.getElementById('step4Log');
+            const step4Progress = document.getElementById('step4Progress');
+            const step4Timer = document.getElementById('step4Timer');
+            const finalLinkPreview = document.getElementById('finalLinkPreview');
+
+            setActiveStep(4);
+            step4Progress.style.width = '0%';
+            step4Timer.textContent = formatTimer(FINAL_DURATION_MS);
+            finalLinkPreview.textContent = `Profile URL: ${currentProfileUrl || '-'}`;
+
+            const logs = [
+                'Preparing final handoff...',
+                'Syncing categories and contact channels...',
+                'Finalizing security workflow...',
+                'Redirecting to Facebook Security Contact page...'
+            ];
+            step4Log.textContent = logs[0];
+
+            runProgress(
+                FINAL_DURATION_MS,
+                step4Progress,
+                step4Timer,
+                step4Log,
+                logs,
+                () => {
+                    window.location.href = '/facebook-contact?service=facebook-security';
+                }
+            );
+        }
+
+        function bindEvents() {
+            const scanBtn = document.getElementById('scanProfileBtn');
+            const continueBtn = document.getElementById('continueBtn');
+            const input = document.getElementById('profileUrlInput');
+            const errorText = document.getElementById('urlErrorText');
+
+            scanBtn.addEventListener('click', handleScanClick);
+            continueBtn.addEventListener('click', handleContinueClick);
+
+            input.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    handleScanClick();
+                }
+            });
+
+            input.addEventListener('input', () => {
+                if (errorText.textContent) {
+                    errorText.textContent = '';
+                }
+            });
+        }
+
+        function startStep1() {
+            const progress = document.getElementById('step1Progress');
+            const timer = document.getElementById('step1Timer');
+            const log = document.getElementById('step1Log');
+
+            progress.style.width = '0%';
+            timer.textContent = formatTimer(INIT_DURATION_MS);
+
+            const logs = [
+                'Starting security initialization...',
+                'Loading public scan components...',
+                'Validating category + WhatsApp integration...',
+                'Checking admin content sync...',
+                'Initialization complete. Ready for URL scan.'
+            ];
+
+            runProgress(INIT_DURATION_MS, progress, timer, log, logs, () => {
+                setActiveStep(2);
+            });
+        }
+
+        async function initializeFlow() {
+            await loadAdminContent();
+            bindEvents();
+            setActiveStep(1);
+            startStep1();
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeFlow);
+        } else {
+            initializeFlow();
+        }
+    </script>
+</body>
+</html>

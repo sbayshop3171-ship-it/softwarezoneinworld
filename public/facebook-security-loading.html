@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook Security Loading - CyberHack Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #020916;
+            --bg-secondary: #031528;
+            --panel-bg: rgba(3, 14, 26, 0.9);
+            --border: rgba(0, 255, 136, 0.45);
+            --border-soft: rgba(0, 255, 136, 0.24);
+            --green: #00ff88;
+            --cyan: #4fd8ff;
+            --text: #d8ffe9;
+            --text-dim: #8ed6b4;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 15% 20%, rgba(0, 255, 136, 0.16), transparent 40%),
+                radial-gradient(circle at 84% 78%, rgba(79, 216, 255, 0.12), transparent 40%),
+                linear-gradient(180deg, var(--bg-secondary), var(--bg-primary));
+            display: grid;
+            place-items: center;
+            padding: 14px;
+        }
+
+        .panel {
+            width: min(760px, 100%);
+            border: 1px solid var(--border-soft);
+            border-radius: 16px;
+            background: var(--panel-bg);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.14);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border-soft);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--green);
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            font-weight: 800;
+            font-size: 13px;
+        }
+
+        .chip {
+            border: 1px solid rgba(79, 216, 255, 0.35);
+            color: var(--cyan);
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .panel-body {
+            padding: 24px 18px;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--green);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: clamp(30px, 5vw, 48px);
+            text-shadow: 0 0 16px rgba(0, 255, 136, 0.5);
+            margin-bottom: 8px;
+        }
+
+        p {
+            text-align: center;
+            color: var(--text-dim);
+            margin-bottom: 18px;
+        }
+
+        .progress-wrap {
+            width: min(620px, 100%);
+            margin: 0 auto;
+        }
+
+        .progress {
+            width: 100%;
+            height: 12px;
+            border-radius: 999px;
+            border: 1px solid var(--border-soft);
+            background: rgba(0, 255, 136, 0.16);
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 0;
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #4fd8ff);
+            transition: width 0.1s linear;
+        }
+
+        .timer {
+            margin-top: 10px;
+            text-align: center;
+            font-family: monospace;
+            color: var(--cyan);
+        }
+
+        .log {
+            margin-top: 16px;
+            border: 1px solid var(--border-soft);
+            border-radius: 10px;
+            min-height: 130px;
+            padding: 12px;
+            background: rgba(1, 14, 22, 0.8);
+            color: #acf2d2;
+            line-height: 1.45;
+            font-family: monospace;
+            white-space: pre-line;
+        }
+
+        .footer-note {
+            margin-top: 14px;
+            text-align: center;
+            font-size: 12px;
+            color: #ffd166;
+        }
+    </style>
+</head>
+<body>
+    <main class="panel">
+        <header class="panel-header">
+            <div class="brand"><i class="fas fa-shield-alt"></i> Facebook Security Flow</div>
+            <div class="chip">Step 1/3 Loading</div>
+        </header>
+
+        <section class="panel-body">
+            <h1>Security Initialization</h1>
+            <p>Preparing public safety workflow. Redirecting to verify page after loading.</p>
+
+            <div class="progress-wrap">
+                <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+                <div class="timer" id="timer">00:05</div>
+                <div class="log" id="log">Starting initialization...</div>
+            </div>
+
+            <div class="footer-note">No account access or hacking performed</div>
+        </section>
+    </main>
+
+    <script src="service-voice-assistant.js"></script>
+    <script>
+        const DURATION = 5000;
+        const logs = [
+            'Starting initialization...',
+            'Loading scan interface modules...',
+            'Checking admin-synced content...',
+            'Preparing URL validation engine...',
+            'Initialization complete. Redirecting to Verify page...'
+        ];
+
+        function formatTime(ms) {
+            const s = Math.max(0, Math.ceil(ms / 1000));
+            return `00:0${Math.min(s, 9)}`;
+        }
+
+        const startedAt = Date.now();
+        const progressFill = document.getElementById('progressFill');
+        const timer = document.getElementById('timer');
+        const log = document.getElementById('log');
+
+        log.textContent = logs[0];
+        let logIndex = 0;
+
+        const interval = setInterval(() => {
+            const elapsed = Date.now() - startedAt;
+            const ratio = Math.min(1, elapsed / DURATION);
+            const remaining = DURATION - elapsed;
+
+            progressFill.style.width = `${Math.round(ratio * 100)}%`;
+            timer.textContent = formatTime(remaining);
+
+            const nextLogIndex = Math.min(logs.length - 1, Math.floor(ratio * logs.length));
+            if (nextLogIndex !== logIndex) {
+                logIndex = nextLogIndex;
+                log.textContent += `\n${logs[logIndex]}`;
+            }
+
+            if (ratio >= 1) {
+                clearInterval(interval);
+                timer.textContent = '00:00';
+                setTimeout(() => {
+                    window.location.href = '/facebook-security-verify';
+                }, 300);
+            }
+        }, 100);
+
+        if (typeof window.initServiceVoiceAssistant === 'function') {
+            window.initServiceVoiceAssistant({
+                serviceKey: 'social-media-service',
+                detectStageKey: () => 1
+            });
+        }
+    </script>
+</body>
+</html>

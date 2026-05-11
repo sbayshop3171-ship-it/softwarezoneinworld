@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberHack Pro - Premium Hacking Services</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <span class="logo-text">CyberHack<span class="pro">Pro</span></span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/">Home</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#tools">Tools</a></li>
+                <li><a href="#features">Features</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-bg-animation">
+            <div class="gradient-orb orb-1"></div>
+            <div class="gradient-orb orb-2"></div>
+            <div class="gradient-orb orb-3"></div>
+        </div>
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge-row">
+                    <div class="hero-badge">
+                        <i class="fas fa-bolt"></i>
+                        <span>Premium Hacking Services</span>
+                    </div>
+                    <div class="voice-assistant hidden" id="voiceAssistant">
+                        <button class="voice-btn" id="voiceAssistantBtn" type="button" aria-label="Play voice message">
+                            <i class="fas fa-volume-up"></i>
+                        </button>
+                        <span class="voice-label">Listen</span>
+                    </div>
+                </div>
+                <h1 id="hero-title" class="hero-title">
+                    <span id="hero-title-line-one" class="gradient-text">Welcome to</span><br>
+                    <span id="hero-title-line-two">CyberHack Pro</span>
+                </h1>
+                <p id="hero-description" class="hero-description">
+                    Professional hacking and security solutions for all your needs. 
+                    Get instant access to premium services with guaranteed results.
+                </p>
+                <div class="hero-buttons">
+                    <a href="#services" class="btn-primary">
+                        <span>Explore Services</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <a href="#services" class="btn-secondary">
+                        <i class="fas fa-comments"></i>
+                        <span>Contact Us</span>
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-mini">
+                        <div class="stat-number">10K+</div>
+                        <div class="stat-label">Active Users</div>
+                    </div>
+                    <div class="stat-mini">
+                        <div class="stat-number">99%</div>
+                        <div class="stat-label">Success Rate</div>
+                    </div>
+                    <div class="stat-mini">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-label">Support</div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="floating-card card-1">
+                    <i class="fas fa-lock"></i>
+                    <span>Secure</span>
+                </div>
+                <div class="floating-card card-2">
+                    <i class="fas fa-bolt"></i>
+                    <span>Fast</span>
+                </div>
+                <div class="floating-card card-3">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Protected</span>
+                </div>
+                <div class="hero-main-card">
+                    <div class="card-glow"></div>
+                    <div class="card-content">
+                        <div class="card-header">
+                            <div class="card-dots">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="terminal-preview">
+                                <div class="terminal-line">
+                                    <span class="prompt">$</span>
+                                    <span class="command">hack --target</span>
+                                </div>
+                                <div class="terminal-line">
+                                    <span class="output">[✓] System accessed</span>
+                                </div>
+                                <div class="terminal-line">
+                                    <span class="output">[✓] Data extracted</span>
+                                </div>
+                                <div class="terminal-line typing">
+                                    <span class="prompt">$</span>
+                                    <span class="cursor">█</span>
+                                </div>
+                            </div>
+                            <!-- Hero typing area (animated words) -->
+                            <div id="heroTyping" class="hero-typing" aria-hidden="false"></div>
+                            <!-- Hero WhatsApp widget (will be filled dynamically) -->
+                            <div id="heroWhatsAppContainer" class="hero-whatsapp-widget" aria-hidden="false">
+                                <!-- WhatsApp numbers will be injected here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- WhatsApp Contact Section -->
+    <section class="whatsapp-contact-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-badge">Get In Touch</div>
+                <h2 id="whatsapp-section-title" class="section-title">Contact Us on WhatsApp</h2>
+                <p class="section-subtitle">Reach out to us for instant support</p>
+            </div>
+            <div id="whatsappCardsContainer" class="whatsapp-cards-grid">
+                <!-- WhatsApp cards will be loaded dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services-section">
+        <div class="container">
+            <div class="section-header">
+                <div id="services-section-badge" class="section-badge">Our Services</div>
+                <h2 id="services-section-title" class="section-title">Premium Hacking Services</h2>
+                <p id="services-section-subtitle" class="section-subtitle">Choose from our professional services</p>
+            </div>
+            
+            <div class="services-grid">
+                <div class="service-card" onclick="openServiceModal('phone-hack', 'Hack Phone With Number')">
+                    <div class="service-icon-wrapper">
+                        <div class="service-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <div class="icon-bg"></div>
+                    </div>
+                    <h3 id="service-title-phone">Phone Services</h3>
+                    <p>Access phone data and information with advanced techniques</p>
+                    <ul class="service-features">
+                        <li><i class="fas fa-check"></i> Call History</li>
+                        <li><i class="fas fa-check"></i> Message Recovery</li>
+                        <li><i class="fas fa-check"></i> Location Tracking</li>
+                    </ul>
+                    <button class="service-btn">
+                        <span>Phone Hack</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon-wrapper">
+                        <div class="service-icon">
+                            <i class="fab fa-facebook"></i>
+                        </div>
+                        <div class="icon-bg"></div>
+                    </div>
+                    <h3 id="service-title-facebook">Facebook Hack</h3>
+                    <p>Recover and access social accounts instantly</p>
+                    <ul class="service-features">
+                        <li><i class="fas fa-check"></i> Facebook Recovery</li>
+                        <li><i class="fas fa-check"></i> Instagram Access</li>
+                        <li><i class="fas fa-check"></i> Twitter Unlock</li>
+                    </ul>
+                    <button class="service-btn" onclick="event.stopPropagation(); openServiceModal('facebook-hack', 'Facebook Hack'); return false;">
+                        <span>Social Media Hack</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon-wrapper">
+                        <div class="service-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="icon-bg"></div>
+                    </div>
+                    <h3 id="service-title-email">Email Services</h3>
+                    <p>Access and recover email accounts securely</p>
+                    <ul class="service-features">
+                        <li><i class="fas fa-check"></i> Gmail Recovery</li>
+                        <li><i class="fas fa-check"></i> Yahoo Access</li>
+                        <li><i class="fas fa-check"></i> Outlook Unlock</li>
+                    </ul>
+                    <button class="service-btn" onclick="event.stopPropagation(); window.location.href = '/email-hack'; return false;">
+                        <span>Email Hack</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+                
+                <div class="service-card" onclick="openServiceModal('nid-find', 'Finding NID by Number')">
+                    <div class="service-icon-wrapper">
+                        <div class="service-icon">
+                            <i class="fas fa-id-card"></i>
+                        </div>
+                        <div class="icon-bg"></div>
+                    </div>
+                    <h3 id="service-title-information">Information Services</h3>
+                    <p>Find information using various methods</p>
+                    <ul class="service-features">
+                        <li><i class="fas fa-check"></i> NID Lookup</li>
+                        <li><i class="fas fa-check"></i> Phone Info</li>
+                        <li><i class="fas fa-check"></i> Address Find</li>
+                    </ul>
+                    <button class="service-btn">
+                        <span>Information Hack</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+                
+                <div class="service-card" onclick="openServiceModal('premium-apps', 'Social Media Service')">
+                    <div class="service-icon-wrapper">
+                        <div class="service-icon">
+                            <i class="fas fa-share-alt"></i>
+                        </div>
+                        <div class="icon-bg"></div>
+                    </div>
+                    <h3 id="service-title-social-media">Social Media Service</h3>
+                    <p>Access social media services and tools</p>
+                    <ul class="service-features">
+                        <li><i class="fas fa-check"></i> Premium Access</li>
+                        <li><i class="fas fa-check"></i> Unlocked Features</li>
+                        <li><i class="fas fa-check"></i> Lifetime License</li>
+                    </ul>
+                    <button class="service-btn" onclick="event.stopPropagation(); openServiceModal('premium-apps', 'Social Media Service'); return false;">
+                        <span>Social Media Service</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+                
+                <div class="service-card" onclick="window.location.href='/premium-apps-loading?from=premium-apps'">
+                    <div class="service-icon-wrapper">
+                        <div class="service-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <div class="icon-bg"></div>
+                    </div>
+                    <h3 id="service-title-premium-apps">Premium Apps</h3>
+                    <p>Get access to premium applications and tools</p>
+                    <ul class="service-features">
+                        <li><i class="fas fa-check"></i> Premium Apps</li>
+                        <li><i class="fas fa-check"></i> Latest Versions</li>
+                        <li><i class="fas fa-check"></i> Free Downloads</li>
+                    </ul>
+                    <button class="service-btn" onclick="event.stopPropagation(); window.location.href='/premium-apps-loading?from=premium-apps'; return false;">
+                        <span>Premium</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <div class="service-card" onclick="openServiceModal('premium-apps', 'Instagram Security')">
+                    <div class="service-icon-wrapper">
+                        <div class="service-icon">
+                            <i class="fab fa-instagram"></i>
+                        </div>
+                        <div class="icon-bg"></div>
+                    </div>
+                    <h3 id="service-title-instagram-security">Instagram Security</h3>
+                    <p>Protect and manage your Instagram account with smart security tools</p>
+                    <ul class="service-features">
+                        <li><i class="fas fa-check"></i> Account Protection</li>
+                        <li><i class="fas fa-check"></i> Risk Detection</li>
+                        <li><i class="fas fa-check"></i> Privacy Setup</li>
+                    </ul>
+                    <button class="service-btn" onclick="event.stopPropagation(); openServiceModal('premium-apps', 'Instagram Security'); return false;">
+                        <span>Instagram Security</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="proof-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-badge" id="proof-section-badge">Proof</div>
+                <h2 class="section-title" id="proof-section-title">Proof Gallery</h2>
+                <p class="section-subtitle" id="proof-section-subtitle">Payment proof and hall media</p>
+            </div>
+            <div id="proofCategoryContainer" class="proof-category-list"></div>
+        </div>
+    </section>
+
+    <div id="proofDialog" class="proof-dialog" aria-hidden="true">
+        <div class="proof-dialog-overlay" onclick="closeProofDialog()"></div>
+        <div class="proof-dialog-content" role="dialog" aria-modal="true">
+            <button class="proof-dialog-close" type="button" onclick="closeProofDialog()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="proof-dialog-media">
+                <img id="proofDialogImage" src="" alt="" style="display: none;">
+                <video id="proofDialogVideo" controls style="display: none;"></video>
+            </div>
+            <div id="proofDialogTitle" class="proof-dialog-title"></div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <section id="features" class="features-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-badge">Why Choose Us</div>
+                <h2 class="section-title">Premium Features</h2>
+                <p class="section-subtitle">Experience the best hacking services with cutting-edge technology</p>
+            </div>
+
+            <div class="reviews-grid">
+                <!-- Review Card 1 -->
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-avatar">
+                            <img src="https://i.pravatar.cc/150?img=1" alt="John Doe" onerror="this.src='https://ui-avatars.com/api/?name=John+Doe&background=00ff41&color=000&size=150'">
+                            <div class="avatar-badge">
+                                <i class="fas fa-check"></i>
+                            </div>
+                        </div>
+                        <div class="reviewer-info">
+                            <h3 class="reviewer-name">John Doe</h3>
+                            <p class="reviewer-title">Software Engineer</p>
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        <div class="stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <span class="rating-text">5.0</span>
+                    </div>
+                    <p class="review-text">
+                        Premium hacking service
+                    </p>
+                </div>
+
+                <!-- Review Card 2 -->
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-avatar">
+                            <img src="https://i.pravatar.cc/150?img=5" alt="Sarah Smith" onerror="this.src='https://ui-avatars.com/api/?name=Sarah+Smith&background=00d4ff&color=000&size=150'">
+                            <div class="avatar-badge">
+                                <i class="fas fa-check"></i>
+                            </div>
+                        </div>
+                        <div class="reviewer-info">
+                            <h3 class="reviewer-name">Sarah Smith</h3>
+                            <p class="reviewer-title">Cybersecurity Analyst</p>
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        <div class="stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <span class="rating-text">5.0</span>
+                    </div>
+                    <p class="review-text">
+                        Premium hacking service
+                    </p>
+                </div>
+
+                <!-- Review Card 3 -->
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-avatar">
+                            <img src="https://i.pravatar.cc/150?img=12" alt="Mike Johnson" onerror="this.src='https://ui-avatars.com/api/?name=Mike+Johnson&background=ff006e&color=fff&size=150'">
+                            <div class="avatar-badge">
+                                <i class="fas fa-check"></i>
+                            </div>
+                        </div>
+                        <div class="reviewer-info">
+                            <h3 class="reviewer-name">Mike Johnson</h3>
+                            <p class="reviewer-title">IT Consultant</p>
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        <div class="stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <span class="rating-text">5.0</span>
+                    </div>
+                    <p class="review-text">
+                        Premium hacking service
+                    </p>
+                </div>
+
+                <!-- Review Card 4 -->
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-avatar">
+                            <img src="https://i.pravatar.cc/150?img=9" alt="Emily Chen" onerror="this.src='https://ui-avatars.com/api/?name=Emily+Chen&background=00ff41&color=000&size=150'">
+                            <div class="avatar-badge">
+                                <i class="fas fa-check"></i>
+                            </div>
+                        </div>
+                        <div class="reviewer-info">
+                            <h3 class="reviewer-name">Emily Chen</h3>
+                            <p class="reviewer-title">Digital Forensics Expert</p>
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        <div class="stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <span class="rating-text">5.0</span>
+                    </div>
+                    <p class="review-text">
+                        Premium hacking service
+                    </p>
+                </div>
+
+                <!-- Review Card 5 -->
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-avatar">
+                            <img src="https://i.pravatar.cc/150?img=47" alt="David Wilson" onerror="this.src='https://ui-avatars.com/api/?name=David+Wilson&background=00d4ff&color=000&size=150'">
+                            <div class="avatar-badge">
+                                <i class="fas fa-check"></i>
+                            </div>
+                        </div>
+                        <div class="reviewer-info">
+                            <h3 class="reviewer-name">David Wilson</h3>
+                            <p class="reviewer-title">Network Security Specialist</p>
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        <div class="stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <span class="rating-text">5.0</span>
+                    </div>
+                    <p class="review-text">
+                        Premium hacking service
+                    </p>
+                </div>
+
+                <!-- Review Card 6 -->
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-avatar">
+                            <img src="https://i.pravatar.cc/150?img=33" alt="Lisa Anderson" onerror="this.src='https://ui-avatars.com/api/?name=Lisa+Anderson&background=ff006e&color=fff&size=150'">
+                            <div class="avatar-badge">
+                                <i class="fas fa-check"></i>
+                            </div>
+                        </div>
+                        <div class="reviewer-info">
+                            <h3 class="reviewer-name">Lisa Anderson</h3>
+                            <p class="reviewer-title">Ethical Hacker</p>
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        <div class="stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <span class="rating-text">5.0</span>
+                    </div>
+                    <p class="review-text">
+                        Premium hacking service
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tools Section -->
+    <section id="tools" class="tools-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-badge">Our Tools</div>
+                <h2 class="section-title">Advanced Hacking Tools</h2>
+                <p class="section-subtitle">Professional tools for all your needs</p>
+            </div>
+            <div class="tools-grid">
+                <div class="tool-card" data-tool-key="terminal_pro">
+                    <div class="tool-icon"><i class="fas fa-terminal"></i></div>
+                    <h3>Terminal Pro</h3>
+                    <p>Advanced command-line interface</p>
+                </div>
+                <div class="tool-card" data-tool-key="password_cracker">
+                    <div class="tool-icon"><i class="fas fa-key"></i></div>
+                    <h3>Password Cracker</h3>
+                    <p>Break any password instantly</p>
+                </div>
+                <div class="tool-card" data-tool-key="network_scanner">
+                    <div class="tool-icon"><i class="fas fa-network-wired"></i></div>
+                    <h3>Network Scanner</h3>
+                    <p>Scan and analyze networks</p>
+                </div>
+                <div class="tool-card" data-tool-key="exploit_finder">
+                    <div class="tool-icon"><i class="fas fa-bug"></i></div>
+                    <h3>Exploit Finder</h3>
+                    <p>Find vulnerabilities automatically</p>
+                </div>
+                <div class="tool-card" data-tool-key="database_hacker">
+                    <div class="tool-icon"><i class="fas fa-database"></i></div>
+                    <h3>Database Hacker</h3>
+                    <p>Access any database system</p>
+                </div>
+                <div class="tool-card" data-tool-key="firewall_bypass">
+                    <div class="tool-icon"><i class="fas fa-fire"></i></div>
+                    <h3>Firewall Bypass</h3>
+                    <p>Break through any firewall</p>
+                </div>
+                <div class="tool-card" data-tool-key="code_injector">
+                    <div class="tool-icon"><i class="fas fa-code"></i></div>
+                    <h3>Code Injector</h3>
+                    <p>Inject code into any system</p>
+                </div>
+                <div class="tool-card" data-tool-key="encryption_breaker">
+                    <div class="tool-icon"><i class="fas fa-lock-open"></i></div>
+                    <h3>Encryption Breaker</h3>
+                    <p>Break any encryption method</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews/Testimonials Section -->
+    <section class="reviews-section">
+        <div class="container">
+            <div class="section-header">
+                <div id="review-section-badge" class="section-badge">Client Reviews</div>
+                <h2 id="review-section-title" class="section-title">What Our Clients Say</h2>
+                <p id="review-section-subtitle" class="section-subtitle">Real feedback from satisfied customers worldwide</p>
+            </div>
+
+            <div class="reviews-grid" id="reviewsGrid">
+                <!-- Reviews will be loaded dynamically from admin panel -->
+            </div>
+
+            <!-- Review Stats -->
+            <div class="review-stats">
+                <div class="stat-item-review">
+                    <div id="review-stat-1-value" class="stat-number-review">10K+</div>
+                    <div id="review-stat-1-label" class="stat-label-review">Happy Clients</div>
+                </div>
+                <div class="stat-item-review">
+                    <div id="review-stat-2-value" class="stat-number-review">4.9/5</div>
+                    <div id="review-stat-2-label" class="stat-label-review">Average Rating</div>
+                </div>
+                <div class="stat-item-review">
+                    <div id="review-stat-3-value" class="stat-number-review">99%</div>
+                    <div id="review-stat-3-label" class="stat-label-review">Satisfaction Rate</div>
+                </div>
+                <div class="stat-item-review">
+                    <div id="review-stat-4-value" class="stat-number-review">50+</div>
+                    <div id="review-stat-4-label" class="stat-label-review">Countries Served</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Floating Support Button -->
+    <div class="support-fab" id="supportFab">
+        <div class="support-fab-menu" id="supportFabMenu" aria-hidden="true"></div>
+        <button class="support-fab-btn" id="supportFabToggle" type="button" aria-label="Open support options">
+            <i class="fas fa-headset"></i>
+        </button>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="service-handler.js"></script>
+    <script>
+        // Service modal functions - phone-hack will be handled by service-handler.js
+        // Other services will open WhatsApp
+        
+        // Load WhatsApp numbers and site settings
+        console.log('Landing page script loaded');
+        console.log('loadWhatsAppNumbers function:', typeof window.loadWhatsAppNumbers);
+        console.log('loadSiteSettings function:', typeof window.loadSiteSettings);
+        
+        function initializeLandingPage() {
+            console.log('Initializing landing page...');
+            if (typeof window.loadWhatsAppNumbers === 'function') {
+                console.log('Calling loadWhatsAppNumbers...');
+                window.loadWhatsAppNumbers();
+            } else {
+                console.error('loadWhatsAppNumbers function not found!');
+            }
+            if (typeof window.loadSiteSettings === 'function') {
+                console.log('Calling loadSiteSettings...');
+                window.loadSiteSettings();
+            } else {
+                console.error('loadSiteSettings function not found!');
+            }
+            if (typeof window.loadSupportTeam === 'function') {
+                console.log('Calling loadSupportTeam...');
+                window.loadSupportTeam();
+            } else {
+                console.error('loadSupportTeam function not found!');
+            }
+            if (typeof window.loadVoiceAssistant === 'function') {
+                console.log('Calling loadVoiceAssistant...');
+                window.loadVoiceAssistant();
+            } else {
+                console.error('loadVoiceAssistant function not found!');
+            }
+            // Load reviews
+            loadReviews();
+            loadProofMedia();
+        }
+
+        // Load reviews from API
+        async function loadReviews() {
+            try {
+                const response = await fetch('/api/reviews');
+                const result = await response.json();
+                
+                if (result.success && result.reviews && result.reviews.length > 0) {
+                    displayReviews(result.reviews);
+                } else {
+                    // Show default message if no reviews
+                    const reviewsGrid = document.getElementById('reviewsGrid');
+                    if (reviewsGrid) {
+                        reviewsGrid.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">No reviews available yet.</p>';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading reviews:', error);
+            }
+        }
+
+        // Real-time refresh function for admin panel
+        window.refreshLandingPageReviews = function() {
+            console.log('Refreshing landing page reviews...');
+            loadReviews();
+        }
+
+        async function loadProofMedia() {
+            try {
+                const response = await fetch('/api/payment-proof-media');
+                const result = await response.json();
+                if (result && result.success && Array.isArray(result.items)) {
+                    renderProofMedia(result.items);
+                } else {
+                    renderProofMedia([]);
+                }
+            } catch (error) {
+                console.error('Error loading proof media:', error);
+                renderProofMedia([]);
+            }
+        }
+
+        function renderProofMedia(items) {
+            const container = document.getElementById('proofCategoryContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            if (!items || items.length === 0) {
+                container.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">No proof media found.</p>';
+                return;
+            }
+            const groups = items.reduce((acc, item) => {
+                const key = (item.category && String(item.category).trim().length) ? String(item.category).trim() : 'Proof';
+                if (!acc[key]) acc[key] = [];
+                acc[key].push(item);
+                return acc;
+            }, {});
+            Object.keys(groups).forEach((category) => {
+                const section = document.createElement('div');
+                section.className = 'proof-category';
+                const heading = document.createElement('h3');
+                heading.className = 'proof-category-title';
+                heading.textContent = category;
+                const grid = document.createElement('div');
+                grid.className = 'proof-grid';
+                groups[category].forEach((item) => {
+                    const card = document.createElement('div');
+                    card.className = 'proof-card';
+                    card.addEventListener('click', () => openProofDialog(item));
+                    const typeStr = String(item.media_type || item.file_type || '');
+                    const isVideo = typeStr.startsWith('video');
+                    const media = document.createElement(isVideo ? 'video' : 'img');
+                    if (isVideo) {
+                        media.setAttribute('controls', 'true');
+                        media.src = item.file_data || '';
+                    } else {
+                        media.src = item.file_data || '';
+                        media.alt = item.title || 'Proof';
+                        media.onerror = function() {
+                            this.src = 'https://via.placeholder.com/240x180/00ff41/000000?text=No+Image';
+                        };
+                    }
+                    media.className = 'proof-media';
+                    media.addEventListener('click', (event) => {
+                        event.stopPropagation();
+                        openProofDialog(item);
+                    });
+                    const title = document.createElement('div');
+                    title.className = 'proof-title';
+                    title.textContent = item.title || 'Proof';
+                    card.appendChild(media);
+                    card.appendChild(title);
+                    grid.appendChild(card);
+                });
+                section.appendChild(heading);
+                section.appendChild(grid);
+                container.appendChild(section);
+            });
+        }
+
+        function openProofDialog(item) {
+            const dialog = document.getElementById('proofDialog');
+            const imageEl = document.getElementById('proofDialogImage');
+            const videoEl = document.getElementById('proofDialogVideo');
+            const titleEl = document.getElementById('proofDialogTitle');
+            if (!dialog || !imageEl || !videoEl || !titleEl) return;
+            const titleText = item && item.title ? String(item.title) : 'Proof';
+            const typeStr = String(item.media_type || item.file_type || '');
+            const isVideo = typeStr.startsWith('video');
+            titleEl.textContent = titleText;
+            if (isVideo) {
+                videoEl.src = item.file_data || '';
+                videoEl.style.display = 'block';
+                imageEl.style.display = 'none';
+            } else {
+                imageEl.src = item.file_data || '';
+                imageEl.alt = titleText;
+                imageEl.style.display = 'block';
+                videoEl.style.display = 'none';
+            }
+            dialog.classList.add('show');
+            dialog.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeProofDialog() {
+            const dialog = document.getElementById('proofDialog');
+            const imageEl = document.getElementById('proofDialogImage');
+            const videoEl = document.getElementById('proofDialogVideo');
+            if (!dialog || !imageEl || !videoEl) return;
+            dialog.classList.remove('show');
+            dialog.setAttribute('aria-hidden', 'true');
+            imageEl.src = '';
+            videoEl.pause();
+            videoEl.src = '';
+        }
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closeProofDialog();
+            }
+        });
+
+        function displayReviews(reviews) {
+            const reviewsGrid = document.getElementById('reviewsGrid');
+            if (!reviewsGrid) return;
+
+            reviewsGrid.innerHTML = reviews.map(review => {
+                const stars = Array(review.rating || 5).fill(0).map(() => '<i class="fas fa-star"></i>').join('');
+                const emptyStars = Array(5 - (review.rating || 5)).fill(0).map(() => '<i class="far fa-star"></i>').join('');
+                const imageUrl = review.reviewer_image || `https://ui-avatars.com/api/?name=${encodeURIComponent(review.reviewer_name)}&background=00ff41&color=000&size=150`;
+                
+                return `
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div class="reviewer-avatar">
+                                <img src="${imageUrl}" alt="${review.reviewer_name}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(review.reviewer_name)}&background=00ff41&color=000&size=150'">
+                                <div class="avatar-badge">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                            </div>
+                            <div class="reviewer-info">
+                                <h3 class="reviewer-name">${review.reviewer_name}</h3>
+                                <p class="reviewer-title">${review.reviewer_title}</p>
+                            </div>
+                        </div>
+                        <div class="review-rating">
+                            <div class="stars">
+                                ${stars}${emptyStars}
+                            </div>
+                            <span class="rating-text">${review.rating || 5}.0</span>
+                        </div>
+                        <p class="review-text">
+                            ${review.description || review.category || 'Premium hacking service'}
+                        </p>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('DOM Content Loaded');
+                initializeLandingPage();
+            });
+        } else {
+            console.log('DOM already loaded');
+            initializeLandingPage();
+        }
+
+        // Terminal typing animation
+        const terminalLines = [
+            'Scanning network...',
+            'Bypassing firewall...',
+            'Accessing database...',
+            'Extracting data...',
+            'Mission complete!'
+        ];
+        let lineIndex = 0;
+        let charIndex = 0;
+
+        function typeTerminalLine() {
+            const typingLine = document.querySelector('.terminal-line.typing');
+            if (!typingLine) return;
+            
+            if (lineIndex < terminalLines.length) {
+                const line = terminalLines[lineIndex];
+                if (charIndex < line.length) {
+                    const textSpan = typingLine.querySelector('.command') || typingLine.querySelector('span:not(.cursor):not(.prompt)');
+                    if (textSpan) {
+                        textSpan.textContent = line.substring(0, charIndex + 1);
+                    }
+                    charIndex++;
+                    setTimeout(typeTerminalLine, 100);
+                } else {
+                    charIndex = 0;
+                    lineIndex++;
+                    if (lineIndex < terminalLines.length) {
+                        setTimeout(typeTerminalLine, 500);
+                    }
+                }
+            }
+        }
+
+        setTimeout(() => {
+            typeTerminalLine();
+        }, 2000);
+
+        // Premium Page Load Animation
+        window.addEventListener('load', () => {
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                document.body.style.transition = 'opacity 0.5s ease-out';
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+
+        // Premium Smooth Scroll for Anchor Links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Premium Navbar Scroll Effect
+        const navbar = document.querySelector('.navbar');
+        let lastScroll = 0;
+        
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            
+            if (currentScroll > 100) {
+                navbar.style.background = 'rgba(10, 10, 10, 0.95)';
+                navbar.style.boxShadow = '0 5px 30px rgba(0, 0, 0, 0.8)';
+            } else {
+                navbar.style.background = 'rgba(10, 10, 10, 0.8)';
+                navbar.style.boxShadow = 'none';
+            }
+            
+            if (currentScroll > lastScroll && currentScroll > 200) {
+                navbar.style.transform = 'translateY(-100%)';
+            } else {
+                navbar.style.transform = 'translateY(0)';
+            }
+            
+            lastScroll = currentScroll;
+        });
+
+        // Hamburger menu toggle with premium animation
+        const hamburger = document.querySelector('.hamburger');
+        const navMenu = document.querySelector('.nav-menu');
+        
+        if (hamburger) {
+            hamburger.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+                hamburger.classList.toggle('active');
+                
+                // Animate hamburger lines
+                const spans = hamburger.querySelectorAll('span');
+                if (hamburger.classList.contains('active')) {
+                    spans[0].style.transform = 'rotate(45deg) translateY(8px)';
+                    spans[1].style.opacity = '0';
+                    spans[2].style.transform = 'rotate(-45deg) translateY(-8px)';
+                } else {
+                    spans[0].style.transform = 'none';
+                    spans[1].style.opacity = '1';
+                    spans[2].style.transform = 'none';
+                }
+            });
+        }
+
+        // Premium 3D Interactive Effects for Cards - Wait for DOM
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                const serviceCards = document.querySelectorAll('.service-card');
+                const featureCards = document.querySelectorAll('.feature-card');
+                const toolCards = document.querySelectorAll('.tool-card');
+                
+                function add3DEffect(cards) {
+                    // Optimized 3D effect with throttling for better performance
+                    let ticking = false;
+                    
+                    cards.forEach(card => {
+                        const handleMouseMove = (e) => {
+                            if (!ticking) {
+                                window.requestAnimationFrame(() => {
+                                    const rect = card.getBoundingClientRect();
+                                    const x = e.clientX - rect.left;
+                                    const y = e.clientY - rect.top;
+                                    
+                                    const centerX = rect.width / 2;
+                                    const centerY = rect.height / 2;
+                                    
+                                    const rotateX = (y - centerY) / 20; // Reduced intensity
+                                    const rotateY = (centerX - x) / 20;
+                                    
+                                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(20px)`;
+                                    ticking = false;
+                                });
+                                ticking = true;
+                            }
+                        };
+                        
+                        card.addEventListener('mousemove', handleMouseMove, { passive: true });
+                        
+                        card.addEventListener('mouseleave', () => {
+                            card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0)';
+                            card.style.transition = 'all 0.3s ease';
+                        });
+                    });
+                }
+                
+                if (serviceCards.length > 0) {
+                    add3DEffect(serviceCards);
+                }
+                if (featureCards.length > 0) {
+                    add3DEffect(featureCards);
+                }
+                if (toolCards.length > 0) {
+                    add3DEffect(toolCards);
+                }
+                
+                // Add 3D effects to WhatsApp cards
+                const whatsappCards = document.querySelectorAll('.whatsapp-card');
+                if (whatsappCards.length > 0) {
+                    add3DEffect(whatsappCards);
+                }
+
+                // Premium Link Effects with enhanced animations
+                const navLinks = document.querySelectorAll('.nav-menu a, .btn-primary, .btn-secondary, .service-btn');
+                navLinks.forEach(link => {
+                    link.addEventListener('mouseenter', function() {
+                        this.style.transform = 'translateY(-5px) scale(1.05)';
+                        this.style.textShadow = '0 0 20px rgba(0, 255, 65, 0.8)';
+                        this.style.filter = 'brightness(1.2)';
+                    });
+                    
+                    link.addEventListener('mouseleave', function() {
+                        this.style.transform = 'translateY(0) scale(1)';
+                        this.style.textShadow = 'none';
+                        this.style.filter = 'brightness(1)';
+                    });
+                });
+
+                // Premium Scroll Animations
+                const observerOptions = {
+                    threshold: 0.1,
+                    rootMargin: '0px 0px -100px 0px'
+                };
+
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach((entry, index) => {
+                        if (entry.isIntersecting) {
+                            setTimeout(() => {
+                                entry.target.style.animation = 'fadeInUp 0.8s ease-out forwards';
+                                entry.target.style.opacity = '1';
+                            }, index * 100);
+                        }
+                    });
+                }, observerOptions);
+
+                // Observe all cards and sections
+                document.querySelectorAll('.service-card, .feature-card, .tool-card, .whatsapp-card').forEach(card => {
+                    card.style.opacity = '0';
+                    observer.observe(card);
+                });
+
+                // Observe feature categories with staggered animation
+                const categoryObserver = new IntersectionObserver((entries) => {
+                    entries.forEach((entry, index) => {
+                        if (entry.isIntersecting) {
+                            setTimeout(() => {
+                                entry.target.style.animation = 'fadeInUp 1s ease-out forwards';
+                                entry.target.style.opacity = '1';
+                                
+                                // Animate cards within category
+                                const cards = entry.target.querySelectorAll('.feature-card');
+                                cards.forEach((card, cardIndex) => {
+                                    setTimeout(() => {
+                                        card.style.animation = 'fadeInUp 0.6s ease-out forwards';
+                                        card.style.opacity = '1';
+                                    }, cardIndex * 100);
+                                });
+                            }, index * 200);
+                        }
+                    });
+                }, observerOptions);
+
+                // Observe feature categories
+                document.querySelectorAll('.feature-category').forEach(category => {
+                    category.style.opacity = '0';
+                    categoryObserver.observe(category);
+                });
+
+                // Observe review cards with staggered animation
+                const reviewObserver = new IntersectionObserver((entries) => {
+                    entries.forEach((entry, index) => {
+                        if (entry.isIntersecting) {
+                            setTimeout(() => {
+                                entry.target.style.animation = 'fadeInUp 0.8s ease-out forwards';
+                                entry.target.style.opacity = '1';
+                            }, index * 150);
+                        }
+                    });
+                }, observerOptions);
+
+                // Observe review cards
+                document.querySelectorAll('.review-card').forEach(card => {
+                    card.style.opacity = '0';
+                    reviewObserver.observe(card);
+                });
+
+                // Observe review stats
+                const statsObserver = new IntersectionObserver((entries) => {
+                    entries.forEach((entry, index) => {
+                        if (entry.isIntersecting) {
+                            setTimeout(() => {
+                                entry.target.style.animation = 'fadeInUp 0.6s ease-out forwards';
+                                entry.target.style.opacity = '1';
+                            }, index * 100);
+                        }
+                    });
+                }, observerOptions);
+
+                document.querySelectorAll('.stat-item-review').forEach(stat => {
+                    stat.style.opacity = '0';
+                    statsObserver.observe(stat);
+                });
+
+                // Removed parallax effect for better performance
+                // Parallax effects cause performance issues on slower devices
+
+                // Removed cursor trail and sparkle effects for better performance
+                // These effects cause performance issues on slower devices
+            }, 500);
+        });
+    </script>
+</body>
+</html>

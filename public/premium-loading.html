@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading Social Media Service - CyberHack Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Poppins:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-0: #03070f;
+            --bg-1: #06111f;
+            --bg-2: #071a13;
+            --panel: rgba(8, 15, 28, 0.84);
+            --panel-2: rgba(9, 22, 18, 0.88);
+            --line: rgba(0, 255, 179, 0.28);
+            --line-soft: rgba(0, 255, 179, 0.12);
+            --cyan: #13e8ff;
+            --cyan-soft: rgba(19, 232, 255, 0.45);
+            --green: #00ff9d;
+            --green-soft: rgba(0, 255, 157, 0.42);
+            --text-main: #ecfeff;
+            --text-muted: rgba(222, 250, 255, 0.72);
+            --danger: #ff8f9e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            width: 100%;
+            color: var(--text-main);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 24px;
+            background:
+                radial-gradient(circle at 15% 20%, rgba(19, 232, 255, 0.11), transparent 34%),
+                radial-gradient(circle at 80% 18%, rgba(0, 255, 157, 0.14), transparent 30%),
+                radial-gradient(circle at 85% 80%, rgba(0, 130, 255, 0.12), transparent 36%),
+                linear-gradient(145deg, var(--bg-0), var(--bg-1) 55%, var(--bg-2));
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(to right, rgba(24, 54, 70, 0.28) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(24, 54, 70, 0.28) 1px, transparent 1px);
+            background-size: 38px 38px;
+            opacity: 0.26;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0.03) 0,
+                rgba(255, 255, 255, 0.03) 1px,
+                transparent 1px,
+                transparent 4px
+            );
+            animation: scanline 8s linear infinite;
+            opacity: 0.22;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes scanline {
+            from {
+                transform: translateY(-30%);
+            }
+            to {
+                transform: translateY(30%);
+            }
+        }
+
+        .loading-container {
+            text-align: center;
+            z-index: 1;
+            position: relative;
+            width: min(620px, 100%);
+            padding: 34px 28px;
+            border-radius: 20px;
+            border: 1px solid var(--line-soft);
+            background: linear-gradient(145deg, var(--panel), rgba(5, 10, 22, 0.86));
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.65),
+                0 0 0 1px rgba(19, 232, 255, 0.08) inset,
+                0 0 35px rgba(0, 255, 157, 0.15);
+            backdrop-filter: blur(8px);
+            overflow: hidden;
+        }
+
+        .loading-container::before,
+        .loading-container::after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border: 1px solid var(--line);
+            pointer-events: none;
+        }
+
+        .loading-container::before {
+            top: 12px;
+            left: 12px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .loading-container::after {
+            right: 12px;
+            bottom: 12px;
+            border-left: none;
+            border-top: none;
+        }
+
+        .loading-icon {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            margin: 0 auto 18px;
+            display: grid;
+            place-items: center;
+            border: 1px solid var(--cyan-soft);
+            background: radial-gradient(circle at 30% 30%, rgba(19, 232, 255, 0.18), rgba(19, 232, 255, 0.05));
+            font-size: 42px;
+            color: var(--cyan);
+            text-shadow: 0 0 18px rgba(19, 232, 255, 0.6);
+            animation: pulse 2.2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(19, 232, 255, 0.25);
+            }
+            50% {
+                transform: scale(1.06);
+                box-shadow: 0 0 0 14px rgba(19, 232, 255, 0);
+            }
+        }
+
+        .loading-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(25px, 3.1vw, 34px);
+            font-weight: 700;
+            color: var(--green);
+            margin-bottom: 10px;
+            letter-spacing: 1.8px;
+            text-shadow: 0 0 18px rgba(0, 255, 157, 0.38);
+        }
+
+        .loading-message {
+            font-size: clamp(15px, 2.2vw, 18px);
+            color: var(--text-muted);
+            margin-bottom: 28px;
+        }
+
+        .loading-bar-container {
+            width: min(450px, 100%);
+            height: 10px;
+            background: rgba(13, 26, 30, 0.95);
+            border-radius: 999px;
+            margin: 0 auto;
+            overflow: hidden;
+            border: 1px solid rgba(19, 232, 255, 0.24);
+            position: relative;
+        }
+
+        .loading-bar {
+            height: 100%;
+            border-radius: 999px;
+            width: 0%;
+            background: linear-gradient(90deg, var(--cyan), var(--green));
+            animation: loading 2s ease-in-out infinite;
+            box-shadow: 0 0 14px rgba(0, 255, 157, 0.45);
+            position: relative;
+        }
+
+        .loading-bar::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+            animation: shimmer 1.3s linear infinite;
+        }
+
+        @keyframes loading {
+            0% {
+                width: 0%;
+            }
+            50% {
+                width: 72%;
+            }
+            100% {
+                width: 100%;
+            }
+        }
+
+        @keyframes shimmer {
+            from {
+                transform: translateX(-100%);
+            }
+            to {
+                transform: translateX(100%);
+            }
+        }
+
+        .loading-steps {
+            margin-top: 26px;
+            display: flex;
+            flex-direction: column;
+            gap: 11px;
+            align-items: center;
+        }
+
+        .loading-step {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 14px;
+            color: rgba(213, 245, 255, 0.53);
+            opacity: 0;
+            animation: fadeInStep 0.45s ease-in-out forwards;
+            letter-spacing: 0.4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .loading-step::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.34);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.24);
+        }
+
+        .loading-step:nth-child(1) {
+            animation-delay: 0.4s;
+        }
+
+        .loading-step:nth-child(2) {
+            animation-delay: 0.9s;
+        }
+
+        .loading-step:nth-child(3) {
+            animation-delay: 1.4s;
+        }
+
+        @keyframes fadeInStep {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .loading-step.active {
+            color: var(--green);
+        }
+
+        .loading-step.active::before {
+            background: var(--green);
+            box-shadow: 0 0 12px rgba(0, 255, 157, 0.75);
+        }
+
+        .scanner-container {
+            display: none;
+            opacity: 0;
+            transform: translateY(18px) scale(0.985);
+            transition: opacity 0.45s ease, transform 0.45s ease;
+            z-index: 1;
+            position: relative;
+            width: min(760px, 100%);
+        }
+
+        .scanner-container.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .scanner-card {
+            width: 100%;
+            margin: 0 auto;
+            border-radius: 24px;
+            padding: 30px;
+            background:
+                linear-gradient(155deg, rgba(6, 16, 30, 0.95), rgba(6, 25, 20, 0.9)),
+                repeating-linear-gradient(
+                    -45deg,
+                    rgba(19, 232, 255, 0.03),
+                    rgba(19, 232, 255, 0.03) 16px,
+                    rgba(0, 255, 157, 0.025) 16px,
+                    rgba(0, 255, 157, 0.025) 32px
+                );
+            border: 1px solid var(--line-soft);
+            box-shadow:
+                0 24px 70px rgba(0, 0, 0, 0.65),
+                0 0 0 1px rgba(19, 232, 255, 0.12) inset,
+                0 0 34px rgba(0, 255, 157, 0.14);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scanner-card::before,
+        .scanner-card::after {
+            content: '';
+            position: absolute;
+            width: 84px;
+            height: 84px;
+            border: 1px solid var(--line);
+            pointer-events: none;
+            opacity: 0.9;
+        }
+
+        .scanner-card::before {
+            top: 14px;
+            left: 14px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .scanner-card::after {
+            right: 14px;
+            bottom: 14px;
+            border-left: none;
+            border-top: none;
+        }
+
+        .scanner-badge {
+            width: fit-content;
+            margin: 0 auto 16px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            color: var(--green);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 1.1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 255, 157, 0.08);
+        }
+
+        .scanner-badge-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 10px rgba(0, 255, 157, 0.8);
+            animation: blink 1.1s infinite;
+        }
+
+        @keyframes blink {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        .scanner-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(28px, 4vw, 38px);
+            line-height: 1.15;
+            margin-bottom: 8px;
+            color: var(--cyan);
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 0 20px rgba(19, 232, 255, 0.48);
+        }
+
+        .scanner-subtitle {
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 18px;
+            font-size: 15px;
+        }
+
+        .scanner-meta {
+            margin: 0 auto 20px;
+            width: min(520px, 100%);
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .scanner-chip {
+            border: 1px solid rgba(19, 232, 255, 0.3);
+            background: rgba(19, 232, 255, 0.08);
+            color: var(--text-main);
+            border-radius: 999px;
+            padding: 6px 11px;
+            font-size: 12px;
+            font-family: 'Share Tech Mono', monospace;
+            letter-spacing: 0.5px;
+        }
+
+        #scannerForm {
+            width: min(560px, 100%);
+            margin: 0 auto;
+        }
+
+        .scanner-input-wrap {
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        .scanner-input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(19, 232, 255, 0.72);
+            font-size: 14px;
+            pointer-events: none;
+        }
+
+        .scanner-input {
+            width: 100%;
+            height: 56px;
+            border-radius: 14px;
+            border: 1px solid rgba(19, 232, 255, 0.36);
+            background: rgba(5, 11, 22, 0.95);
+            color: #d9fbff;
+            padding: 0 14px 0 42px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+            font-family: 'Share Tech Mono', monospace;
+            letter-spacing: 0.2px;
+        }
+
+        .scanner-input::placeholder {
+            color: rgba(207, 246, 255, 0.42);
+        }
+
+        .scanner-input:focus {
+            border-color: var(--cyan);
+            box-shadow: 0 0 0 3px rgba(19, 232, 255, 0.22), 0 0 18px rgba(19, 232, 255, 0.28);
+            transform: translateY(-1px);
+        }
+
+        .scanner-btn {
+            margin-top: 2px;
+            width: 100%;
+            height: 56px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #0ad5ff, #0bf3d7 48%, #00ffa3);
+            color: #03111d;
+            font-size: 18px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 0.5px;
+            box-shadow: 0 12px 28px rgba(0, 255, 157, 0.32);
+        }
+
+        .scanner-btn:hover {
+            filter: brightness(1.06);
+            transform: translateY(-2px);
+            box-shadow: 0 18px 34px rgba(0, 255, 157, 0.4);
+        }
+
+        .scanner-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.92;
+            transform: none;
+            animation: scanningPulse 1.2s ease-in-out infinite;
+        }
+
+        @keyframes scanningPulse {
+            0%,
+            100% {
+                filter: brightness(1);
+            }
+            50% {
+                filter: brightness(1.15);
+            }
+        }
+
+        .scanner-status {
+            margin-top: 12px;
+            min-height: 20px;
+            font-size: 13px;
+            text-align: center;
+            color: rgba(215, 250, 255, 0.88);
+            font-family: 'Share Tech Mono', monospace;
+            letter-spacing: 0.2px;
+        }
+
+        .scanner-status.error {
+            color: var(--danger);
+        }
+
+        .hacking-process-container {
+            display: none;
+            opacity: 0;
+            transform: translateY(18px) scale(0.985);
+            transition: opacity 0.45s ease, transform 0.45s ease;
+            z-index: 1;
+            position: relative;
+            width: min(920px, 100%);
+        }
+
+        .hacking-process-container.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .process-panel {
+            border-radius: 24px;
+            padding: 30px;
+            border: 1px solid var(--line-soft);
+            background:
+                linear-gradient(145deg, rgba(6, 18, 30, 0.94), rgba(6, 25, 20, 0.9)),
+                repeating-linear-gradient(
+                    to bottom,
+                    rgba(19, 232, 255, 0.02),
+                    rgba(19, 232, 255, 0.02) 2px,
+                    transparent 2px,
+                    transparent 6px
+                );
+            box-shadow:
+                0 24px 70px rgba(0, 0, 0, 0.68),
+                0 0 0 1px rgba(0, 255, 157, 0.16) inset,
+                0 0 42px rgba(0, 255, 157, 0.14);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .process-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(26px, 4.2vw, 44px);
+            color: var(--green);
+            text-shadow: 0 0 18px rgba(0, 255, 157, 0.45);
+            letter-spacing: 0.8px;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .process-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            font-size: 14px;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        .process-terminal {
+            width: 100%;
+            border-radius: 16px;
+            border: 1px solid rgba(0, 255, 157, 0.3);
+            background: rgba(0, 7, 14, 0.94);
+            min-height: 230px;
+            max-height: 300px;
+            overflow: auto;
+            padding: 16px 14px;
+            box-shadow: 0 0 24px rgba(0, 255, 157, 0.1) inset;
+        }
+
+        .process-line {
+            font-family: 'Share Tech Mono', monospace;
+            color: #7dffca;
+            font-size: 15px;
+            line-height: 1.55;
+            margin-bottom: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            animation: lineSlide 0.28s ease;
+        }
+
+        .process-line::before {
+            content: '> ';
+            color: var(--cyan);
+            margin-right: 2px;
+        }
+
+        @keyframes lineSlide {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .process-progress {
+            margin-top: 18px;
+            border-radius: 16px;
+            border: 1px solid rgba(19, 232, 255, 0.24);
+            background: rgba(5, 13, 24, 0.9);
+            padding: 18px 16px;
+        }
+
+        .process-progress-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--green);
+            font-size: 20px;
+        }
+
+        .process-progress-label {
+            font-size: 19px;
+        }
+
+        .process-progress-time {
+            font-size: 17px;
+            color: var(--cyan);
+        }
+
+        .process-progress-bar {
+            width: 100%;
+            height: 16px;
+            border-radius: 999px;
+            border: 1px solid rgba(0, 255, 157, 0.28);
+            background: rgba(0, 20, 12, 0.82);
+            overflow: hidden;
+        }
+
+        .process-progress-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #0ad5ff, #00ff9d);
+            box-shadow: 0 0 14px rgba(0, 255, 157, 0.4);
+            transition: width 0.24s linear;
+        }
+
+        .process-footer {
+            margin-top: 12px;
+            font-family: 'Share Tech Mono', monospace;
+            color: rgba(215, 250, 255, 0.9);
+            text-align: center;
+            min-height: 20px;
+            font-size: 13px;
+        }
+
+        .process-footer.done {
+            color: var(--green);
+            text-shadow: 0 0 10px rgba(0, 255, 157, 0.35);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 16px;
+            }
+
+            .loading-container {
+                padding: 26px 18px;
+                border-radius: 18px;
+            }
+
+            .loading-message {
+                margin-bottom: 22px;
+            }
+
+            .scanner-card {
+                border-radius: 18px;
+                padding: 22px 16px;
+            }
+
+            .scanner-title {
+                font-size: clamp(23px, 7vw, 30px);
+            }
+
+            .scanner-subtitle {
+                font-size: 14px;
+                margin-bottom: 14px;
+            }
+
+            .scanner-input,
+            .scanner-btn {
+                height: 52px;
+                font-size: 15px;
+            }
+
+            .scanner-btn {
+                font-size: 16px;
+            }
+
+            .scanner-card::before,
+            .scanner-card::after,
+            .loading-container::before,
+            .loading-container::after {
+                width: 46px;
+                height: 46px;
+            }
+
+            .process-panel {
+                padding: 20px 14px;
+                border-radius: 18px;
+            }
+
+            .process-terminal {
+                min-height: 180px;
+                max-height: 220px;
+            }
+
+            .process-line {
+                font-size: 13px;
+            }
+
+            .process-progress-head {
+                font-size: 16px;
+            }
+
+            .process-progress-label {
+                font-size: 15px;
+            }
+
+            .process-progress-time {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-container" id="loadingContainer">
+        <div class="loading-icon" id="loadingIcon">
+            <i class="fas fa-share-alt"></i>
+        </div>
+        <h1 class="loading-title" id="loadingTitle">Loading Premium Apps</h1>
+        <p class="loading-message" id="loadingMessage">Preparing your premium apps...</p>
+        <div class="loading-bar-container">
+            <div class="loading-bar"></div>
+        </div>
+        <div class="loading-steps">
+            <div class="loading-step" id="step1">Loading premium applications...</div>
+            <div class="loading-step" id="step2">Preparing download links...</div>
+            <div class="loading-step" id="step3">Almost ready...</div>
+        </div>
+    </div>
+
+    <div class="scanner-container" id="scannerContainer">
+        <div class="scanner-card">
+            <div class="scanner-badge">
+                <span class="scanner-badge-dot"></span>
+                PREMIUM HACK MODULE
+            </div>
+            <h2 class="scanner-title">Instagram Security</h2>
+            <p class="scanner-subtitle">Target profile link din, scanner instantly tactical analysis mode e jabe.</p>
+            <div class="scanner-meta">
+                <span class="scanner-chip">Threat Matrix: Active</span>
+                <span class="scanner-chip">Encryption Bypass: Ready</span>
+                <span class="scanner-chip">Signal Trace: Secured</span>
+            </div>
+            <form id="scannerForm">
+                <div class="scanner-input-wrap">
+                    <i class="fas fa-link scanner-input-icon"></i>
+                    <input
+                        type="text"
+                        class="scanner-input"
+                        id="instagramLinkInput"
+                        placeholder="https://instagram.com/username"
+                        autocomplete="off"
+                    >
+                </div>
+                <button type="submit" class="scanner-btn" id="scannerBtn">
+                    <i class="fas fa-search"></i> Scanner
+                </button>
+                <div class="scanner-status" id="scannerStatus"></div>
+            </form>
+        </div>
+    </div>
+
+    <div class="hacking-process-container" id="hackingProcessContainer">
+        <div class="process-panel">
+            <h2 class="process-title">
+                <i class="fas fa-lock"></i>
+                Hacking Process
+            </h2>
+            <p class="process-subtitle">Live payload execution stream</p>
+            <div class="process-terminal" id="processTerminal"></div>
+            <div class="process-progress">
+                <div class="process-progress-head">
+                    <span class="process-progress-label">Progress</span>
+                    <span class="process-progress-time" id="processProgressTime">0%</span>
+                </div>
+                <div class="process-progress-bar">
+                    <div class="process-progress-fill" id="processProgressFill"></div>
+                </div>
+                <div class="process-footer" id="processFooter">Preparing hacking process...</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="service-voice-assistant.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const fromPremiumApps = urlParams.get('from') === 'premium-apps';
+        const isInstagramSecurity = urlParams.get('service') === 'instagram-security';
+
+        const loadingContainer = document.getElementById('loadingContainer');
+        const loadingTitle = document.getElementById('loadingTitle');
+        const loadingMessage = document.getElementById('loadingMessage');
+        const loadingIcon = document.getElementById('loadingIcon');
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const step3 = document.getElementById('step3');
+        const scannerContainer = document.getElementById('scannerContainer');
+        const hackingProcessContainer = document.getElementById('hackingProcessContainer');
+        const processTerminal = document.getElementById('processTerminal');
+        const processProgressFill = document.getElementById('processProgressFill');
+        const processProgressTime = document.getElementById('processProgressTime');
+        const processFooter = document.getElementById('processFooter');
+
+        if (isInstagramSecurity) {
+            document.body.classList.add('instagram-mode');
+            loadingTitle.textContent = 'Initializing Secure Node';
+            loadingMessage.textContent = 'Instagram scanner engines booting...';
+            step1.textContent = 'Injecting shield layers...';
+            loadingIcon.innerHTML = '<i class="fas fa-shield-halved"></i>';
+            step2.style.display = 'none';
+            step3.style.display = 'none';
+
+            setTimeout(() => {
+                step1.classList.add('active');
+            }, 500);
+
+            setTimeout(() => {
+                loadingContainer.style.display = 'none';
+                scannerContainer.style.display = 'block';
+                requestAnimationFrame(() => {
+                    scannerContainer.classList.add('show');
+                });
+            }, 3000);
+        } else {
+            if (fromPremiumApps) {
+                loadingTitle.textContent = 'Loading Premium Apps';
+                loadingMessage.textContent = 'Preparing your premium apps...';
+                step1.textContent = 'Loading premium applications...';
+                step2.textContent = 'Preparing download links...';
+            }
+
+            setTimeout(() => {
+                step1.classList.add('active');
+            }, 500);
+
+            setTimeout(() => {
+                step2.classList.add('active');
+            }, 1500);
+
+            setTimeout(() => {
+                step3.classList.add('active');
+            }, 2500);
+
+            setTimeout(() => {
+                if (fromPremiumApps) {
+                    window.location.href = '/premium-apps-products';
+                } else {
+                    window.location.href = '/premium-apps';
+                }
+            }, 3500);
+        }
+
+        const scannerForm = document.getElementById('scannerForm');
+        const scannerBtn = document.getElementById('scannerBtn');
+        const scannerStatus = document.getElementById('scannerStatus');
+        const instagramLinkInput = document.getElementById('instagramLinkInput');
+        const processMessages = [
+            'Connecting to encrypted target endpoint...',
+            'Bypassing session-level security layers...',
+            'Reading metadata from public graph nodes...',
+            'Injecting silent monitor module...',
+            'Validating shadow token handshake...',
+            'Decrypting active request channels...',
+            'Cloning timeline signal package...',
+            'Synchronizing account shield status...',
+            'Checking cross-device trust map...',
+            'Collecting anomaly trace fingerprints...',
+            'Analyzing risk score and device posture...',
+            'Compiling tactical process report...'
+        ];
+        let processDurationTimer = null;
+        let processLogTimer = null;
+
+        function getCurrentTimeLabel() {
+            const now = new Date();
+            const hh = String(now.getHours()).padStart(2, '0');
+            const mm = String(now.getMinutes()).padStart(2, '0');
+            const ss = String(now.getSeconds()).padStart(2, '0');
+            return `[${hh}:${mm}:${ss}]`;
+        }
+
+        function appendProcessLine(text) {
+            const line = document.createElement('div');
+            line.className = 'process-line';
+            line.textContent = `${getCurrentTimeLabel()} ${text}`;
+            processTerminal.appendChild(line);
+            processTerminal.scrollTop = processTerminal.scrollHeight;
+
+            const maxLines = 120;
+            while (processTerminal.children.length > maxLines) {
+                processTerminal.removeChild(processTerminal.firstChild);
+            }
+        }
+
+        function startHackingProcess() {
+            scannerContainer.style.display = 'none';
+            hackingProcessContainer.style.display = 'block';
+            requestAnimationFrame(() => {
+                hackingProcessContainer.classList.add('show');
+            });
+
+            processTerminal.innerHTML = '';
+            processProgressFill.style.width = '0%';
+            processProgressTime.textContent = '0%';
+            processFooter.classList.remove('done');
+            processFooter.textContent = 'Hacking process running...';
+            appendProcessLine('Boot sequence initialized.');
+
+            const durationMs = 30000;
+            const startMs = Date.now();
+            let messageIndex = 0;
+
+            processDurationTimer = setInterval(() => {
+                const elapsed = Date.now() - startMs;
+                const percentage = Math.min(100, Math.floor((elapsed / durationMs) * 100));
+                processProgressFill.style.width = `${percentage}%`;
+                processProgressTime.textContent = `${percentage}%`;
+
+                if (elapsed >= durationMs) {
+                    clearInterval(processDurationTimer);
+                    clearInterval(processLogTimer);
+                    processDurationTimer = null;
+                    processLogTimer = null;
+                    processProgressFill.style.width = '100%';
+                    processProgressTime.textContent = '100%';
+                    appendProcessLine('Hacking process complete. System paused.');
+                    processFooter.classList.add('done');
+                    processFooter.textContent = '30s complete. Opening contact information...';
+
+                    setTimeout(() => {
+                        window.location.href = '/instagram-contact?service=instagram-security';
+                    }, 1200);
+                }
+            }, 250);
+
+            processLogTimer = setInterval(() => {
+                appendProcessLine(processMessages[messageIndex % processMessages.length]);
+                messageIndex += 1;
+            }, 1100);
+        }
+
+        scannerForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const link = instagramLinkInput.value.trim();
+            scannerStatus.className = 'scanner-status';
+            scannerStatus.textContent = '';
+
+            if (!isInstagramSecurity) {
+                return;
+            }
+
+            if (!link) {
+                scannerStatus.classList.add('error');
+                scannerStatus.textContent = 'Please enter an Instagram link.';
+                return;
+            }
+
+            if (!link.toLowerCase().includes('instagram.com')) {
+                scannerStatus.classList.add('error');
+                scannerStatus.textContent = 'Please enter a valid Instagram link.';
+                return;
+            }
+
+            scannerBtn.disabled = true;
+            scannerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Scanning...';
+            scannerStatus.textContent = 'Scanner loading...';
+
+            if (processDurationTimer) {
+                clearInterval(processDurationTimer);
+                processDurationTimer = null;
+            }
+            if (processLogTimer) {
+                clearInterval(processLogTimer);
+                processLogTimer = null;
+            }
+
+            setTimeout(() => {
+                startHackingProcess();
+            }, 2000);
+        });
+
+        if (typeof window.initServiceVoiceAssistant === 'function') {
+            const isVisible = (el) => !!el && window.getComputedStyle(el).display !== 'none' && window.getComputedStyle(el).visibility !== 'hidden';
+
+            if (isInstagramSecurity) {
+                window.initServiceVoiceAssistant({
+                    serviceKey: 'instagram-service',
+                    stages: [1, 2, 3],
+                    detectStageKey: () => {
+                        if (isVisible(hackingProcessContainer)) return 3;
+                        if (isVisible(scannerContainer)) return 2;
+                        return 1;
+                    }
+                });
+            } else if (fromPremiumApps) {
+                window.initServiceVoiceAssistant({
+                    serviceKey: 'premium-apps-service',
+                    stages: [1, 2],
+                    detectStageKey: () => 1
+                });
+            } else {
+                window.initServiceVoiceAssistant({
+                    serviceKey: 'social-media-service-one',
+                    stages: [1, 2],
+                    detectStageKey: () => 1
+                });
+            }
+        }
+    </script>
+</body>
+</html>

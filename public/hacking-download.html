@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Secure Download</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00ff41;
+            --bg: #0d1117;
+            --panel: #161b22;
+            --border: #30363d;
+            --text: #c9d1d9;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Courier New', Courier, monospace;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.1;
+        }
+
+        .terminal-container {
+            position: relative;
+            z-index: 10;
+            width: min(700px, 90%);
+            background: rgba(13, 17, 23, 0.95);
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.15);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .terminal-header {
+            background: rgba(48, 54, 61, 0.5);
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .terminal-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .control {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .close { background: #ff5f56; }
+        .minimize { background: #ffbd2e; }
+        .maximize { background: #27c93f; }
+
+        .terminal-title {
+            color: var(--text);
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .terminal-body {
+            padding: 20px;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            color: var(--primary);
+            font-size: 14px;
+            line-height: 1.5;
+            text-shadow: 0 0 5px rgba(0, 255, 65, 0.4);
+        }
+
+        .log-entry {
+            display: flex;
+            gap: 10px;
+            opacity: 0;
+            animation: fadeIn 0.3s forwards;
+        }
+
+        .timestamp {
+            color: #8b949e;
+            min-width: 80px;
+        }
+
+        .command { color: #fff; font-weight: bold; }
+        .success { color: var(--primary); }
+        .warning { color: #ffbd2e; }
+        .error { color: #ff5f56; }
+        .info { color: #58a6ff; }
+
+        .progress-container {
+            margin-top: auto;
+            border: 1px solid var(--border);
+            padding: 2px;
+            border-radius: 4px;
+            position: relative;
+            height: 20px;
+            background: #000;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            box-shadow: 0 0 10px var(--primary);
+            transition: width 0.1s linear;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            font-size: 11px;
+            font-weight: bold;
+            mix-blend-mode: difference;
+            z-index: 2;
+        }
+
+        .status-footer {
+            margin-top: 15px;
+            border-top: 1px solid var(--border);
+            padding-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #8b949e;
+        }
+
+        .blink {
+            animation: blink 1s infinite;
+        }
+
+        .glitch {
+            position: relative;
+        }
+        
+        .download-btn {
+            background: var(--primary);
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            display: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: pulse 2s infinite;
+        }
+        
+        .download-btn:hover {
+            box-shadow: 0 0 20px var(--primary);
+        }
+
+        @keyframes fadeIn { to { opacity: 1; } }
+        @keyframes blink { 50% { opacity: 0; } }
+        @keyframes pulse { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.8; } }
+    </style>
+</head>
+<body>
+    <canvas id="matrix" class="matrix-bg"></canvas>
+
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <div class="terminal-controls">
+                <div class="control close"></div>
+                <div class="control minimize"></div>
+                <div class="control maximize"></div>
+            </div>
+            <div class="terminal-title">SECURE_DOWNLOAD_PROTOCOL_V4.2</div>
+            <div style="width: 40px"></div>
+        </div>
+        <div class="terminal-body" id="terminalBody">
+            <div class="log-entry">
+                <span class="timestamp">[SYSTEM]</span>
+                <span>Initializing secure environment...</span>
+            </div>
+        </div>
+        <div style="padding: 20px; padding-top: 0;">
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+                <div class="progress-text" id="progressText">0%</div>
+            </div>
+            <div class="status-footer">
+                <span id="statusText">STATUS: IDLE</span>
+                <span>ENC: AES-256-GCM</span>
+            </div>
+            <div style="text-align: center;">
+                <button id="downloadBtn" class="download-btn">DOWNLOAD FILE</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Matrix Effect
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const chars = '01010101ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(13, 17, 23, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0f0';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars[Math.floor(Math.random() * chars.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
+        }
+        setInterval(drawMatrix, 50);
+
+        // Terminal Logic
+        const terminal = document.getElementById('terminalBody');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        const statusText = document.getElementById('statusText');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        function log(msg, type = 'info') {
+            const div = document.createElement('div');
+            div.className = 'log-entry';
+            const time = new Date().toLocaleTimeString('en-US', { hour12: false });
+            div.innerHTML = `
+                <span class="timestamp">[${time}]</span>
+                <span class="${type}">${msg}</span>
+            `;
+            terminal.appendChild(div);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        const steps = [
+            { msg: 'Resolving host...', delay: 500, type: 'command' },
+            { msg: 'Connecting to secure server...', delay: 1200, type: 'info' },
+            { msg: 'Handshake successful.', delay: 1800, type: 'success' },
+            { msg: 'Bypassing firewall...', delay: 2500, type: 'warning' },
+            { msg: 'Firewall bypassed.', delay: 3200, type: 'success' },
+            { msg: 'Locating file signature...', delay: 3800, type: 'command' },
+            { msg: 'File found. Verifying hash...', delay: 4500, type: 'info' },
+            { msg: 'Integrity check passed.', delay: 5200, type: 'success' },
+            { msg: 'Decrypting payload...', delay: 6000, type: 'warning' },
+            { msg: 'Decryption complete.', delay: 7000, type: 'success' },
+            { msg: 'Preparing download stream...', delay: 7500, type: 'info' }
+        ];
+
+        let currentStep = 0;
+        
+        function runSequence() {
+            if (currentStep >= steps.length) {
+                log('Ready for download.', 'success');
+                statusText.innerText = 'STATUS: READY';
+                progressBar.style.width = '100%';
+                progressText.innerText = '100%';
+                downloadBtn.style.display = 'inline-block';
+                
+                // Auto download after 1 second
+                setTimeout(() => {
+                    const currentUrl = window.location.href;
+                    const downloadUrl = currentUrl.includes('?') 
+                        ? currentUrl + '&raw=true' 
+                        : currentUrl + '?raw=true';
+                    window.location.href = downloadUrl;
+                }, 1000);
+                return;
+            }
+
+            const step = steps[currentStep];
+            setTimeout(() => {
+                log(step.msg, step.type);
+                
+                // Update progress
+                const progress = Math.round(((currentStep + 1) / steps.length) * 100);
+                progressBar.style.width = `${progress}%`;
+                progressText.innerText = `${progress}%`;
+                
+                currentStep++;
+                runSequence();
+            }, step.delay - (currentStep > 0 ? steps[currentStep-1].delay : 0));
+        }
+
+        // Start
+        setTimeout(() => {
+            statusText.innerText = 'STATUS: WORKING';
+            runSequence();
+        }, 500);
+
+        downloadBtn.onclick = () => {
+             const currentUrl = window.location.href;
+             const downloadUrl = currentUrl.includes('?') 
+                 ? currentUrl + '&raw=true' 
+                 : currentUrl + '?raw=true';
+             window.location.href = downloadUrl;
+        };
+    </script>
+</body>
+</html>

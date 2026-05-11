@@ -1,0 +1,57 @@
+name: Deploy Live Server
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Upload project files to server
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          source: "server.js,package.json,package-lock.json,public,scripts,LIVE_DEPLOY_CHECKLIST.md"
+          target: ${{ secrets.APP_DIR }}
+
+      - name: Install deps and restart app
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            set -e
+            cd "${{ secrets.APP_DIR }}"
+            npm install --omit=dev
+
+            if [ -n "${{ secrets.RESTART_CMD }}" ]; then
+              bash -lc "${{ secrets.RESTART_CMD }}"
+            else
+              pm2 restart softwarezoneinworld || pm2 start server.js --name softwarezoneinworld
+              pm2 save
+            fi
+
+      - name: Verify live API
+        if: ${{ secrets.LIVE_URL != '' }}
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            set -e
+            cd "${{ secrets.APP_DIR }}"
+            chmod +x ./scripts/verify-live-api.sh
+            ./scripts/verify-live-api.sh "${{ secrets.LIVE_URL }}"

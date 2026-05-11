@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook Security Verify - CyberHack Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #020916;
+            --bg-secondary: #031528;
+            --panel-bg: rgba(3, 14, 26, 0.9);
+            --panel-strong: rgba(1, 10, 18, 0.96);
+            --border: rgba(0, 255, 136, 0.45);
+            --border-soft: rgba(0, 255, 136, 0.24);
+            --green: #00ff88;
+            --cyan: #4fd8ff;
+            --text: #d8ffe9;
+            --text-dim: #8ed6b4;
+            --danger: #ff7886;
+            --warn: #ffd166;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            min-height: 100vh;
+            font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 15% 20%, rgba(0, 255, 136, 0.16), transparent 40%),
+                radial-gradient(circle at 84% 78%, rgba(79, 216, 255, 0.12), transparent 40%),
+                linear-gradient(180deg, var(--bg-secondary), var(--bg-primary));
+            padding: 16px;
+        }
+
+        .panel {
+            width: min(980px, 100%);
+            margin: 0 auto;
+            border: 1px solid var(--border-soft);
+            border-radius: 16px;
+            background: var(--panel-bg);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.14);
+            overflow: hidden;
+        }
+
+        .header {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border-soft);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--green);
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            font-weight: 800;
+            font-size: 13px;
+        }
+
+        .chip {
+            border: 1px solid rgba(79, 216, 255, 0.35);
+            color: var(--cyan);
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .body { padding: 22px 18px 24px; }
+
+        h1 {
+            text-align: center;
+            color: var(--green);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: clamp(28px, 4.7vw, 46px);
+            text-shadow: 0 0 16px rgba(0, 255, 136, 0.5);
+            margin-bottom: 8px;
+        }
+
+        .sub {
+            text-align: center;
+            color: var(--text-dim);
+            margin-bottom: 18px;
+        }
+
+        .disclaimer {
+            text-align: center;
+            color: var(--warn);
+            font-size: 12px;
+            border: 1px solid rgba(255, 209, 102, 0.35);
+            background: rgba(255, 209, 102, 0.09);
+            border-radius: 10px;
+            padding: 9px;
+            margin-bottom: 18px;
+        }
+
+        .verify-box {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: var(--panel-strong);
+            padding: 16px;
+        }
+
+        .label {
+            color: var(--green);
+            text-transform: uppercase;
+            font-size: 13px;
+            letter-spacing: 0.7px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .url-input {
+            flex: 1;
+            min-width: 250px;
+            height: 50px;
+            border: 1px solid var(--border-soft);
+            border-radius: 12px;
+            padding: 0 14px;
+            background: rgba(2, 14, 24, 0.9);
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .url-input:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.15);
+        }
+
+        .scan-btn,
+        .continue-btn {
+            height: 50px;
+            border: none;
+            border-radius: 12px;
+            padding: 0 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            letter-spacing: 0.4px;
+            transition: transform 0.2s ease, filter 0.2s ease;
+        }
+
+        .scan-btn {
+            min-width: 150px;
+            background: linear-gradient(135deg, #00ff88, #4fd8ff);
+            color: #03151e;
+        }
+
+        .continue-btn {
+            min-width: 170px;
+            background: linear-gradient(135deg, #4fd8ff, #00ff88);
+            color: #03151e;
+        }
+
+        .scan-btn:hover,
+        .continue-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.05);
+        }
+
+        .scan-btn:disabled,
+        .continue-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            filter: none;
+        }
+
+        .error {
+            color: var(--danger);
+            min-height: 20px;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .log {
+            border: 1px solid var(--border-soft);
+            border-radius: 10px;
+            min-height: 98px;
+            padding: 10px;
+            background: rgba(1, 14, 22, 0.8);
+            color: #acf2d2;
+            line-height: 1.45;
+            font-family: monospace;
+            white-space: pre-line;
+        }
+
+        .result {
+            margin-top: 14px;
+            border: 1px solid var(--border-soft);
+            border-radius: 12px;
+            background: rgba(2, 13, 22, 0.8);
+            padding: 12px;
+            display: none;
+        }
+
+        .result.show { display: block; }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .card {
+            border: 1px solid var(--border-soft);
+            border-radius: 10px;
+            padding: 10px;
+            background: rgba(2, 20, 30, 0.7);
+        }
+
+        .card .k {
+            color: var(--green);
+            text-transform: uppercase;
+            font-size: 11px;
+            margin-bottom: 4px;
+            letter-spacing: 0.6px;
+        }
+
+        .card .v {
+            color: #eafff4;
+            font-size: 14px;
+            word-break: break-all;
+        }
+
+        .result-note {
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--warn);
+            border: 1px solid rgba(255, 209, 102, 0.35);
+            background: rgba(255, 209, 102, 0.08);
+            border-radius: 9px;
+            padding: 8px;
+        }
+
+        .actions {
+            margin-top: 12px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        @media (max-width: 760px) {
+            .body { padding: 18px 12px; }
+            .result-grid { grid-template-columns: 1fr; }
+            .actions { justify-content: stretch; }
+            .continue-btn, .scan-btn { width: 100%; }
+            .input-row { flex-direction: column; }
+            .url-input { min-width: 0; }
+        }
+    </style>
+</head>
+<body>
+    <main class="panel">
+        <header class="header">
+            <div class="brand"><i class="fas fa-link"></i> Facebook Security Flow</div>
+            <div class="chip">Step 2/3 Verify Facebook URL</div>
+        </header>
+
+        <section class="body">
+            <h1>Verify Facebook Profile URL</h1>
+            <p class="sub">Enter a valid Facebook profile/page URL and run verification preview.</p>
+            <div class="disclaimer">Demo mode only. No account access or hacking performed.</div>
+
+            <div class="verify-box">
+                <label class="label" for="urlInput">Facebook Profile URL</label>
+                <div class="input-row">
+                    <input id="urlInput" class="url-input" type="text" placeholder="https://facebook.com/username" autocomplete="off">
+                    <button id="scanBtn" class="scan-btn" type="button"><i class="fas fa-search"></i> Verify</button>
+                </div>
+
+                <div id="errorText" class="error"></div>
+                <div id="scanLog" class="log">Waiting for URL input...</div>
+
+                <div id="resultBox" class="result">
+                    <div class="result-grid">
+                        <article class="card">
+                            <div class="k">Display Name</div>
+                            <div id="rName" class="v">-</div>
+                        </article>
+                        <article class="card">
+                            <div class="k">Profile URL</div>
+                            <div id="rUrl" class="v">-</div>
+                        </article>
+                        <article class="card">
+                            <div class="k">Provider</div>
+                            <div id="rFriends" class="v">-</div>
+                        </article>
+                        <article class="card">
+                            <div class="k">Risk Score</div>
+                            <div id="rPosts" class="v">-</div>
+                        </article>
+                    </div>
+                    <div class="result-note">Generated demo data for workflow continuity.</div>
+                    <div class="actions">
+                        <button id="continueBtn" class="continue-btn" type="button" disabled><i class="fas fa-arrow-right"></i> Continue</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="service-voice-assistant.js"></script>
+    <script>
+        function normalizeFacebookUrl(raw) {
+            const value = String(raw || '').trim();
+            if (!value) return '';
+            let urlText = value;
+            if (!/^[a-zA-Z]+:\/\//.test(urlText)) {
+                urlText = `https://${urlText}`;
+            }
+            try {
+                const u = new URL(urlText);
+                const host = u.hostname.toLowerCase();
+                const allowed =
+                    host === 'facebook.com' ||
+                    host === 'fb.com' ||
+                    host.endsWith('.facebook.com');
+                if (!allowed) return '';
+                u.search = '';
+                u.hash = '';
+                return u.toString();
+            } catch {
+                return '';
+            }
+        }
+
+        function nameFromUrl(urlText) {
+            try {
+                const u = new URL(String(urlText || ''));
+                const parts = u.pathname.split('/').filter(Boolean);
+                const last = parts[parts.length - 1] || '';
+                const decoded = decodeURIComponent(last);
+                return decoded
+                    .replace(/[^a-z0-9._-]/gi, ' ')
+                    .split(/[\s._-]+/)
+                    .filter(Boolean)
+                    .map((p) => p.charAt(0).toUpperCase() + p.slice(1).toLowerCase())
+                    .join(' ') || 'Profile';
+            } catch {
+                return 'Profile';
+            }
+        }
+
+        function pseudoNum(seed, min, max) {
+            let hash = 0;
+            const text = String(seed || 'seed');
+            for (let i = 0; i < text.length; i += 1) {
+                hash = ((hash << 5) - hash + text.charCodeAt(i)) | 0;
+            }
+            const span = max - min + 1;
+            return min + (Math.abs(hash) % span);
+        }
+
+        function buildResult(urlText) {
+            const name = nameFromUrl(urlText);
+            let provider = 'facebook.com';
+            try {
+                const u = new URL(String(urlText || ''));
+                provider = u.hostname.toLowerCase();
+            } catch {}
+            const riskScore = pseudoNum(`${urlText}-risk`, 1, 100);
+            return {
+                name,
+                url: urlText,
+                friends: provider || 'unknown',
+                posts: `${riskScore}/100`,
+                createdAt: Date.now()
+            };
+        }
+
+        const urlInput = document.getElementById('urlInput');
+        const scanBtn = document.getElementById('scanBtn');
+        const continueBtn = document.getElementById('continueBtn');
+        const errorText = document.getElementById('errorText');
+        const scanLog = document.getElementById('scanLog');
+        const resultBox = document.getElementById('resultBox');
+
+        let latestResult = null;
+
+        function clearError() {
+            errorText.textContent = '';
+        }
+
+        function setError(message) {
+            errorText.textContent = message;
+        }
+
+        function renderResult(result) {
+            document.getElementById('rName').textContent = result.name;
+            document.getElementById('rUrl').textContent = result.url;
+            document.getElementById('rFriends').textContent = `${result.friends}`;
+            document.getElementById('rPosts').textContent = `${result.posts}`;
+            resultBox.classList.add('show');
+            continueBtn.disabled = false;
+        }
+
+        function runScan() {
+            clearError();
+            continueBtn.disabled = true;
+
+            const normalized = normalizeFacebookUrl(urlInput.value);
+            if (!normalized) {
+                setError('Please enter a valid Facebook profile/page URL.');
+                scanLog.textContent = 'Invalid URL or unsupported domain.';
+                resultBox.classList.remove('show');
+                return;
+            }
+
+            scanBtn.disabled = true;
+            const logs = [
+                'URL accepted.',
+                'Running verification preview...',
+                'Checking profile footprint...',
+                'Generating verification summary...',
+                'Scan complete.'
+            ];
+
+            scanLog.textContent = logs[0];
+            let i = 1;
+            const interval = setInterval(() => {
+                if (i >= logs.length) {
+                    clearInterval(interval);
+                    scanBtn.disabled = false;
+                    latestResult = buildResult(normalized);
+                    renderResult(latestResult);
+                    return;
+                }
+                scanLog.textContent += `\n${logs[i]}`;
+                i += 1;
+            }, 420);
+        }
+
+        scanBtn.addEventListener('click', runScan);
+
+        continueBtn.addEventListener('click', () => {
+            if (!latestResult) {
+                return;
+            }
+            sessionStorage.setItem('facebookSecurityScanResult', JSON.stringify(latestResult));
+            window.location.href = '/facebook-security-processing';
+        });
+
+        urlInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                runScan();
+            }
+        });
+
+        urlInput.addEventListener('input', clearError);
+
+        if (typeof window.initServiceVoiceAssistant === 'function') {
+            window.initServiceVoiceAssistant({
+                serviceKey: 'social-media-service',
+                detectStageKey: () => 2
+            });
+        }
+    </script>
+</body>
+</html>
