@@ -45,7 +45,6 @@ jobs:
             fi
 
       - name: Verify live API
-        if: ${{ secrets.LIVE_URL != '' }}
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -55,6 +54,11 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             set -e
+            LIVE_URL="${{ secrets.LIVE_URL }}"
+            if [ -z "${LIVE_URL}" ]; then
+              echo "LIVE_URL secret is empty; skipping verify step."
+              exit 0
+            fi
             cd "${{ secrets.APP_DIR }}"
             chmod +x ./scripts/verify-live-api.sh
-            ./scripts/verify-live-api.sh "${{ secrets.LIVE_URL }}"
+            ./scripts/verify-live-api.sh "${LIVE_URL}"
