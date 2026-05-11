@@ -134,6 +134,12 @@ window.loadSupportTeam = async function() {
         }
 
         const items = [];
+        const normalizeHttpUrl = (rawValue, fallbackPrefix = 'https://') => {
+            const cleaned = String(rawValue || '').trim();
+            if (!cleaned) return '';
+            if (/^https?:\/\//i.test(cleaned)) return cleaned;
+            return `${fallbackPrefix}${cleaned.replace(/^\/+/, '')}`;
+        };
 
         const whatsappNumber = (result.whatsapp_number || '').trim();
         if (whatsappNumber) {
@@ -146,6 +152,16 @@ window.loadSupportTeam = async function() {
                     href: `https://wa.me/${clean}`
                 });
             }
+        }
+
+        const whatsappGroupRaw = (result.whatsapp_group_link || '').trim();
+        if (whatsappGroupRaw) {
+            items.push({
+                key: 'whatsapp-group',
+                label: 'WhatsApp Group',
+                icon: 'fas fa-users',
+                href: normalizeHttpUrl(whatsappGroupRaw)
+            });
         }
 
         const callNumber = (result.call_number || '').trim();
@@ -173,7 +189,7 @@ window.loadSupportTeam = async function() {
                 key: 'messenger',
                 label: 'Messenger',
                 icon: 'fab fa-facebook-messenger',
-                href: messengerLink
+                href: normalizeHttpUrl(messengerLink)
             });
         }
 
@@ -187,7 +203,7 @@ window.loadSupportTeam = async function() {
                 key: 'telegram',
                 label: 'Telegram',
                 icon: 'fab fa-telegram',
-                href: telegramLink
+                href: normalizeHttpUrl(telegramLink)
             });
         }
 

@@ -675,6 +675,7 @@ db.serialize(() => {
   db.run(`CREATE TABLE IF NOT EXISTS support_team (
     id INTEGER PRIMARY KEY,
     whatsapp_number TEXT,
+    whatsapp_group_link TEXT,
     call_number TEXT,
     messenger_link TEXT,
     telegram_username TEXT,
@@ -691,6 +692,7 @@ db.serialize(() => {
 
   // Add new columns if they don't exist (for existing databases)
   db.run(`ALTER TABLE support_team ADD COLUMN whatsapp_number TEXT`, () => {});
+  db.run(`ALTER TABLE support_team ADD COLUMN whatsapp_group_link TEXT`, () => {});
   db.run(`ALTER TABLE support_team ADD COLUMN call_number TEXT`, () => {});
   db.run(`ALTER TABLE support_team ADD COLUMN messenger_link TEXT`, () => {});
   db.run(`ALTER TABLE support_team ADD COLUMN telegram_username TEXT`, () => {});
@@ -1558,6 +1560,7 @@ app.get('/api/support-team', (req, res) => {
       return res.json({
         success: true,
         whatsapp_number: '',
+        whatsapp_group_link: '',
         call_number: '',
         messenger_link: '',
         telegram_username: ''
@@ -1566,6 +1569,7 @@ app.get('/api/support-team', (req, res) => {
     res.json({
       success: true,
       whatsapp_number: row.whatsapp_number || '',
+      whatsapp_group_link: row.whatsapp_group_link || '',
       call_number: row.call_number || '',
       messenger_link: row.messenger_link || '',
       telegram_username: row.telegram_username || ''
@@ -1576,21 +1580,22 @@ app.get('/api/support-team', (req, res) => {
 app.put('/api/support-team', (req, res) => {
   try {
     const whatsapp_number = req.body && req.body.whatsapp_number ? String(req.body.whatsapp_number).trim() : '';
+    const whatsapp_group_link = req.body && req.body.whatsapp_group_link ? String(req.body.whatsapp_group_link).trim() : '';
     const call_number = req.body && req.body.call_number ? String(req.body.call_number).trim() : '';
     const messenger_link = req.body && req.body.messenger_link ? String(req.body.messenger_link).trim() : '';
     const telegram_username = req.body && req.body.telegram_username ? String(req.body.telegram_username).trim() : '';
 
     db.run(
-      'UPDATE support_team SET whatsapp_number = ?, call_number = ?, messenger_link = ?, telegram_username = ?, updated_at = CURRENT_TIMESTAMP WHERE id = 1',
-      [whatsapp_number, call_number, messenger_link, telegram_username],
+      'UPDATE support_team SET whatsapp_number = ?, whatsapp_group_link = ?, call_number = ?, messenger_link = ?, telegram_username = ?, updated_at = CURRENT_TIMESTAMP WHERE id = 1',
+      [whatsapp_number, whatsapp_group_link, call_number, messenger_link, telegram_username],
       function(err) {
         if (err) {
           return res.status(500).json({ success: false, message: 'Database error: ' + err.message });
         }
         if (this.changes === 0) {
           db.run(
-            'INSERT INTO support_team (id, whatsapp_number, call_number, messenger_link, telegram_username) VALUES (1, ?, ?, ?, ?)',
-            [whatsapp_number, call_number, messenger_link, telegram_username],
+            'INSERT INTO support_team (id, whatsapp_number, whatsapp_group_link, call_number, messenger_link, telegram_username) VALUES (1, ?, ?, ?, ?, ?)',
+            [whatsapp_number, whatsapp_group_link, call_number, messenger_link, telegram_username],
             function(insertErr) {
               if (insertErr) {
                 return res.status(500).json({ success: false, message: 'Database error: ' + insertErr.message });
