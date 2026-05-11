@@ -3025,15 +3025,16 @@
             padding: 10px 14px;
             border-radius: 12px;
             background: rgba(0, 0, 0, 0.88);
-            border: 1px solid rgba(0, 255, 65, 0.45);
-            color: #00ff41;
-            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.38), 0 0 12px rgba(0, 255, 65, 0.28);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: 1px solid #334155;
+            color: #d5deeb;
+            box-shadow: none;
+            transition: transform 0.2s ease, background-color 0.2s ease;
         }
 
         .phonehack-back-btn:hover {
             transform: translateY(-1px);
-            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.48), 0 0 16px rgba(0, 255, 65, 0.38);
+            box-shadow: none;
+            background: #111827;
         }
 
         .phonehack-back-btn i {
@@ -3046,6 +3047,203 @@
                 left: 12px;
                 font-size: 13px;
                 padding: 9px 12px;
+            }
+        }
+
+        /* Compact Normal Premium (No Lighting) */
+        .verification-screen {
+            background: #06080f !important;
+            background-image: none !important;
+        }
+
+        .verification-screen::before,
+        .verification-screen::after {
+            display: none !important;
+            content: none !important;
+        }
+
+        .verification-container {
+            max-width: 420px !important;
+            padding: 26px 22px !important;
+            border-radius: 14px !important;
+            border: 1px solid #283145 !important;
+            box-shadow: none !important;
+            background: #0c101a !important;
+            animation: none !important;
+        }
+
+        .verification-container::before,
+        .verification-container::after {
+            display: none !important;
+            content: none !important;
+        }
+
+        .verification-header {
+            margin-bottom: 18px !important;
+            padding-bottom: 10px !important;
+        }
+
+        .verification-header::after {
+            display: none !important;
+        }
+
+        .verification-header i {
+            width: 42px;
+            height: 42px;
+            margin: 0 auto 8px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            font-size: 18px !important;
+            color: #b9c8dd !important;
+            background: #151c2b;
+            border: 1px solid #2e3a52;
+            text-shadow: none !important;
+            animation: none !important;
+        }
+
+        .verification-header i::before {
+            animation: none !important;
+        }
+
+        .verification-header h1 {
+            font-size: 26px !important;
+            line-height: 1.18 !important;
+            margin-bottom: 8px !important;
+            color: #e5eaf4 !important;
+            text-shadow: none !important;
+            letter-spacing: 0.8px !important;
+            animation: none !important;
+        }
+
+        .verification-header p {
+            font-size: 13px !important;
+            color: #97a5bb !important;
+            text-shadow: none !important;
+            letter-spacing: 0 !important;
+            font-family: 'Poppins', sans-serif !important;
+        }
+
+        .form-group {
+            margin-bottom: 14px !important;
+        }
+
+        .form-group label {
+            margin-bottom: 7px !important;
+            font-size: 12px !important;
+            letter-spacing: 0.5px !important;
+            text-shadow: none !important;
+        }
+
+        .form-group label i {
+            color: #8ea0bb !important;
+            text-shadow: none !important;
+            animation: none !important;
+        }
+
+        .form-group select,
+        .form-group input {
+            padding: 12px 13px !important;
+            font-size: 14px !important;
+            border-radius: 10px !important;
+            border: 1px solid #2c3a55 !important;
+            color: #dce6f4 !important;
+            background: #0f1522 !important;
+            box-shadow: none !important;
+            font-family: 'Poppins', sans-serif !important;
+        }
+
+        .form-group select:hover,
+        .form-group input:hover,
+        .form-group select:focus,
+        .form-group input:focus {
+            border-color: #4a5b79 !important;
+            box-shadow: none !important;
+            transform: none !important;
+            background: #0f1522 !important;
+        }
+
+        .continue-btn {
+            margin-top: 6px !important;
+            padding: 12px !important;
+            border-radius: 10px !important;
+            border: 1px solid #2c3a55 !important;
+            background: #1b2436 !important;
+            color: #ecf0f6 !important;
+            box-shadow: none !important;
+            font-size: 15px !important;
+            letter-spacing: 0.7px !important;
+            text-transform: uppercase;
+            animation: none !important;
+        }
+
+        .continue-btn::before {
+            display: none !important;
+        }
+
+        .continue-btn:hover,
+        .continue-btn:active {
+            transform: none !important;
+            box-shadow: none !important;
+            background: #242f45 !important;
+        }
+
+        .continue-btn i {
+            font-size: 16px !important;
+            transform: none !important;
+            filter: none !important;
+        }
+
+        .continue-btn:hover i {
+            transform: none !important;
+        }
+
+        .error-notification {
+            box-shadow: none !important;
+            text-shadow: none !important;
+            border: 1px solid rgba(255, 0, 102, 0.45) !important;
+        }
+
+        #contactTitle::before {
+            content: "\f095";
+            display: block;
+            margin-bottom: 8px;
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            font-size: 18px;
+            color: #9fb6d8;
+            text-shadow: none !important;
+        }
+
+        @media (max-width: 560px) {
+            .verification-container {
+                max-width: 340px !important;
+                padding: 20px 15px !important;
+                border-radius: 12px !important;
+            }
+
+            .verification-header h1 {
+                font-size: 20px !important;
+                letter-spacing: 0.4px !important;
+            }
+
+            .verification-header p {
+                font-size: 11px !important;
+            }
+
+            .form-group label {
+                font-size: 11px !important;
+            }
+
+            .form-group select,
+            .form-group input {
+                font-size: 13px !important;
+                padding: 10px 11px !important;
+            }
+
+            .continue-btn {
+                padding: 10px !important;
+                font-size: 13px !important;
             }
         }
     </style>
