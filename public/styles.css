@@ -8711,10 +8711,66 @@ iframe {
         letter-spacing: 0.8px;
     }
 
-    .services-grid,
+    .services-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.7rem;
+    }
+
     .features-grid,
     .reviews-grid {
         grid-template-columns: 1fr;
+    }
+
+    .services-section .service-card {
+        padding: 0.95rem 0.75rem;
+        border-radius: 12px;
+    }
+
+    .services-section .service-icon-wrapper {
+        width: 46px;
+        height: 46px;
+        margin: 0 auto 0.6rem;
+    }
+
+    .services-section .service-icon {
+        width: 46px;
+        height: 46px;
+        font-size: 1.15rem;
+    }
+
+    .services-section .icon-bg {
+        width: 60px;
+        height: 60px;
+    }
+
+    .services-section .service-card h3 {
+        font-size: 0.88rem;
+        line-height: 1.2;
+        margin-bottom: 0.4rem;
+    }
+
+    .services-section .service-card p {
+        font-size: 0.72rem;
+        line-height: 1.35;
+        margin-bottom: 0.55rem;
+    }
+
+    .services-section .service-features {
+        margin-bottom: 0.55rem;
+    }
+
+    .services-section .service-features li {
+        font-size: 0.66rem;
+        line-height: 1.25;
+        gap: 0.35rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .services-section .service-btn {
+        padding: 0.46rem 0.55rem;
+        font-size: 0.66rem;
+        border-radius: 8px;
+        gap: 0.3rem;
     }
 
     .proof-category-list {
@@ -8886,6 +8942,56 @@ iframe {
 
     .service-features li {
         font-size: 0.82rem;
+    }
+
+    .services-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.55rem;
+    }
+
+    .services-section .service-card {
+        padding: 0.78rem 0.58rem;
+        border-radius: 10px;
+    }
+
+    .services-section .service-icon-wrapper {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 0.45rem;
+    }
+
+    .services-section .service-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+
+    .services-section .icon-bg {
+        width: 52px;
+        height: 52px;
+    }
+
+    .services-section .service-card h3 {
+        font-size: 0.79rem;
+        margin-bottom: 0.34rem;
+    }
+
+    .services-section .service-card p {
+        font-size: 0.65rem;
+        line-height: 1.25;
+        margin-bottom: 0.45rem;
+    }
+
+    .services-section .service-features li {
+        font-size: 0.58rem;
+        margin-bottom: 0.22rem;
+    }
+
+    .services-section .service-btn {
+        font-size: 0.58rem;
+        padding: 0.38rem 0.42rem;
+        border-radius: 7px;
+        gap: 0.25rem;
     }
 
     .review-header {
