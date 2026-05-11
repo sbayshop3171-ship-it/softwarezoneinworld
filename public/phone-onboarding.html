@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phone Verification Onboarding</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #04100a;
+            --panel: #071b11;
+            --line: rgba(0, 255, 65, 0.35);
+            --glow: rgba(0, 255, 65, 0.35);
+            --text: #e8fff1;
+            --subtext: #95d1aa;
+            --accent: #00ff41;
+            --accent-2: #00d4ff;
+            --danger: #ff5e7a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at 15% 20%, rgba(0, 255, 65, 0.12), transparent 40%),
+                radial-gradient(circle at 85% 75%, rgba(0, 212, 255, 0.1), transparent 40%),
+                var(--bg);
+            color: var(--text);
+            padding: 24px 14px 40px;
+        }
+
+        .container {
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        .panel {
+            border: 2px solid var(--line);
+            border-radius: 18px;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.7), rgba(5, 25, 15, 0.85));
+            padding: 22px;
+            box-shadow: 0 0 24px var(--glow), inset 0 0 20px rgba(0, 255, 65, 0.08);
+        }
+
+        .title {
+            text-align: center;
+            font-size: 32px;
+            line-height: 1.2;
+            color: var(--accent);
+            text-shadow: 0 0 12px rgba(0, 255, 65, 0.65);
+            margin-bottom: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--subtext);
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--accent);
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        select,
+        input {
+            width: 100%;
+            border: 2px solid rgba(0, 255, 65, 0.25);
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.45);
+            color: var(--text);
+            padding: 14px 12px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        select:focus,
+        input:focus {
+            border-color: rgba(0, 255, 65, 0.8);
+            box-shadow: 0 0 0 3px rgba(0, 255, 65, 0.2);
+        }
+
+        .continue-btn {
+            width: 100%;
+            border: none;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #032410;
+            background: linear-gradient(90deg, #00ff41, #00d4ff);
+            cursor: pointer;
+            margin-top: 8px;
+            box-shadow: 0 8px 24px rgba(0, 255, 65, 0.35);
+        }
+
+        .continue-btn:active {
+            transform: translateY(1px);
+        }
+
+        .error-text {
+            color: var(--danger);
+            margin-top: 10px;
+            min-height: 20px;
+            font-size: 14px;
+        }
+
+        .next-step-panel {
+            margin-top: 18px;
+            border: 2px solid rgba(0, 212, 255, 0.4);
+            border-radius: 14px;
+            background: rgba(0, 20, 30, 0.5);
+            padding: 16px;
+            display: none;
+        }
+
+        .next-step-panel.show {
+            display: block;
+        }
+
+        .next-step-panel h3 {
+            color: var(--accent-2);
+            margin-bottom: 10px;
+        }
+
+        .next-step-panel p {
+            color: #c8f3ff;
+            margin-bottom: 8px;
+            line-height: 1.45;
+            word-break: break-word;
+        }
+
+        .selector-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.62);
+            backdrop-filter: blur(4px);
+            display: none;
+            z-index: 9999;
+        }
+
+        .selector-overlay.show {
+            display: block;
+        }
+
+        .selector-sheet {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            max-height: 82vh;
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            border: 2px solid rgba(0, 255, 65, 0.35);
+            border-bottom: none;
+            background: linear-gradient(180deg, #04150d, #021109);
+            box-shadow: 0 -12px 42px rgba(0, 255, 65, 0.22);
+            transform: translateY(105%);
+            transition: transform 0.34s ease;
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        .selector-overlay.show .selector-sheet {
+            transform: translateY(0);
+        }
+
+        .sheet-handle {
+            width: 64px;
+            height: 5px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.35);
+            margin: 0 auto 14px;
+        }
+
+        .sheet-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .sheet-head h2 {
+            color: var(--accent);
+            font-size: 20px;
+        }
+
+        .sheet-close {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #d3f8e0;
+            border-radius: 8px;
+            padding: 6px 10px;
+            cursor: pointer;
+        }
+
+        .sheet-note {
+            color: var(--subtext);
+            font-size: 13px;
+            margin-bottom: 14px;
+        }
+
+        .selector-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .selector-card {
+            border: 1px solid rgba(0, 255, 65, 0.35);
+            border-radius: 14px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .selector-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(0, 255, 65, 0.8);
+        }
+
+        .selector-card img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 65, 0.28);
+            margin-bottom: 9px;
+        }
+
+        .selector-card h4 {
+            font-size: 14px;
+            line-height: 1.35;
+            color: var(--text);
+            word-break: break-word;
+        }
+
+        .empty-state {
+            border: 1px dashed rgba(0, 255, 65, 0.35);
+            border-radius: 12px;
+            padding: 18px;
+            color: var(--subtext);
+            text-align: center;
+        }
+
+        .loading-state {
+            text-align: center;
+            color: var(--subtext);
+            padding: 16px;
+        }
+
+        @media (max-width: 420px) {
+            .title {
+                font-size: 28px;
+            }
+
+            .selector-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="panel">
+            <h1 class="title">PHONE NUMBER VERIFICATION</h1>
+            <p class="subtitle">Enter your country and phone number, then choose a service card to continue.</p>
+
+            <form id="verificationForm">
+                <div class="form-group">
+                    <label for="countrySelect">Select Country</label>
+                    <select id="countrySelect" required>
+                        <option value="">-- Select Country --</option>
+                        <option value="+880">Bangladesh (+880)</option>
+                        <option value="+91">India (+91)</option>
+                        <option value="+1">United States (+1)</option>
+                        <option value="+44">United Kingdom (+44)</option>
+                        <option value="+971">UAE (+971)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="phoneNumber">Phone Number</label>
+                    <input type="tel" id="phoneNumber" placeholder="Enter phone number" inputmode="numeric" required>
+                </div>
+
+                <button type="submit" class="continue-btn">CONTINUE</button>
+                <p id="formError" class="error-text"></p>
+            </form>
+
+            <div id="nextStepPanel" class="next-step-panel">
+                <h3>Next Step Ready</h3>
+                <p id="selectedCardText"></p>
+                <p id="selectedNumberText"></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="selectorOverlay" class="selector-overlay" aria-hidden="true">
+        <div id="selectorSheet" class="selector-sheet" role="dialog" aria-modal="true" aria-label="Select service option">
+            <div class="sheet-handle"></div>
+            <div class="sheet-head">
+                <h2>Select a Card</h2>
+                <button class="sheet-close" type="button" onclick="closeSelectorSheet()">Close</button>
+            </div>
+            <p class="sheet-note">Cards auto-sync from admin panel. Any add/delete will appear here automatically.</p>
+            <div id="selectorGrid" class="selector-grid">
+                <div class="loading-state">Loading cards...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectorOptions = [];
+        let refreshTimer = null;
+        let currentPayload = {
+            country: '',
+            phone: ''
+        };
+
+        function escapeHtml(value) {
+            return String(value || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/\"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function sanitizePhoneInput(value) {
+            return String(value || '').replace(/\D/g, '');
+        }
+
+        function renderSelectorOptions() {
+            const grid = document.getElementById('selectorGrid');
+            if (!grid) return;
+
+            if (!Array.isArray(selectorOptions) || selectorOptions.length === 0) {
+                grid.innerHTML = '<div class="empty-state">No cards available right now. Please add cards from admin panel.</div>';
+                return;
+            }
+
+            grid.innerHTML = selectorOptions.map((option) => {
+                const name = escapeHtml(option.name || 'Untitled');
+                const image = escapeHtml(option.image_url || '');
+                const id = Number(option.id);
+                return `
+                    <button type="button" class="selector-card" onclick="selectOption(${id})">
+                        <img src="${image}" alt="${name}">
+                        <h4>${name}</h4>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        async function loadSelectorOptions() {
+            const response = await fetch('/api/service-selector-options', { cache: 'no-cache' });
+            const result = await response.json();
+
+            if (!response.ok || !result.success) {
+                throw new Error(result.message || 'Failed to load selector cards');
+            }
+
+            selectorOptions = Array.isArray(result.options) ? result.options : [];
+            renderSelectorOptions();
+        }
+
+        async function refreshSelectorOptionsSilently() {
+            try {
+                await loadSelectorOptions();
+            } catch (error) {
+                console.error('Selector refresh error:', error);
+            }
+        }
+
+        function startAutoRefresh() {
+            stopAutoRefresh();
+            refreshTimer = window.setInterval(refreshSelectorOptionsSilently, 2500);
+        }
+
+        function stopAutoRefresh() {
+            if (refreshTimer) {
+                clearInterval(refreshTimer);
+                refreshTimer = null;
+            }
+        }
+
+        function openSelectorSheet() {
+            const overlay = document.getElementById('selectorOverlay');
+            if (!overlay) return;
+            overlay.classList.add('show');
+            overlay.setAttribute('aria-hidden', 'false');
+            startAutoRefresh();
+        }
+
+        function closeSelectorSheet() {
+            const overlay = document.getElementById('selectorOverlay');
+            if (!overlay) return;
+            overlay.classList.remove('show');
+            overlay.setAttribute('aria-hidden', 'true');
+            stopAutoRefresh();
+        }
+
+        function selectOption(id) {
+            const selected = selectorOptions.find((item) => Number(item.id) === Number(id));
+            if (!selected) {
+                return;
+            }
+
+            closeSelectorSheet();
+
+            const nextStepPanel = document.getElementById('nextStepPanel');
+            const selectedCardText = document.getElementById('selectedCardText');
+            const selectedNumberText = document.getElementById('selectedNumberText');
+
+            if (selectedCardText) {
+                selectedCardText.textContent = `Selected Card: ${selected.name || 'Untitled'}`;
+            }
+            if (selectedNumberText) {
+                selectedNumberText.textContent = `Country: ${currentPayload.country} | Phone: ${currentPayload.phone}`;
+            }
+            if (nextStepPanel) {
+                nextStepPanel.classList.add('show');
+            }
+        }
+
+        function setFormError(message) {
+            const errorEl = document.getElementById('formError');
+            if (errorEl) {
+                errorEl.textContent = message || '';
+            }
+        }
+
+        async function onContinue(event) {
+            event.preventDefault();
+            setFormError('');
+
+            const country = document.getElementById('countrySelect')?.value.trim() || '';
+            const phoneRaw = document.getElementById('phoneNumber')?.value || '';
+            const phone = sanitizePhoneInput(phoneRaw);
+
+            if (!country) {
+                setFormError('Please select a country.');
+                return;
+            }
+
+            if (!phone) {
+                setFormError('Please enter a valid phone number.');
+                return;
+            }
+
+            currentPayload = { country, phone };
+
+            const grid = document.getElementById('selectorGrid');
+            if (grid) {
+                grid.innerHTML = '<div class="loading-state">Loading cards...</div>';
+            }
+
+            try {
+                await loadSelectorOptions();
+                openSelectorSheet();
+            } catch (error) {
+                console.error(error);
+                setFormError('Failed to load selector cards. Please try again.');
+            }
+        }
+
+        document.getElementById('verificationForm')?.addEventListener('submit', onContinue);
+        document.getElementById('phoneNumber')?.addEventListener('input', (event) => {
+            event.target.value = sanitizePhoneInput(event.target.value).slice(0, 15);
+        });
+
+        document.getElementById('selectorOverlay')?.addEventListener('click', (event) => {
+            if (event.target.id === 'selectorOverlay') {
+                closeSelectorSheet();
+            }
+        });
+
+        document.addEventListener('visibilitychange', () => {
+            const overlay = document.getElementById('selectorOverlay');
+            if (!overlay || !overlay.classList.contains('show')) {
+                return;
+            }
+            if (document.hidden) {
+                stopAutoRefresh();
+            } else {
+                startAutoRefresh();
+                refreshSelectorOptionsSilently();
+            }
+        });
+
+        refreshSelectorOptionsSilently();
+    </script>
+</body>
+</html>

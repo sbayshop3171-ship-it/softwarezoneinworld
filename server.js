@@ -417,6 +417,17 @@ db.serialize(() => {
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
 
+  // Create service selector options table (safe onboarding cards)
+  db.run(`CREATE TABLE IF NOT EXISTS service_selector_options (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT UNIQUE NOT NULL,
+    image_url TEXT NOT NULL,
+    display_order INTEGER DEFAULT 0,
+    is_active INTEGER DEFAULT 1,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`);
+
   // Insert default categories
   db.run(`INSERT OR IGNORE INTO categories (name, icon, description, display_order) VALUES
     ('Messenger', 'fab fa-facebook-messenger', 'Messenger Hacking Services', 1),
@@ -1927,6 +1938,145 @@ app.get('/api/admin/categories', (req, res) => {
       return res.status(500).json({ success: false, message: 'Database error' });
     }
     res.json({ success: true, categories: rows });
+  });
+});
+
+// Service Selector Options APIs (safe onboarding flow)
+app.get('/api/service-selector-options', (req, res) => {
+  db.all(
+    'SELECT id, name, image_url, display_order FROM service_selector_options WHERE is_active = 1 ORDER BY display_order ASC, id ASC',
+    (err, rows) => {
+      if (err) {
+        return res.status(500).json({ success: false, message: 'Database error' });
+      }
+      res.json({ success: true, options: rows || [] });
+    }
+  );
+});
+
+app.get('/api/admin/service-selector-options', (req, res) => {
+  db.all(
+    'SELECT * FROM service_selector_options ORDER BY display_order ASC, id ASC',
+    (err, rows) => {
+      if (err) {
+        return res.status(500).json({ success: false, message: 'Database error' });
+      }
+      res.json({ success: true, options: rows || [] });
+    }
+  );
+});
+
+app.get('/api/admin/service-selector-options/:id', (req, res) => {
+  const { id } = req.params;
+  db.get('SELECT * FROM service_selector_options WHERE id = ?', [id], (err, row) => {
+    if (err) {
+      return res.status(500).json({ success: false, message: 'Database error' });
+    }
+    if (!row) {
+      return res.status(404).json({ success: false, message: 'Option not found' });
+    }
+    res.json({ success: true, option: row });
+  });
+});
+
+app.post('/api/admin/service-selector-options', (req, res) => {
+  const { name, image_url, display_order, is_active } = req.body || {};
+  const normalizedName = String(name || '').trim();
+  const normalizedImageUrl = normalizeOptionalUrl(image_url, {
+    allowRelative: true,
+    allowDataImage: true
+  });
+  const normalizedOrder = Number.isFinite(Number(display_order))
+    ? parseInt(display_order, 10)
+    : 0;
+  const normalizedActive =
+    is_active === 0 || is_active === '0' || is_active === false ? 0 : 1;
+
+  if (!normalizedName) {
+    return res.status(400).json({ success: false, message: 'Name is required' });
+  }
+  if (!normalizedImageUrl) {
+    return res
+      .status(400)
+      .json({ success: false, message: 'A valid image URL or image data is required' });
+  }
+
+  db.run(
+    'INSERT INTO service_selector_options (name, image_url, display_order, is_active) VALUES (?, ?, ?, ?)',
+    [normalizedName, normalizedImageUrl, normalizedOrder, normalizedActive],
+    function(err) {
+      if (err) {
+        const isUniqueViolation = String(err.message || '').includes('UNIQUE constraint failed');
+        return res.status(500).json({
+          success: false,
+          message: isUniqueViolation
+            ? 'Name already exists. Please use a different name.'
+            : `Database error: ${err.message}`
+        });
+      }
+      res.json({
+        success: true,
+        message: 'Option added successfully',
+        optionId: this.lastID
+      });
+    }
+  );
+});
+
+app.put('/api/admin/service-selector-options/:id', (req, res) => {
+  const { id } = req.params;
+  const { name, image_url, display_order, is_active } = req.body || {};
+  const normalizedName = String(name || '').trim();
+  const normalizedImageUrl = normalizeOptionalUrl(image_url, {
+    allowRelative: true,
+    allowDataImage: true
+  });
+  const normalizedOrder = Number.isFinite(Number(display_order))
+    ? parseInt(display_order, 10)
+    : 0;
+  const normalizedActive =
+    is_active === 0 || is_active === '0' || is_active === false ? 0 : 1;
+
+  if (!normalizedName) {
+    return res.status(400).json({ success: false, message: 'Name is required' });
+  }
+  if (!normalizedImageUrl) {
+    return res
+      .status(400)
+      .json({ success: false, message: 'A valid image URL or image data is required' });
+  }
+
+  db.run(
+    'UPDATE service_selector_options SET name = ?, image_url = ?, display_order = ?, is_active = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+    [normalizedName, normalizedImageUrl, normalizedOrder, normalizedActive, id],
+    function(err) {
+      if (err) {
+        const isUniqueViolation = String(err.message || '').includes('UNIQUE constraint failed');
+        return res.status(500).json({
+          success: false,
+          message: isUniqueViolation
+            ? 'Name already exists. Please use a different name.'
+            : `Database error: ${err.message}`
+        });
+      }
+      if (this.changes === 0) {
+        return res.status(404).json({ success: false, message: 'Option not found' });
+      }
+      res.json({ success: true, message: 'Option updated successfully' });
+    }
+  );
+});
+
+app.delete('/api/admin/service-selector-options/:id', (req, res) => {
+  const { id } = req.params;
+  db.run('DELETE FROM service_selector_options WHERE id = ?', [id], function(err) {
+    if (err) {
+      return res.status(500).json({ success: false, message: `Database error: ${err.message}` });
+    }
+    if (this.changes === 0) {
+      return res.status(404).json({ success: false, message: 'Option not found' });
+    }
+    res.json({ success: true, message: 'Option deleted successfully' });
   });
 });
 

@@ -1182,6 +1182,64 @@
             box-shadow: 0 0 50px rgba(0, 255, 65, 0.3);
         }
 
+        .selector-options-list {
+            margin-top: 25px;
+            display: grid;
+            gap: 12px;
+        }
+
+        .selector-option-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 65, 0.35);
+            background: rgba(0, 255, 65, 0.08);
+        }
+
+        .selector-option-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .selector-option-thumb {
+            width: 46px;
+            height: 46px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 1px solid rgba(0, 255, 65, 0.4);
+            flex-shrink: 0;
+        }
+
+        .selector-option-text {
+            min-width: 0;
+        }
+
+        .selector-option-title {
+            color: #00ff41;
+            font-size: 15px;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .selector-option-subtitle {
+            color: #9bfec0;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .selector-option-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         /* Performance mode: reduce repaint/reflow load for this large admin page */
         body.performance-mode::before {
             animation: none !important;
@@ -1541,6 +1599,83 @@
 
                 <div class="success-message" id="contentSuccess">
                     <i class="fas fa-check-circle"></i> Content saved successfully!
+                </div>
+            </div>
+        </div>
+
+        <div class="admin-folder" id="serviceSelectorFolder">
+            <div class="folder-header" onclick="toggleFolder('serviceSelectorFolder')">
+                <div class="folder-title">
+                    <i class="fas fa-layer-group"></i>
+                    <h2>Phone Selector Cards (Safe Flow)</h2>
+                </div>
+                <i class="fas fa-chevron-down folder-toggle"></i>
+            </div>
+            <div class="folder-content">
+                <input type="hidden" id="serviceSelectorOptionId" value="">
+
+                <div class="form-group">
+                    <label for="serviceSelectorName">Card Name</label>
+                    <input type="text" id="serviceSelectorName" placeholder="Example: WhatsApp Verification">
+                </div>
+
+                <div class="form-group">
+                    <label for="serviceSelectorOrder">Display Order</label>
+                    <input type="number" id="serviceSelectorOrder" value="0" min="0">
+                </div>
+
+                <div class="form-group">
+                    <label>Card Image</label>
+                    <div style="display: flex; gap: 15px; margin-bottom: 10px;">
+                        <label style="flex: 1; cursor: pointer;">
+                            <input type="radio" name="selectorImageOption" value="url" checked onchange="toggleServiceSelectorImageOption()">
+                            <span>Image URL</span>
+                        </label>
+                        <label style="flex: 1; cursor: pointer;">
+                            <input type="radio" name="selectorImageOption" value="upload" onchange="toggleServiceSelectorImageOption()">
+                            <span>Upload Image</span>
+                        </label>
+                    </div>
+                    <div id="serviceSelectorImageUrlWrap">
+                        <input type="text" id="serviceSelectorImageUrl" placeholder="https://example.com/image.jpg">
+                    </div>
+                    <div id="serviceSelectorImageUploadWrap" style="display: none;">
+                        <input type="file" id="serviceSelectorImageUpload" accept="image/*" onchange="handleServiceSelectorImageUpload(event)">
+                        <small>Upload image file (JPG, PNG, GIF)</small>
+                    </div>
+                    <div id="serviceSelectorImagePreview" style="display: none; margin-top: 10px;">
+                        <img id="serviceSelectorPreviewImg" src="" alt="Card preview" style="width: 120px; height: 120px; object-fit: cover; border-radius: 12px; border: 2px solid rgba(0, 255, 65, 0.45);">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="serviceSelectorActive" checked>
+                        <span>Active</span>
+                    </label>
+                </div>
+
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="save-btn" onclick="saveServiceSelectorOption()">
+                        <i class="fas fa-save"></i> Save Card
+                    </button>
+                    <button class="save-btn" style="background: #666;" onclick="resetServiceSelectorForm()">
+                        <i class="fas fa-undo"></i> Reset
+                    </button>
+                </div>
+
+                <div class="success-message" id="serviceSelectorSuccess">
+                    <i class="fas fa-check-circle"></i> Card saved successfully!
+                </div>
+
+                <div style="margin-top: 28px;">
+                    <p style="color: #9bfec0; margin-bottom: 10px; font-size: 13px;">
+                        Frontend page: <code>/phone-onboarding.html</code>
+                    </p>
+                    <h3 style="color: #00ff41; margin-bottom: 14px; font-size: 18px;">Current Selector Cards</h3>
+                    <div id="serviceSelectorOptionsList" class="selector-options-list">
+                        <p style="color: #8fddac;">No cards yet. Add your first card.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -3437,6 +3572,7 @@
             welcomeSettingsFolder: [loadWelcomeLines],
             advancedToolsFolder: [loadAdvancedToolsContent],
             phoneHackFolder: [loadPhoneHackContent],
+            serviceSelectorFolder: [loadServiceSelectorOptions],
             facebookHackFolder: [loadFacebookHackContent],
             informationHackFolder: [loadInformationHackContent],
             socialMediaServiceFolder: [loadSocialMediaService],
@@ -4530,6 +4666,275 @@
             }
         }
 
+        // Service Selector Card Management (safe onboarding flow)
+        let serviceSelectorUploadedImageUrl = '';
+        let serviceSelectorOptionsCache = [];
+
+        function escapeSelectorText(value) {
+            return String(value || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function showServiceSelectorPreview(imageSrc) {
+            const previewWrap = document.getElementById('serviceSelectorImagePreview');
+            const previewImg = document.getElementById('serviceSelectorPreviewImg');
+            if (!previewWrap || !previewImg) return;
+
+            const src = String(imageSrc || '').trim();
+            if (!src) {
+                previewWrap.style.display = 'none';
+                previewImg.src = '';
+                return;
+            }
+
+            previewImg.src = src;
+            previewWrap.style.display = 'block';
+        }
+
+        function toggleServiceSelectorImageOption() {
+            const selected = document.querySelector('input[name="selectorImageOption"]:checked')?.value || 'url';
+            const urlWrap = document.getElementById('serviceSelectorImageUrlWrap');
+            const uploadWrap = document.getElementById('serviceSelectorImageUploadWrap');
+            const urlInput = document.getElementById('serviceSelectorImageUrl');
+
+            if (urlWrap) {
+                urlWrap.style.display = selected === 'url' ? 'block' : 'none';
+            }
+            if (uploadWrap) {
+                uploadWrap.style.display = selected === 'upload' ? 'block' : 'none';
+            }
+
+            if (selected === 'url') {
+                showServiceSelectorPreview(urlInput ? urlInput.value.trim() : '');
+            } else {
+                showServiceSelectorPreview(serviceSelectorUploadedImageUrl);
+            }
+        }
+
+        function handleServiceSelectorImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                alert('Please select a valid image file');
+                event.target.value = '';
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Image size should be less than 5MB');
+                event.target.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                serviceSelectorUploadedImageUrl = e.target.result || '';
+                showServiceSelectorPreview(serviceSelectorUploadedImageUrl);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function resetServiceSelectorForm() {
+            const idInput = document.getElementById('serviceSelectorOptionId');
+            const nameInput = document.getElementById('serviceSelectorName');
+            const orderInput = document.getElementById('serviceSelectorOrder');
+            const urlInput = document.getElementById('serviceSelectorImageUrl');
+            const uploadInput = document.getElementById('serviceSelectorImageUpload');
+            const activeInput = document.getElementById('serviceSelectorActive');
+            const urlRadio = document.querySelector('input[name="selectorImageOption"][value="url"]');
+
+            if (idInput) idInput.value = '';
+            if (nameInput) nameInput.value = '';
+            if (orderInput) orderInput.value = '0';
+            if (urlInput) urlInput.value = '';
+            if (uploadInput) uploadInput.value = '';
+            if (activeInput) activeInput.checked = true;
+            if (urlRadio) urlRadio.checked = true;
+            serviceSelectorUploadedImageUrl = '';
+            showServiceSelectorPreview('');
+            toggleServiceSelectorImageOption();
+        }
+
+        function renderServiceSelectorOptions(options) {
+            const container = document.getElementById('serviceSelectorOptionsList');
+            if (!container) return;
+
+            if (!Array.isArray(options) || options.length === 0) {
+                container.innerHTML = '<p style="color: #8fddac;">No cards yet. Add your first card.</p>';
+                return;
+            }
+
+            container.innerHTML = options.map((option) => {
+                const safeName = escapeSelectorText(option.name || 'Untitled');
+                const safeImage = escapeSelectorText(option.image_url || '');
+                const order = Number.isFinite(Number(option.display_order)) ? Number(option.display_order) : 0;
+                const status = Number(option.is_active) === 1 ? 'Active' : 'Inactive';
+
+                return `
+                    <div class="selector-option-item">
+                        <div class="selector-option-meta">
+                            <img class="selector-option-thumb" src="${safeImage}" alt="${safeName}">
+                            <div class="selector-option-text">
+                                <div class="selector-option-title">${safeName}</div>
+                                <div class="selector-option-subtitle">Order: ${order} · ${status}</div>
+                            </div>
+                        </div>
+                        <div class="selector-option-actions">
+                            <button class="save-btn" style="background: #00d4ff; padding: 8px 12px; font-size: 13px;" onclick="editServiceSelectorOption(${Number(option.id)})">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="save-btn" style="background: #ff0066; padding: 8px 12px; font-size: 13px;" onclick="deleteServiceSelectorOption(${Number(option.id)})">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function loadServiceSelectorOptions() {
+            try {
+                const response = await fetch('/api/admin/service-selector-options', { cache: 'no-cache' });
+                const result = await response.json();
+                if (response.ok && result.success) {
+                    serviceSelectorOptionsCache = Array.isArray(result.options) ? result.options : [];
+                    renderServiceSelectorOptions(serviceSelectorOptionsCache);
+                } else {
+                    throw new Error(result.message || 'Failed to load selector options');
+                }
+            } catch (error) {
+                console.error('Error loading selector options:', error);
+                const container = document.getElementById('serviceSelectorOptionsList');
+                if (container) {
+                    container.innerHTML = '<p style="color: #ff6c9f;">Failed to load cards.</p>';
+                }
+            }
+        }
+
+        function editServiceSelectorOption(id) {
+            const option = serviceSelectorOptionsCache.find((item) => Number(item.id) === Number(id));
+            if (!option) {
+                alert('Card data not found');
+                return;
+            }
+
+            const idInput = document.getElementById('serviceSelectorOptionId');
+            const nameInput = document.getElementById('serviceSelectorName');
+            const orderInput = document.getElementById('serviceSelectorOrder');
+            const urlInput = document.getElementById('serviceSelectorImageUrl');
+            const activeInput = document.getElementById('serviceSelectorActive');
+            const urlRadio = document.querySelector('input[name="selectorImageOption"][value="url"]');
+            const uploadRadio = document.querySelector('input[name="selectorImageOption"][value="upload"]');
+
+            if (idInput) idInput.value = String(option.id);
+            if (nameInput) nameInput.value = option.name || '';
+            if (orderInput) orderInput.value = String(Number(option.display_order) || 0);
+            if (activeInput) activeInput.checked = Number(option.is_active) === 1;
+
+            const imageValue = String(option.image_url || '').trim();
+            if (imageValue.startsWith('data:image')) {
+                serviceSelectorUploadedImageUrl = imageValue;
+                if (uploadRadio) uploadRadio.checked = true;
+                if (urlInput) urlInput.value = '';
+                toggleServiceSelectorImageOption();
+                showServiceSelectorPreview(serviceSelectorUploadedImageUrl);
+            } else {
+                serviceSelectorUploadedImageUrl = '';
+                if (urlInput) urlInput.value = imageValue;
+                if (urlRadio) urlRadio.checked = true;
+                toggleServiceSelectorImageOption();
+                showServiceSelectorPreview(imageValue);
+            }
+
+            document.getElementById('serviceSelectorFolder')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        async function saveServiceSelectorOption() {
+            const id = document.getElementById('serviceSelectorOptionId')?.value.trim();
+            const name = document.getElementById('serviceSelectorName')?.value.trim();
+            const imageMode = document.querySelector('input[name="selectorImageOption"]:checked')?.value || 'url';
+            const urlImage = document.getElementById('serviceSelectorImageUrl')?.value.trim() || '';
+            const display_order = parseInt(document.getElementById('serviceSelectorOrder')?.value || '0', 10) || 0;
+            const is_active = document.getElementById('serviceSelectorActive')?.checked ? 1 : 0;
+            const imageUrl = imageMode === 'upload' ? serviceSelectorUploadedImageUrl : urlImage;
+
+            if (!name) {
+                alert('Please enter a card name');
+                return;
+            }
+
+            if (!imageUrl) {
+                alert('Please add a card image');
+                return;
+            }
+
+            try {
+                const endpoint = id
+                    ? `/api/admin/service-selector-options/${encodeURIComponent(id)}`
+                    : '/api/admin/service-selector-options';
+                const method = id ? 'PUT' : 'POST';
+                const response = await fetch(endpoint, {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name,
+                        image_url: imageUrl,
+                        display_order,
+                        is_active
+                    })
+                });
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || 'Failed to save card');
+                }
+
+                showNotification(id ? 'Card updated successfully!' : 'Card added successfully!');
+                const successEl = document.getElementById('serviceSelectorSuccess');
+                if (successEl) {
+                    successEl.classList.add('show');
+                    setTimeout(() => successEl.classList.remove('show'), 3000);
+                }
+                resetServiceSelectorForm();
+                await loadServiceSelectorOptions();
+            } catch (error) {
+                console.error('Error saving selector card:', error);
+                alert('Error saving card: ' + error.message);
+            }
+        }
+
+        async function deleteServiceSelectorOption(id) {
+            if (!confirm('Are you sure you want to delete this card?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/admin/service-selector-options/${encodeURIComponent(id)}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || 'Failed to delete card');
+                }
+
+                showNotification('Card deleted successfully!');
+                if (String(document.getElementById('serviceSelectorOptionId')?.value || '') === String(id)) {
+                    resetServiceSelectorForm();
+                }
+                await loadServiceSelectorOptions();
+            } catch (error) {
+                console.error('Error deleting selector card:', error);
+                alert('Error deleting card: ' + error.message);
+            }
+        }
+
         // Show notification toast
         function showNotification(message) {
             const toast = document.getElementById('notificationToast');
@@ -5152,6 +5557,18 @@
         function initializeAdminPanel() {
             console.log('Admin panel loaded, initializing in lazy mode...');
             expandAllFolders();
+
+            const selectorUrlInput = document.getElementById('serviceSelectorImageUrl');
+            if (selectorUrlInput && !selectorUrlInput.dataset.boundPreview) {
+                selectorUrlInput.dataset.boundPreview = '1';
+                selectorUrlInput.addEventListener('input', () => {
+                    const selected = document.querySelector('input[name="selectorImageOption"]:checked')?.value || 'url';
+                    if (selected === 'url') {
+                        showServiceSelectorPreview(selectorUrlInput.value.trim());
+                    }
+                });
+            }
+            toggleServiceSelectorImageOption();
 
             // Preload only lightweight global settings during idle time.
             const scheduleIdle = typeof window.requestIdleCallback === 'function'
