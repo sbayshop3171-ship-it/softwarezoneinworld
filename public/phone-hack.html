@@ -3371,6 +3371,259 @@
                 font-size: 13px !important;
             }
         }
+
+        /* Contact page adjustments requested by client */
+        .contact-cards {
+            grid-template-columns: minmax(0, 1fr) !important;
+            max-width: 760px !important;
+            gap: 24px !important;
+        }
+
+        .contact-card {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+
+        /* Remove the middle "যোগাযোগের জন্য" card from UI */
+        .contact-card--contact.is-removed {
+            display: none !important;
+        }
+
+        /* Learning-page-like colorful card style */
+        .contact-card--friends,
+        .contact-card--notice {
+            --contact-panel-bg: linear-gradient(160deg, #f8f1ff 0%, #f3ebff 100%);
+            --contact-panel-border: #b06ce8;
+            --contact-title: #1f2937;
+            --contact-text: #334155;
+            background: var(--contact-panel-bg) !important;
+            border: 1.6px solid var(--contact-panel-border) !important;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.2) !important;
+            backdrop-filter: none !important;
+            animation: none !important;
+        }
+
+        .contact-card--notice {
+            --contact-panel-bg: linear-gradient(160deg, #fff1f4 0%, #ffe6ec 100%);
+            --contact-panel-border: #d77a95;
+        }
+
+        .contact-card--friends::before,
+        .contact-card--friends::after,
+        .contact-card--notice::before,
+        .contact-card--notice::after {
+            display: none !important;
+            content: none !important;
+        }
+
+        .contact-card--friends h2,
+        .contact-card--notice h2 {
+            color: var(--contact-title) !important;
+            text-shadow: none !important;
+            animation: none !important;
+            text-transform: none !important;
+            letter-spacing: 0.4px !important;
+        }
+
+        .contact-card--friends h2::after,
+        .contact-card--notice h2::after {
+            background: rgba(255, 255, 255, 0.95) !important;
+            box-shadow: none !important;
+        }
+
+        .contact-card--friends .contact-message,
+        .contact-card--notice .contact-message {
+            color: var(--contact-text) !important;
+            text-shadow: none !important;
+            font-family: 'Poppins', sans-serif !important;
+            font-weight: 600 !important;
+        }
+
+        .contact-card--friends .contact-number-item,
+        .contact-card--notice .contact-number-item {
+            background: rgba(255, 255, 255, 0.88) !important;
+            border: 1px solid rgba(148, 163, 184, 0.45) !important;
+            box-shadow: none !important;
+            color: #0f172a !important;
+        }
+
+        .contact-card--friends .contact-number-item span,
+        .contact-card--notice .contact-number-item span,
+        .contact-card--friends .contact-number-item i,
+        .contact-card--notice .contact-number-item i {
+            color: #0f172a !important;
+            text-shadow: none !important;
+        }
+
+        .contact-card--friends .whatsapp-contact-btn,
+        .contact-card--notice .whatsapp-contact-btn {
+            background: linear-gradient(135deg, #10b981 0%, #0ea5e9 100%) !important;
+            border: 1px solid rgba(255, 255, 255, 0.7) !important;
+            box-shadow: none !important;
+        }
+
+        .contact-card--notice .warning-text {
+            background: rgba(255, 255, 255, 0.9) !important;
+            border: 1px solid rgba(215, 122, 149, 0.6) !important;
+            box-shadow: none !important;
+            color: #9f1239 !important;
+            text-shadow: none !important;
+        }
+
+        .contact-card--notice .warning-text::before {
+            color: #be123c !important;
+        }
+
+        /* Make contact + category text compact and mobile responsive */
+        @media (max-width: 768px) {
+            .blank-page {
+                padding: 72px 12px 26px !important;
+            }
+
+            .contact-container {
+                max-width: 100% !important;
+            }
+
+            .page-header {
+                margin-bottom: 22px !important;
+            }
+
+            .page-header h1 {
+                font-size: 28px !important;
+                letter-spacing: 1.1px !important;
+            }
+
+            .contact-cards {
+                gap: 15px !important;
+                margin-bottom: 18px !important;
+            }
+
+            .contact-card {
+                padding: 16px 14px !important;
+                border-radius: 14px !important;
+            }
+
+            .contact-card h2 {
+                font-size: 20px !important;
+                line-height: 1.3 !important;
+                margin-bottom: 10px !important;
+                padding-bottom: 9px !important;
+                letter-spacing: 0.2px !important;
+            }
+
+            .contact-message {
+                font-size: 14px !important;
+                line-height: 1.56 !important;
+                margin-bottom: 14px !important;
+            }
+
+            .contact-number-item {
+                padding: 12px !important;
+                gap: 10px !important;
+                border-radius: 12px !important;
+            }
+
+            .contact-number-item i {
+                font-size: 20px !important;
+                margin-right: 8px !important;
+            }
+
+            .contact-number-item span {
+                font-size: 13px !important;
+            }
+
+            .whatsapp-contact-btn {
+                font-size: 13px !important;
+                padding: 9px 14px !important;
+            }
+
+            .warning-text {
+                font-size: 13px !important;
+                line-height: 1.56 !important;
+                padding: 14px !important;
+                margin-top: 12px !important;
+            }
+
+            .warning-text::before {
+                font-size: 18px !important;
+                top: 12px !important;
+                right: 12px !important;
+            }
+
+            .categories-section {
+                margin-top: 24px !important;
+                padding: 16px 12px !important;
+                border-radius: 16px !important;
+            }
+
+            .categories-section h2 {
+                font-size: 18px !important;
+                margin-bottom: 14px !important;
+                letter-spacing: 0.5px !important;
+                text-transform: none !important;
+            }
+
+            .categories-section h2::before,
+            .categories-section h2::after {
+                display: none !important;
+            }
+
+            .categories-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 8px !important;
+            }
+
+            .category-box {
+                min-height: 78px !important;
+                border-radius: 10px !important;
+                padding: 10px 8px !important;
+            }
+
+            .category-box i {
+                font-size: 18px !important;
+                margin-bottom: 6px !important;
+            }
+
+            .category-box h3 {
+                font-size: 10px !important;
+                line-height: 1.2 !important;
+                letter-spacing: 0 !important;
+                margin-bottom: 2px !important;
+            }
+
+            .category-box p {
+                font-size: 8.5px !important;
+                line-height: 1.22 !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .contact-card h2 {
+                font-size: 18px !important;
+            }
+
+            .contact-message,
+            .warning-text {
+                font-size: 12px !important;
+            }
+
+            .category-box {
+                min-height: 72px !important;
+                padding: 9px 7px !important;
+            }
+
+            .category-box i {
+                font-size: 16px !important;
+            }
+
+            .category-box h3 {
+                font-size: 9px !important;
+            }
+
+            .category-box p {
+                font-size: 8px !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -3630,7 +3883,7 @@
 
             <div class="contact-cards">
                 <!-- Card 1: প্রিয় বন্ধুরা -->
-                <div class="contact-card" style="grid-column: span 1;">
+                <div class="contact-card contact-card--friends" style="grid-column: span 1;">
                     <h2 id="dearFriendsTitle">প্রিয় বন্ধুরা</h2>
                     <p class="contact-message" id="dearFriendsMessage">
                         কোড নেওয়ার জন্য দয়া করে নিচের নাম্বারে যোগাযোগ করুন। আপনার নিরাপত্তা আমাদের কাছে গুরুত্বপূর্ণ।
@@ -3641,7 +3894,7 @@
                 </div>
 
                 <!-- Card 2: যোগাযোগের জন্য -->
-                <div class="contact-card" style="grid-column: span 1;">
+                <div class="contact-card contact-card--contact is-removed" style="grid-column: span 1;">
                     <h2 id="contactTitle">যোগাযোগের জন্য</h2>
                     <p class="contact-message" id="contactCardMessage"></p>
                     <div class="contact-numbers" id="contactNumbersCard2">
@@ -3650,7 +3903,7 @@
                 </div>
 
                 <!-- Card 3: বিশেষ দ্রষ্টব্য -->
-                <div class="contact-card" style="grid-column: 1 / -1; max-width: 100%;">
+                <div class="contact-card contact-card--notice" style="grid-column: 1 / -1; max-width: 100%;">
                     <h2 id="specialNoteTitle">বিশেষ দ্রষ্টব্য</h2>
                     <p class="contact-message" id="specialNoteMessage">
                         🌈 প্রিয় বন্ধুরা, কোড নেওয়ার জন্য দয়া করে নিচের নাম্বারে যোগাযোগ করুন। আপনার নিরাপত্তা আমাদের কাছে গুরুত্বপূর্ণ।
@@ -3666,7 +3919,7 @@
 
             <!-- Categories Section -->
             <div class="categories-section">
-                <h2>Select a Category</h2>
+                <h2>Select Category</h2>
                 <div class="categories-grid" id="categoriesGrid">
                     <!-- Categories will be loaded here -->
                 </div>
