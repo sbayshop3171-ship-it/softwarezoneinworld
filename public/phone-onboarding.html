@@ -335,6 +335,7 @@
     <script>
         let selectorOptions = [];
         let refreshTimer = null;
+        const SELECTOR_CATEGORY_MARKER = '__selector_card__';
         let currentPayload = {
             country: '',
             phone: ''
@@ -376,14 +377,23 @@
         }
 
         async function loadSelectorOptions() {
-            const response = await fetch('/api/service-selector-options', { cache: 'no-cache' });
+            const response = await fetch('/api/admin/categories', { cache: 'no-cache' });
             const result = await response.json();
 
             if (!response.ok || !result.success) {
                 throw new Error(result.message || 'Failed to load selector cards');
             }
 
-            selectorOptions = Array.isArray(result.options) ? result.options : [];
+            const rows = Array.isArray(result.categories) ? result.categories : [];
+            selectorOptions = rows
+                .filter((item) => String(item.description || '') === SELECTOR_CATEGORY_MARKER && Number(item.is_active) === 1)
+                .map((item) => ({
+                    id: item.id,
+                    name: item.name,
+                    image_url: item.icon || '',
+                    display_order: item.display_order || 0
+                }))
+                .sort((a, b) => (Number(a.display_order) || 0) - (Number(b.display_order) || 0));
             renderSelectorOptions();
         }
 

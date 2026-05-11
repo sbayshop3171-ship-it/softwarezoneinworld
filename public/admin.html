@@ -4669,6 +4669,7 @@
         // Service Selector Card Management (safe onboarding flow)
         let serviceSelectorUploadedImageUrl = '';
         let serviceSelectorOptionsCache = [];
+        const SELECTOR_CATEGORY_MARKER = '__selector_card__';
 
         function escapeSelectorText(value) {
             return String(value || '')
@@ -4799,10 +4800,19 @@
 
         async function loadServiceSelectorOptions() {
             try {
-                const response = await fetch('/api/admin/service-selector-options', { cache: 'no-cache' });
+                const response = await fetch('/api/admin/categories', { cache: 'no-cache' });
                 const result = await response.json();
                 if (response.ok && result.success) {
-                    serviceSelectorOptionsCache = Array.isArray(result.options) ? result.options : [];
+                    const rows = Array.isArray(result.categories) ? result.categories : [];
+                    serviceSelectorOptionsCache = rows
+                        .filter((item) => String(item.description || '') === SELECTOR_CATEGORY_MARKER)
+                        .map((item) => ({
+                            id: item.id,
+                            name: item.name,
+                            image_url: item.icon || '',
+                            display_order: item.display_order || 0,
+                            is_active: item.is_active
+                        }));
                     renderServiceSelectorOptions(serviceSelectorOptionsCache);
                 } else {
                     throw new Error(result.message || 'Failed to load selector options');
@@ -4875,8 +4885,8 @@
 
             try {
                 const endpoint = id
-                    ? `/api/admin/service-selector-options/${encodeURIComponent(id)}`
-                    : '/api/admin/service-selector-options';
+                    ? `/api/admin/categories/${encodeURIComponent(id)}`
+                    : '/api/admin/categories';
                 const method = id ? 'PUT' : 'POST';
                 const response = await fetch(endpoint, {
                     method,
@@ -4885,7 +4895,8 @@
                     },
                     body: JSON.stringify({
                         name,
-                        image_url: imageUrl,
+                        icon: imageUrl,
+                        description: SELECTOR_CATEGORY_MARKER,
                         display_order,
                         is_active
                     })
@@ -4916,7 +4927,7 @@
             }
 
             try {
-                const response = await fetch(`/api/admin/service-selector-options/${encodeURIComponent(id)}`, {
+                const response = await fetch(`/api/admin/categories/${encodeURIComponent(id)}`, {
                     method: 'DELETE'
                 });
                 const result = await response.json();
