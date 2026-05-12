@@ -563,6 +563,12 @@
 
     <section class="proof-section">
         <div class="container">
+            <div class="about-entry-wrap">
+                <button id="aboutEntryBtn" class="about-entry-btn" type="button" onclick="openAboutWithLoading()">
+                    <span id="about-entry-text">About</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
             <div class="section-header">
                 <div class="section-badge" id="proof-section-badge">Proof</div>
                 <h2 class="section-title" id="proof-section-title">Proof Gallery</h2>
@@ -583,6 +589,18 @@
                 <video id="proofDialogVideo" controls style="display: none;"></video>
             </div>
             <div id="proofDialogTitle" class="proof-dialog-title"></div>
+        </div>
+    </div>
+
+    <div id="aboutRedirectOverlay" class="about-redirect-overlay" aria-hidden="true">
+        <div class="about-redirect-card">
+            <div class="about-redirect-spinner"></div>
+            <h3 class="about-redirect-title">Opening About Page</h3>
+            <p class="about-redirect-text">Please wait while we prepare your page.</p>
+            <div class="about-redirect-progress">
+                <div id="aboutRedirectBar" class="about-redirect-bar"></div>
+            </div>
+            <div id="aboutRedirectCount" class="about-redirect-count">10s</div>
         </div>
     </div>
 
@@ -909,6 +927,59 @@
             // Load reviews
             loadReviews();
             loadProofMedia();
+        }
+
+        let aboutRedirectInterval = null;
+        let aboutRedirectTimer = null;
+
+        function openAboutWithLoading() {
+            const overlay = document.getElementById('aboutRedirectOverlay');
+            const bar = document.getElementById('aboutRedirectBar');
+            const count = document.getElementById('aboutRedirectCount');
+            const button = document.getElementById('aboutEntryBtn');
+            if (!overlay || !bar || !count || !button) {
+                window.location.href = '/about-gallery';
+                return;
+            }
+
+            if (overlay.classList.contains('show')) {
+                return;
+            }
+
+            overlay.classList.add('show');
+            overlay.setAttribute('aria-hidden', 'false');
+            button.classList.add('is-loading');
+
+            const durationMs = 10000;
+            const startTime = Date.now();
+            bar.style.width = '0%';
+            count.textContent = '10s';
+
+            if (aboutRedirectInterval) {
+                clearInterval(aboutRedirectInterval);
+                aboutRedirectInterval = null;
+            }
+            if (aboutRedirectTimer) {
+                clearTimeout(aboutRedirectTimer);
+                aboutRedirectTimer = null;
+            }
+
+            aboutRedirectInterval = setInterval(() => {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min((elapsed / durationMs) * 100, 100);
+                const remaining = Math.max(0, Math.ceil((durationMs - elapsed) / 1000));
+                bar.style.width = `${progress}%`;
+                count.textContent = `${remaining}s`;
+            }, 120);
+
+            aboutRedirectTimer = setTimeout(() => {
+                if (aboutRedirectInterval) {
+                    clearInterval(aboutRedirectInterval);
+                    aboutRedirectInterval = null;
+                }
+                aboutRedirectTimer = null;
+                window.location.href = '/about-gallery';
+            }, durationMs);
         }
 
         // Load reviews from API
