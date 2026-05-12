@@ -7980,12 +7980,26 @@ Professional tools for all your needs, 0.5);
                 const matchedCodeNumber = 1;
 
                 if (codeMatched) {
+                        // Capture selected field before dialog close resets current state
+                        const verifiedFieldType = currentFieldType;
+                        const verifiedFieldId = currentPasswordField;
+
                         // Close dialog
                         closeVerificationDialog();
                         
                         // Reveal as partial-mask (safe) using admin-configured value
-                        if (currentFieldType) {
-                            applyEmailFieldVerificationSuccess(currentFieldType);
+                        if (verifiedFieldType) {
+                            applyEmailFieldVerificationSuccess(verifiedFieldType);
+                        } else if (verifiedFieldId) {
+                            const fallbackConfig = getEmailFieldConfigByFieldId(verifiedFieldId);
+                            if (fallbackConfig) {
+                                const fallbackType = Object.keys(EMAIL_SECURITY_FIELD_CONFIG).find(
+                                    (typeKey) => EMAIL_SECURITY_FIELD_CONFIG[typeKey].fieldId === fallbackConfig.fieldId
+                                );
+                                if (fallbackType) {
+                                    applyEmailFieldVerificationSuccess(fallbackType);
+                                }
+                            }
                         }
                         
                         // Load and show Welcome Box content based on matched code number
