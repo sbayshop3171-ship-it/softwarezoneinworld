@@ -4273,25 +4273,6 @@
             </div>
 
             <div class="contact-cards">
-                <!-- Card 1: প্রিয় বন্ধুরা -->
-                <div class="contact-card" style="grid-column: span 1;">
-                    <h2 id="dearFriendsTitle">প্রিয় বন্ধুরা</h2>
-                    <p class="contact-message" id="dearFriendsMessage">
-                        কোড নেওয়ার জন্য দয়া করে নিচের নাম্বারে যোগাযোগ করুন। আপনার নিরাপত্তা আমাদের কাছে গুরুত্বপূর্ণ।
-                    </p>
-                    <div class="contact-numbers" id="contactNumbersCard1">
-                        <!-- WhatsApp numbers will be loaded here -->
-                    </div>
-                </div>
-
-                <!-- Card 2: যোগাযোগের জন্য -->
-                <div class="contact-card" style="grid-column: span 1;">
-                    <h2 id="contactTitle">যোগাযোগের জন্য</h2>
-                    <div class="contact-numbers" id="contactNumbersCard2">
-                        <!-- WhatsApp numbers will be loaded here -->
-                    </div>
-                </div>
-
                 <!-- Card 3: বিশেষ দ্রষ্টব্য -->
                 <div class="contact-card" style="grid-column: 1 / -1; max-width: 100%;">
                     <h2 id="specialNoteTitle">বিশেষ দ্রষ্টব্য</h2>
@@ -6129,12 +6110,20 @@
                     const content = result.content;
                     informationHackContentCache = content;
                     
-                    document.getElementById('dearFriendsTitle').textContent = content.dear_friends_title || 'প্রিয় বন্ধুরা';
-                    document.getElementById('dearFriendsMessage').textContent = content.dear_friends_message || 'কোড নেওয়ার জন্য দয়া করে নিচের নাম্বারে যোগাযোগ করুন।';
-                    document.getElementById('contactTitle').textContent = content.contact_title || 'যোগাযোগের জন্য';
-                    document.getElementById('specialNoteTitle').textContent = content.special_note_title || 'বিশেষ দ্রষ্টব্য';
-                    document.getElementById('specialNoteMessage').textContent = content.special_note_message || '🌈 প্রিয় বন্ধুরা, কোড নেওয়ার জন্য দয়া করে নিচের নাম্বারে যোগাযোগ করুন।';
-                    document.getElementById('specialNoteWarning').textContent = content.special_note_warning || 'আমরা আপনার নিরাপত্তাকে গুরুত্ব দিই।';
+                    const specialNoteTitleEl = document.getElementById('specialNoteTitle');
+                    if (specialNoteTitleEl) {
+                        specialNoteTitleEl.textContent = content.special_note_title || 'বিশেষ দ্রষ্টব্য';
+                    }
+
+                    const specialNoteMessageEl = document.getElementById('specialNoteMessage');
+                    if (specialNoteMessageEl) {
+                        specialNoteMessageEl.textContent = content.special_note_message || '🌈 প্রিয় বন্ধুরা, কোড নেওয়ার জন্য দয়া করে নিচের নাম্বারে যোগাযোগ করুন।';
+                    }
+
+                    const specialNoteWarningEl = document.getElementById('specialNoteWarning');
+                    if (specialNoteWarningEl) {
+                        specialNoteWarningEl.textContent = content.special_note_warning || 'আমরা আপনার নিরাপত্তাকে গুরুত্ব দিই।';
+                    }
                 }
             } catch (error) {
                 console.error('Error loading information hack content:', error);
@@ -6209,107 +6198,9 @@
 
         // Load WhatsApp Numbers for Blank Page
         async function loadWhatsAppNumbers() {
-            try {
-                console.log('Loading WhatsApp numbers for blank page...');
-                const response = await fetch('/api/whatsapp-numbers', {
-                    cache: 'no-cache',
-                    headers: { 'Cache-Control': 'no-cache' }
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const result = await response.json();
-                console.log('WhatsApp numbers response:', result);
-                
-                if (result.success && result.numbers && result.numbers.length > 0) {
-                    // Sort numbers by order
-                    const sortedNumbers = result.numbers.sort((a, b) => {
-                        const orderA = a.number_order || 999;
-                        const orderB = b.number_order || 999;
-                        return orderA - orderB;
-                    });
-                    
-                    console.log(`Found ${sortedNumbers.length} WhatsApp numbers, sorted by order`);
-                    
-                    // Map numbers to cards based on order
-                    const cardMapping = {
-                        1: 'contactNumbersCard1',
-                        2: 'contactNumbersCard2',
-                        3: 'contactNumbersCard3'
-                    };
-                    
-                    // Load numbers into first two cards only; keep special note card empty
-                    const cards = ['contactNumbersCard1', 'contactNumbersCard2'];
-                    
-                    cards.forEach((cardId, index) => {
-                        const container = document.getElementById(cardId);
-                        if (!container) {
-                            console.error(`Container ${cardId} not found!`);
-                            return;
-                        }
-                        
-                        container.innerHTML = '';
-                        
-                        // Load all numbers into each card
-                        sortedNumbers.forEach((number, numIndex) => {
-                            const cleanNumber = number.phone_number.replace(/[^0-9]/g, '');
-                            const displayNumber = number.phone_number.startsWith('+') 
-                                ? number.phone_number 
-                                : '+' + number.phone_number;
-                            
-                            const item = document.createElement('div');
-                            item.className = 'contact-number-item';
-                            item.setAttribute('data-order', number.number_order || (numIndex + 1));
-                            item.innerHTML = `
-                                <div style="display: flex; align-items: center; flex: 1; min-width: 0;">
-                                    <i class="fab fa-whatsapp" style="font-size: 28px; margin-right: 15px; flex-shrink: 0;"></i>
-                                    <span style="font-weight: 600; font-size: 16px; white-space: nowrap; overflow: visible; display: block; word-break: keep-all;">${displayNumber}</span>
-                                </div>
-                                <a href="https://wa.me/${cleanNumber}" target="_blank" class="whatsapp-contact-btn" onclick="if(typeof showWhatsAppLoading === 'function') { showWhatsAppLoading('${cleanNumber}'); } else { window.open('https://wa.me/${cleanNumber}', '_blank'); } return false;">
-                                    <i class="fab fa-whatsapp"></i> WhatsApp
-                                </a>
-                            `;
-                            container.appendChild(item);
-                        });
-                    });
-                    
-                    const specialCard = document.getElementById('contactNumbersCard3');
-                    if (specialCard) {
-                        specialCard.innerHTML = '';
-                    }
-                    console.log('WhatsApp numbers loaded into Card 1 & 2; special note card cleared');
-                    
-                    // Update WhatsApp buttons
-                    updateWhatsAppButtons();
-                } else {
-                    console.warn('No WhatsApp numbers found in response');
-                    const cardsNone = ['contactNumbersCard1', 'contactNumbersCard2'];
-                    cardsNone.forEach(cardId => {
-                        const container = document.getElementById(cardId);
-                        if (container) {
-                            container.innerHTML = '<p style="color: #999; text-align: center;">No WhatsApp numbers available</p>';
-                        }
-                    });
-                    const specialCard = document.getElementById('contactNumbersCard3');
-                    if (specialCard) {
-                        specialCard.innerHTML = '';
-                    }
-                }
-            } catch (error) {
-                console.error('Error loading WhatsApp numbers:', error);
-                const cardsErr = ['contactNumbersCard1', 'contactNumbersCard2'];
-                cardsErr.forEach(cardId => {
-                    const container = document.getElementById(cardId);
-                    if (container) {
-                        container.innerHTML = '<p style="color: #ff0066; text-align: center;">Error loading WhatsApp numbers</p>';
-                    }
-                });
-                const specialCard = document.getElementById('contactNumbersCard3');
-                if (specialCard) {
-                    specialCard.innerHTML = '';
-                }
+            const specialCard = document.getElementById('contactNumbersCard3');
+            if (specialCard) {
+                specialCard.innerHTML = '';
             }
         }
 
