@@ -3,413 +3,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document Submission Preview</title>
+    <title>Document Submission Status</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
+        :root {
+            --bg: #0f171d;
+            --panel: rgba(18, 24, 31, 0.9);
+            --panel-soft: rgba(27, 35, 43, 0.96);
+            --line: rgba(103, 215, 196, 0.16);
+            --line-strong: rgba(121, 194, 255, 0.24);
+            --text: #f5f1e8;
+            --muted: #b8c4c8;
+            --accent: #67d7c4;
+            --accent-strong: #79c2ff;
+            --accent-soft: rgba(103, 215, 196, 0.14);
+            --warn: #f4bc77;
+            --warn-soft: rgba(244, 188, 119, 0.16);
+            --danger: #ff907f;
+            --danger-soft: rgba(255, 144, 127, 0.16);
+            --shadow: 0 28px 80px rgba(0, 0, 0, 0.38);
+        }
+
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            background: #000;
-            color: #fff;
-            overflow-x: hidden;
             min-height: 100vh;
-            position: relative;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
+            font-family: 'Poppins', sans-serif;
+            color: var(--text);
             background:
-                radial-gradient(circle at 20% 30%, rgba(0, 255, 65, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(0, 212, 255, 0.1) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: 0;
+                radial-gradient(circle at top left, rgba(103, 215, 196, 0.12), transparent 30%),
+                radial-gradient(circle at bottom right, rgba(121, 194, 255, 0.12), transparent 32%),
+                linear-gradient(180deg, #0c1318 0%, #101b22 56%, #0f171d 100%);
         }
 
-        body.failed::before {
+        body.failed {
             background:
-                radial-gradient(circle at 20% 30%, rgba(255, 191, 0, 0.12) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(255, 105, 97, 0.1) 0%, transparent 50%);
+                radial-gradient(circle at top left, rgba(244, 188, 119, 0.14), transparent 30%),
+                radial-gradient(circle at bottom right, rgba(255, 144, 127, 0.12), transparent 34%),
+                linear-gradient(180deg, #15110f 0%, #1b1713 58%, #15110f 100%);
         }
 
-        .service-back-btn {
-            position: fixed;
-            top: 18px;
-            left: 16px;
-            z-index: 12000;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 18px;
-            border-radius: 16px;
-            border: 1px solid rgba(0, 212, 255, 0.35);
-            background: rgba(4, 13, 24, 0.85);
-            color: #fff;
-            font-weight: 700;
-            text-decoration: none;
-            box-shadow:
-                0 0 0 1px rgba(0, 255, 65, 0.12),
-                0 0 24px rgba(0, 212, 255, 0.12);
-            backdrop-filter: blur(10px);
-            transition: transform 0.25s ease, border-color 0.25s ease;
+        .page-shell {
+            width: min(100%, 860px);
+            margin: 0 auto;
+            padding: 20px 16px 40px;
         }
 
-        .service-back-btn:hover {
-            transform: translateY(-2px);
-            border-color: rgba(0, 255, 65, 0.55);
-        }
-
-        .home-btn {
-            position: fixed;
-            top: 18px;
-            right: 16px;
-            z-index: 12000;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 18px;
-            border-radius: 16px;
-            border: 1px solid rgba(0, 255, 65, 0.28);
-            background: rgba(4, 13, 24, 0.85);
-            color: #fff;
-            font-weight: 700;
-            text-decoration: none;
-            box-shadow:
-                0 0 0 1px rgba(0, 255, 65, 0.12),
-                0 0 24px rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(10px);
-            transition: transform 0.25s ease, border-color 0.25s ease;
-        }
-
-        .home-btn:hover {
-            transform: translateY(-2px);
-            border-color: rgba(0, 212, 255, 0.45);
-        }
-
-        .status-loading-screen {
-            position: fixed;
-            inset: 0;
-            z-index: 10000;
+        .topbar {
             display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .topbar-actions,
+        .footer-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .ghost-btn,
+        .secondary-btn,
+        .primary-btn,
+        .home-link {
+            border: 1px solid transparent;
+            border-radius: 999px;
+            padding: 12px 18px;
+            font: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
-            background: #000;
+            gap: 8px;
+            transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
         }
 
-        .loading-content {
-            width: min(92vw, 760px);
-            background: rgba(0, 0, 0, 0.95);
-            border: 2px solid rgba(0, 255, 65, 0.16);
-            border-radius: 22px;
-            padding: 34px;
-            box-shadow:
-                0 0 0 1px rgba(0, 255, 65, 0.06),
-                0 0 10px rgba(0, 255, 65, 0.08),
-                inset 0 0 10px rgba(0, 255, 65, 0.03);
-            position: relative;
-            overflow: hidden;
+        .ghost-btn,
+        .secondary-btn,
+        .home-link {
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.03);
+            border-color: rgba(255, 255, 255, 0.08);
         }
 
-        .loading-content::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent 0%,
-                rgba(0, 255, 65, 0.02) 30%,
-                rgba(0, 212, 255, 0.02) 50%,
-                rgba(0, 255, 65, 0.02) 70%,
-                transparent 100%
-            );
-            animation: shimmer 3s infinite;
+        .primary-btn {
+            background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+            color: #091015;
+            font-weight: 800;
         }
 
-        @keyframes shimmer {
-            0% { left: -100%; }
-            100% { left: 100%; }
+        body.failed .primary-btn {
+            background: linear-gradient(135deg, var(--warn), var(--danger));
+            color: #1f120d;
         }
 
-        .loading-header {
-            text-align: center;
-            margin-bottom: 28px;
-            position: relative;
-            z-index: 1;
+        .ghost-btn:hover,
+        .secondary-btn:hover,
+        .primary-btn:hover,
+        .home-link:hover {
+            transform: translateY(-1px);
         }
 
-        .loading-icon {
-            font-size: 58px;
-            color: #00ff41;
-            margin-bottom: 18px;
-            text-shadow:
-                0 0 20px rgba(0, 255, 65, 0.36),
-                0 0 40px rgba(0, 255, 65, 0.18);
-        }
-
-        body.failed .loading-icon {
-            color: #ffc65b;
-            text-shadow:
-                0 0 20px rgba(255, 198, 91, 0.36),
-                0 0 40px rgba(255, 198, 91, 0.18);
-        }
-
-        .loading-title {
-            color: #00ff41;
-            font-size: 28px;
+        .step-pill {
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: var(--accent-soft);
+            color: var(--accent);
+            font-size: 13px;
             font-weight: 700;
-            margin: 0;
-            font-family: 'Orbitron', sans-serif;
-            letter-spacing: 2px;
+            letter-spacing: 0.04em;
         }
 
-        body.failed .loading-title {
-            color: #ffc65b;
+        body.failed .step-pill {
+            background: var(--warn-soft);
+            color: var(--warn);
         }
 
-        .loading-terminal {
-            background: rgba(0, 0, 0, 0.82);
-            border: 2px solid rgba(0, 255, 65, 0.42);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 26px;
-            min-height: 190px;
-            font-family: 'Courier New', monospace;
-            color: #00ff41;
-            position: relative;
-            z-index: 1;
-            box-shadow:
-                0 0 20px rgba(0, 255, 65, 0.16),
-                inset 0 0 20px rgba(0, 255, 65, 0.08);
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 28px;
+            box-shadow: var(--shadow);
+            padding: 28px;
+            backdrop-filter: blur(10px);
         }
 
-        body.failed .loading-terminal {
-            color: #ffd684;
-            border-color: rgba(255, 198, 91, 0.38);
-            box-shadow:
-                0 0 20px rgba(255, 198, 91, 0.14),
-                inset 0 0 20px rgba(255, 198, 91, 0.06);
+        body.failed .card {
+            border-color: rgba(244, 188, 119, 0.16);
         }
 
-        .terminal-messages {
-            line-height: 1.8;
-            font-size: 14px;
-            max-height: 220px;
-            overflow-y: auto;
-        }
-
-        .terminal-line {
-            margin-bottom: 8px;
-            opacity: 0;
-            animation: messageFadeIn 0.45s ease forwards;
-        }
-
-        @keyframes messageFadeIn {
-            from {
-                opacity: 0;
-                transform: translateX(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .terminal-cursor {
-            display: inline-block;
-            font-weight: bold;
-            animation: blink 1s infinite;
-        }
-
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0.3; }
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: rgba(0, 255, 65, 0.2);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-bottom: 10px;
-            border: 1px solid rgba(0, 255, 65, 0.28);
-        }
-
-        body.failed .progress-bar {
-            background: rgba(255, 198, 91, 0.2);
-            border-color: rgba(255, 198, 91, 0.3);
-        }
-
-        .progress-fill {
-            width: 0;
-            height: 100%;
-            background: linear-gradient(90deg, #00ff41, #00d4ff);
-            transition: width 0.12s ease;
-            box-shadow:
-                0 0 10px rgba(0, 255, 65, 0.6),
-                0 0 20px rgba(0, 255, 65, 0.3);
-        }
-
-        body.failed .progress-fill {
-            background: linear-gradient(90deg, #ffc65b, #ff8a7a);
-            box-shadow:
-                0 0 10px rgba(255, 198, 91, 0.6),
-                0 0 20px rgba(255, 138, 122, 0.3);
-        }
-
-        .progress-text {
-            text-align: center;
-            color: #00ff41;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 18px;
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 999px;
+            background: var(--accent-soft);
+            color: var(--accent);
+            padding: 8px 12px;
+            font-size: 13px;
             font-weight: 700;
+            letter-spacing: 0.04em;
+            margin-bottom: 16px;
         }
 
-        body.failed .progress-text {
-            color: #ffc65b;
+        body.failed .eyebrow {
+            background: var(--warn-soft);
+            color: var(--warn);
         }
 
-        .status-screen {
-            display: none;
-            min-height: 100vh;
-            padding: 84px 18px 120px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .status-screen.show {
-            display: block;
-            animation: fadeInScreen 0.5s ease;
-        }
-
-        @keyframes fadeInScreen {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .status-container {
-            width: min(92vw, 820px);
-            margin: 0 auto;
-            background: linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 20, 10, 0.95) 100%);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            padding: 38px 30px 32px;
-            border: 3px solid rgba(0, 255, 65, 0.5);
-            box-shadow:
-                0 0 0 4px rgba(0, 255, 65, 0.22),
-                0 0 50px rgba(0, 255, 65, 0.24),
-                0 0 100px rgba(0, 255, 65, 0.12),
-                inset 0 0 40px rgba(0, 255, 65, 0.08);
-            position: relative;
-            overflow: hidden;
-        }
-
-        body.failed .status-container {
-            background: linear-gradient(135deg, rgba(15, 9, 0, 0.95) 0%, rgba(28, 14, 8, 0.95) 100%);
-            border-color: rgba(255, 198, 91, 0.52);
-            box-shadow:
-                0 0 0 4px rgba(255, 198, 91, 0.18),
-                0 0 50px rgba(255, 198, 91, 0.18),
-                0 0 100px rgba(255, 138, 122, 0.12),
-                inset 0 0 40px rgba(255, 198, 91, 0.05);
-        }
-
-        .status-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent 0%,
-                rgba(0, 255, 65, 0.08) 30%,
-                rgba(0, 212, 255, 0.08) 50%,
-                rgba(0, 255, 65, 0.08) 70%,
-                transparent 100%
-            );
-            animation: shimmer 3s infinite;
-        }
-
-        body.failed .status-container::before {
-            background: linear-gradient(
-                90deg,
-                transparent 0%,
-                rgba(255, 198, 91, 0.08) 30%,
-                rgba(255, 138, 122, 0.08) 50%,
-                rgba(255, 198, 91, 0.08) 70%,
-                transparent 100%
-            );
-        }
-
-        .status-header {
-            text-align: center;
-            margin-bottom: 32px;
-            position: relative;
-            z-index: 1;
+        .status-hero {
+            display: grid;
+            gap: 18px;
+            margin-bottom: 22px;
         }
 
         .status-icon {
-            font-size: 62px;
-            margin-bottom: 18px;
-            color: #00ff41;
-            text-shadow:
-                0 0 20px rgba(0, 255, 65, 0.9),
-                0 0 40px rgba(0, 255, 65, 0.6);
+            width: 82px;
+            height: 82px;
+            border-radius: 24px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--accent-soft);
+            color: var(--accent);
+            font-size: 34px;
         }
 
         body.failed .status-icon {
-            color: #ffc65b;
-            text-shadow:
-                0 0 20px rgba(255, 198, 91, 0.9),
-                0 0 40px rgba(255, 138, 122, 0.4);
+            background: var(--danger-soft);
+            color: var(--danger);
         }
 
-        .status-header h1 {
-            color: #00ff41;
-            font-size: 32px;
-            font-weight: 700;
-            margin: 0 0 10px;
-            font-family: 'Orbitron', sans-serif;
-            letter-spacing: 2px;
-            text-shadow:
-                0 0 20px rgba(0, 255, 65, 0.9),
-                0 0 40px rgba(0, 255, 65, 0.42);
+        h1 {
+            font-family: 'Manrope', sans-serif;
+            font-size: clamp(30px, 6vw, 42px);
+            line-height: 1.08;
         }
 
-        body.failed .status-header h1 {
-            color: #ffc65b;
-            text-shadow:
-                0 0 20px rgba(255, 198, 91, 0.9),
-                0 0 40px rgba(255, 138, 122, 0.3);
-        }
-
-        .status-header p {
-            color: #b8f4ff;
-            line-height: 1.8;
-            font-size: 14px;
-            max-width: 620px;
-            margin: 0 auto;
+        .lead {
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.75;
+            max-width: 660px;
         }
 
         .meta-grid,
         .summary-grid {
-            position: relative;
-            z-index: 1;
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 14px;
@@ -424,95 +214,74 @@
             display: grid;
             gap: 8px;
             padding: 16px;
-            border-radius: 18px;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(0, 255, 65, 0.24);
-            box-shadow: inset 0 0 18px rgba(0, 255, 65, 0.04);
-        }
-
-        body.failed .meta-card,
-        body.failed .summary-item {
-            border-color: rgba(255, 198, 91, 0.22);
-            box-shadow: inset 0 0 18px rgba(255, 198, 91, 0.04);
+            border-radius: 20px;
+            background: var(--panel-soft);
+            border: 1px solid rgba(255, 255, 255, 0.06);
         }
 
         .meta-card span,
         .summary-label {
-            color: #00ff41;
+            color: var(--muted);
             font-size: 12px;
             font-weight: 700;
-            letter-spacing: 0.08em;
+            letter-spacing: 0.06em;
             text-transform: uppercase;
-            font-family: 'Orbitron', sans-serif;
-        }
-
-        body.failed .meta-card span,
-        body.failed .summary-label {
-            color: #ffc65b;
         }
 
         .meta-card strong,
         .summary-value {
-            color: #fff;
+            color: var(--text);
             font-size: 15px;
             line-height: 1.65;
             word-break: break-word;
         }
 
         .section-title {
-            position: relative;
-            z-index: 1;
             display: flex;
             align-items: center;
             gap: 10px;
-            margin: 26px 0 12px;
+            margin: 28px 0 12px;
             font-size: 18px;
             font-weight: 700;
-            color: #cfffff;
         }
 
         .attachment-panel {
-            position: relative;
-            z-index: 1;
             display: none;
-            grid-template-columns: 120px 1fr;
             gap: 16px;
             align-items: center;
-            margin-top: 14px;
             padding: 16px;
-            border-radius: 18px;
-            border: 1px solid rgba(0, 212, 255, 0.22);
-            background: rgba(0, 10, 20, 0.4);
+            border-radius: 22px;
+            border: 1px solid rgba(103, 215, 196, 0.14);
+            background: rgba(255, 255, 255, 0.02);
+            margin-top: 10px;
         }
 
         .attachment-panel.show {
             display: grid;
+            grid-template-columns: 120px 1fr;
         }
 
         body.failed .attachment-panel {
-            border-color: rgba(255, 198, 91, 0.22);
-            background: rgba(25, 12, 6, 0.4);
+            border-color: rgba(244, 188, 119, 0.18);
         }
 
         .attachment-panel img,
         .attachment-fallback {
             width: 120px;
             height: 120px;
-            border-radius: 18px;
-            border: 1px solid rgba(0, 255, 65, 0.24);
-            background: rgba(0, 0, 0, 0.55);
+            border-radius: 20px;
             object-fit: cover;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #00d4ff;
-            font-size: 30px;
+            font-size: 32px;
+            color: var(--accent-strong);
         }
 
-        body.failed .attachment-panel img,
         body.failed .attachment-fallback {
-            border-color: rgba(255, 198, 91, 0.24);
-            color: #ffc65b;
+            color: var(--warn);
         }
 
         .attachment-meta {
@@ -521,221 +290,72 @@
         }
 
         .attachment-meta strong {
-            color: #fff;
-            font-size: 15px;
-            line-height: 1.55;
+            font-size: 16px;
+            line-height: 1.5;
         }
 
         .attachment-meta span {
-            color: #9fd9e8;
+            color: var(--muted);
             font-size: 13px;
             line-height: 1.65;
         }
 
         .next-steps {
-            position: relative;
-            z-index: 1;
+            margin-top: 18px;
             display: grid;
             gap: 10px;
-            margin-top: 10px;
         }
 
         .next-step {
             display: flex;
             align-items: flex-start;
-            gap: 12px;
+            gap: 10px;
             padding: 14px 16px;
-            border-radius: 16px;
-            border: 1px solid rgba(0, 255, 65, 0.18);
-            background: rgba(0, 0, 0, 0.3);
-            color: #d7ffff;
-            line-height: 1.7;
-        }
-
-        body.failed .next-step {
-            border-color: rgba(255, 198, 91, 0.2);
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .next-step i {
-            color: #00ff41;
+            color: var(--accent);
             margin-top: 2px;
         }
 
         body.failed .next-step i {
-            color: #ffc65b;
+            color: var(--warn);
         }
 
         .footer-actions {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
             margin-top: 28px;
         }
 
-        .primary-btn,
-        .secondary-btn {
-            border-radius: 12px;
-            padding: 14px 20px;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-            font-family: 'Orbitron', sans-serif;
-            letter-spacing: 1px;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .primary-btn {
-            color: #000;
-            background: linear-gradient(135deg, #00ff41 0%, #00d4ff 100%);
-            border-color: rgba(0, 255, 65, 0.45);
-            box-shadow: 0 0 20px rgba(0, 255, 65, 0.25);
-        }
-
-        body.failed .primary-btn {
-            background: linear-gradient(135deg, #ffc65b 0%, #ff8a7a 100%);
-            border-color: rgba(255, 198, 91, 0.45);
-            box-shadow: 0 0 20px rgba(255, 198, 91, 0.18);
-        }
-
-        .secondary-btn {
-            color: #d4f8ff;
-            background: rgba(255, 255, 255, 0.07);
-            border-color: rgba(0, 212, 255, 0.22);
-        }
-
-        body.failed .secondary-btn {
-            border-color: rgba(255, 198, 91, 0.22);
-        }
-
-        .primary-btn:hover,
-        .secondary-btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .empty-state {
+        .empty-card {
             display: none;
-            min-height: 100vh;
-            padding: 120px 18px 80px;
-            position: relative;
-            z-index: 1;
+            text-align: center;
         }
 
-        .empty-state.show {
+        .empty-card.show {
             display: block;
         }
 
-        .empty-card {
-            width: min(92vw, 700px);
-            margin: 0 auto;
-            background: rgba(0, 0, 0, 0.88);
-            border-radius: 24px;
-            padding: 34px 26px;
-            border: 2px solid rgba(0, 212, 255, 0.18);
-            text-align: center;
-            box-shadow: 0 0 36px rgba(0, 0, 0, 0.44);
-        }
-
-        .empty-card h2 {
-            color: #00ff41;
-            font-family: 'Orbitron', sans-serif;
-            margin-bottom: 12px;
-        }
-
         .empty-card p {
-            color: #9fd9e8;
+            color: var(--muted);
             line-height: 1.8;
-            margin-bottom: 22px;
+            margin: 14px auto 22px;
+            max-width: 520px;
         }
 
-        .step-dock {
-            position: fixed;
-            left: 50%;
-            bottom: 20px;
-            transform: translateX(-50%);
-            z-index: 50;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 14px;
-            border-radius: 18px;
-            border: 1px solid rgba(0, 212, 255, 0.2);
-            background: rgba(4, 13, 24, 0.88);
-            box-shadow:
-                0 0 0 1px rgba(0, 255, 65, 0.08),
-                0 0 24px rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(10px);
-        }
-
-        .step-node {
-            width: 42px;
-            height: 42px;
-            border-radius: 14px;
-            border: 1px solid rgba(0, 255, 65, 0.34);
-            background: rgba(0, 0, 0, 0.5);
-            color: #c8f8ff;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 14px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .step-node.active {
-            background: linear-gradient(135deg, #00ff41, #00d4ff);
-            color: #000;
-            border-color: rgba(0, 255, 65, 0.7);
-            box-shadow: 0 0 24px rgba(0, 255, 65, 0.35);
-        }
-
-        body.failed .step-node.active {
-            background: linear-gradient(135deg, #ffc65b, #ff8a7a);
-            border-color: rgba(255, 198, 91, 0.7);
-            box-shadow: 0 0 24px rgba(255, 198, 91, 0.25);
-        }
-
-        .step-caption {
-            padding: 0 8px 0 4px;
-            color: #8bd4f1;
-            font-size: 12px;
-            letter-spacing: 0.08em;
-            font-family: 'Orbitron', sans-serif;
-            text-transform: uppercase;
-        }
-
-        @media (max-width: 768px) {
-            .service-back-btn,
-            .home-btn {
-                top: 12px;
-                padding: 10px 14px;
+        @media (max-width: 720px) {
+            .card {
+                padding: 22px 18px;
+                border-radius: 24px;
             }
 
-            .service-back-btn {
-                left: 12px;
-            }
-
-            .home-btn {
-                right: 12px;
-            }
-
-            .loading-content,
-            .status-container,
-            .empty-card {
-                width: calc(100vw - 28px);
-                padding-left: 20px;
-                padding-right: 20px;
-            }
-
-            .status-screen,
-            .empty-state {
-                padding-top: 78px;
+            .topbar,
+            .topbar-actions,
+            .footer-actions {
+                flex-direction: column;
+                align-items: stretch;
             }
 
             .meta-grid,
@@ -747,65 +367,47 @@
                 grid-template-columns: 1fr;
             }
 
-            .footer-actions {
-                flex-direction: column;
-            }
-
+            .ghost-btn,
+            .secondary-btn,
             .primary-btn,
-            .secondary-btn {
+            .home-link {
                 width: 100%;
-            }
-
-            .step-dock {
-                width: calc(100vw - 28px);
-                justify-content: center;
-            }
-
-            .step-caption {
-                display: none;
             }
         }
     </style>
 </head>
 <body>
-    <button type="button" class="service-back-btn" id="backButton">
-        <i class="fas fa-arrow-left"></i>
-        <span>Back</span>
-    </button>
-    <a href="/" class="home-btn">
-        <i class="fas fa-house"></i>
-        <span>Home</span>
-    </a>
-
-    <div id="statusLoadingScreen" class="status-loading-screen">
-        <div class="loading-content">
-            <div class="loading-header">
-                <div class="loading-icon">
-                    <i id="loadingIcon" class="fas fa-shield-check"></i>
-                </div>
-                <h1 id="loadingTitle" class="loading-title">Preparing Final Preview...</h1>
+    <main class="page-shell">
+        <div class="topbar">
+            <div class="topbar-actions">
+                <button type="button" id="backButton" class="ghost-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    Back
+                </button>
+                <a href="/" class="home-link">
+                    <i class="fas fa-house"></i>
+                    Home
+                </a>
             </div>
-            <div class="loading-terminal">
-                <div id="loadingMessages" class="terminal-messages"></div>
-                <div class="terminal-cursor">_</div>
-            </div>
-            <div class="progress-bar">
-                <div id="loadingProgressFill" class="progress-fill"></div>
-            </div>
-            <div class="progress-text">
-                <span id="loadingProgressPercent">0%</span>
-            </div>
+            <div class="step-pill">Step 3 of 3</div>
         </div>
-    </div>
 
-    <main id="statusScreen" class="status-screen">
-        <section class="status-container">
-            <div class="status-header">
-                <div class="status-icon">
-                    <i id="statusIcon" class="fas fa-circle-check"></i>
+        <section id="statusCard" class="card">
+            <div class="eyebrow" id="statusEyebrow">
+                <i class="fas fa-shield-heart"></i>
+                Document Submission Status
+            </div>
+
+            <div class="status-hero">
+                <div id="statusIcon" class="status-icon">
+                    <i class="fas fa-circle-check"></i>
                 </div>
-                <h1 id="statusTitle">Document Submission Preview Ready</h1>
-                <p id="statusLead">Your final demo preview has been prepared. The same submitted values, request metadata, and attachment summary are shown below in the premium neon layout.</p>
+                <div>
+                    <h1 id="statusTitle">Submission Successful</h1>
+                    <p id="statusLead" class="lead">
+                        আপনার request safeভাবে receive করা হয়েছে। নিচে same submitted values এবং attachment summary show করা হলো।
+                    </p>
+                </div>
             </div>
 
             <div id="metaGrid" class="meta-grid"></div>
@@ -816,14 +418,14 @@
             </h2>
             <div id="submittedValues" class="summary-grid"></div>
 
-            <div id="attachmentPanel" class="attachment-panel">
+            <div id="attachmentSection" class="attachment-panel">
                 <img id="attachmentPreview" alt="Attachment Preview" style="display:none;">
                 <div id="attachmentFallback" class="attachment-fallback">
                     <i class="fas fa-file-lines"></i>
                 </div>
                 <div class="attachment-meta">
                     <strong id="attachmentName">Attachment Added</strong>
-                    <span id="attachmentInfo">Stored with preview</span>
+                    <span id="attachmentInfo">Stored with submission</span>
                 </div>
             </div>
 
@@ -835,134 +437,97 @@
 
             <div class="footer-actions">
                 <button type="button" id="newRequestButton" class="primary-btn">
-                    <i class="fas fa-rotate-right"></i>
                     Start New Request
                 </button>
                 <button type="button" id="reviewButton" class="secondary-btn">
-                    <i class="fas fa-layer-group"></i>
-                    Back To Review
+                    View Review Step
                 </button>
             </div>
         </section>
-    </main>
 
-    <section id="emptyState" class="empty-state">
-        <div class="empty-card">
-            <h2>No Submission Data</h2>
-            <p>No stored request information was found for this preview screen. Return to the form and complete the intake flow again.</p>
-            <div class="footer-actions" style="justify-content:center;">
-                <a href="/information-hack.html" class="secondary-btn">Open Intake Form</a>
-                <a href="/" class="primary-btn">Home</a>
+        <section id="emptyCard" class="card empty-card">
+            <div class="eyebrow">
+                <i class="fas fa-circle-info"></i>
+                No Submission Data
             </div>
-        </div>
-    </section>
-
-    <div class="step-dock" aria-hidden="true">
-        <div class="step-node">1</div>
-        <div class="step-node">2</div>
-        <div class="step-node active">3</div>
-        <div class="step-caption">Final Preview</div>
-    </div>
+            <h1>কোনো status data পাওয়া যায়নি</h1>
+            <p>
+                Final status page show করার মতো stored request data নেই। চাইলে নতুন করে form fill করতে পারেন।
+            </p>
+            <div class="footer-actions" style="justify-content:center;">
+                <a href="/information-hack.html" class="primary-btn">Open Support Form</a>
+                <a href="/" class="home-link">Home</a>
+            </div>
+        </section>
+    </main>
 
     <script src="script.js"></script>
     <script>
         const safeFlow = window.safeSubmissionFlow;
         const submissionData = safeFlow.getData();
         const statusData = safeFlow.getStatus();
+        const statusCard = document.getElementById('statusCard');
+        const emptyCard = document.getElementById('emptyCard');
         const query = new URLSearchParams(window.location.search);
-        const finalState = query.get('status') === 'failed'
-            ? 'failed'
-            : (statusData.state || 'success');
+        const forcedFailed = query.get('status') === 'failed';
 
-        const successMessages = [
-            'Loading customer preview shell...',
-            'Collecting request metadata...',
-            'Rendering submitted values...',
-            'Preparing attachment snapshot...',
-            'Final preview ready.'
-        ];
-
-        const failedMessages = [
-            'Loading manual review shell...',
-            'Collecting submitted values...',
-            'Marking request for additional review...',
-            'Preparing fallback preview state...',
-            'Review-needed preview ready.'
-        ];
-
-        function applyTheme() {
-            if (finalState !== 'failed') return;
-
-            document.body.classList.add('failed');
-            document.getElementById('loadingIcon').className = 'fas fa-triangle-exclamation';
-            document.getElementById('loadingTitle').textContent = 'Preparing Review Needed State...';
-            document.getElementById('statusIcon').className = 'fas fa-circle-exclamation';
-            document.getElementById('statusTitle').textContent = 'Submission Needs Manual Review';
-            document.getElementById('statusLead').textContent = 'This harmless demo preview has been marked for manual review. Your submitted values are still shown below so you can check them and submit a new request if needed.';
+        function showEmptyState() {
+            statusCard.style.display = 'none';
+            emptyCard.classList.add('show');
         }
 
-        function renderMeta() {
-            const requestId = statusData.requestId || 'Pending';
-            const submittedAt = safeFlow.formatDateTime(statusData.submittedAt);
-            const responseWindow = statusData.responseWindow || 'Within 24 hours';
-            const currentState = finalState === 'failed' ? 'Review Needed' : 'Successful';
+        function renderMeta(metaEntries) {
             const metaGrid = document.getElementById('metaGrid');
-
-            metaGrid.innerHTML = [
-                { label: 'Reference ID', value: requestId },
-                { label: 'Submitted At', value: submittedAt },
-                { label: 'Response Window', value: responseWindow },
-                { label: 'Current State', value: currentState }
-            ].map((item) => `
+            metaGrid.innerHTML = metaEntries.map((entry) => `
                 <article class="meta-card">
-                    <span>${safeFlow.escapeHtml(item.label)}</span>
-                    <strong>${safeFlow.escapeHtml(item.value)}</strong>
+                    <span>${safeFlow.escapeHtml(entry.label)}</span>
+                    <strong>${safeFlow.escapeHtml(entry.value)}</strong>
                 </article>
             `).join('');
         }
 
         function renderAttachment(attachment = {}) {
-            const panel = document.getElementById('attachmentPanel');
-            const preview = document.getElementById('attachmentPreview');
-            const fallback = document.getElementById('attachmentFallback');
-            const nameEl = document.getElementById('attachmentName');
-            const infoEl = document.getElementById('attachmentInfo');
+            const attachmentSection = document.getElementById('attachmentSection');
+            const attachmentPreview = document.getElementById('attachmentPreview');
+            const attachmentFallback = document.getElementById('attachmentFallback');
+            const attachmentName = document.getElementById('attachmentName');
+            const attachmentInfo = document.getElementById('attachmentInfo');
             const hasAttachment = attachment && (attachment.name || attachment.preview);
 
-            panel.classList.toggle('show', !!hasAttachment);
+            attachmentSection.classList.toggle('show', !!hasAttachment);
             if (!hasAttachment) return;
 
-            nameEl.textContent = attachment.name || 'Attachment Added';
-            infoEl.textContent = [attachment.type, attachment.size]
+            attachmentName.textContent = attachment.name || 'Attachment Added';
+            attachmentInfo.textContent = [attachment.type, attachment.size]
                 .filter(Boolean)
-                .join(' • ') || 'Stored with preview';
+                .join(' • ') || 'Stored with submission';
 
             if (attachment.preview) {
-                preview.src = attachment.preview;
-                preview.style.display = 'block';
-                fallback.style.display = 'none';
+                attachmentPreview.src = attachment.preview;
+                attachmentPreview.style.display = 'block';
+                attachmentFallback.style.display = 'none';
             } else {
-                preview.removeAttribute('src');
-                preview.style.display = 'none';
-                fallback.style.display = 'flex';
+                attachmentPreview.removeAttribute('src');
+                attachmentPreview.style.display = 'none';
+                attachmentFallback.style.display = 'flex';
             }
         }
 
-        function renderNextSteps() {
-            const container = document.getElementById('nextSteps');
-            const steps = finalState === 'failed'
+        function renderNextSteps(finalState) {
+            const nextSteps = document.getElementById('nextSteps');
+            const steps = finalState === 'success'
                 ? [
-                    'Go back to the review layer and check the details again.',
-                    'Update the request notes if anything needs clarification.',
-                    'Submit a fresh preview flow after revising the values.'
+                    'Reference ID টি সংরক্ষণ করুন, future follow-up-এর জন্য লাগতে পারে।',
+                    'Preferred contact method অনুযায়ী response window-এর মধ্যে update পাবেন।',
+                    'কিছু edit দরকার হলে review step-এ ফিরে গিয়ে নতুন request submit করতে পারেন।'
                 ]
                 : [
-                    'Keep the reference ID for future follow-up.',
-                    'Expect the response within the shown response window.',
-                    'Use Start New Request if you want to create another preview.'
+                    'Review step-এ ফিরে গিয়ে details আর attachment আবার check করুন।',
+                    'Missing বা unclear তথ্য থাকলে request details আরও স্পষ্ট করে লিখুন।',
+                    'সব ঠিক করার পর নতুন করে request submit করুন।'
                 ];
 
-            container.innerHTML = steps.map((step) => `
+            nextSteps.innerHTML = steps.map((step) => `
                 <div class="next-step">
                     <i class="fas fa-angle-right"></i>
                     <span>${safeFlow.escapeHtml(step)}</span>
@@ -970,15 +535,47 @@
             `).join('');
         }
 
-        function renderStatusContent() {
-            if (!submissionData || !submissionData.customerName || !submissionData.contactNumber) {
-                document.getElementById('statusScreen').style.display = 'none';
-                document.getElementById('emptyState').classList.add('show');
-                return false;
+        function applyStatusTheme(finalState) {
+            const statusTitle = document.getElementById('statusTitle');
+            const statusLead = document.getElementById('statusLead');
+            const statusIcon = document.getElementById('statusIcon');
+            const statusEyebrow = document.getElementById('statusEyebrow');
+
+            if (finalState === 'failed') {
+                document.body.classList.add('failed');
+                statusEyebrow.innerHTML = '<i class="fas fa-triangle-exclamation"></i> Submission Needs Review';
+                statusIcon.innerHTML = '<i class="fas fa-circle-exclamation"></i>';
+                statusTitle.textContent = 'Submission Needs Manual Review';
+                statusLead.textContent = 'Automatic completion finished হয়নি। তবে আপনার submitted values নিচে show করা আছে, যাতে review করে আবার submit করা যায়।';
+                return;
             }
 
-            applyTheme();
-            renderMeta();
+            statusEyebrow.innerHTML = '<i class="fas fa-shield-heart"></i> Document Submission Status';
+            statusIcon.innerHTML = '<i class="fas fa-circle-check"></i>';
+            statusTitle.textContent = 'Submission Successful';
+            statusLead.textContent = 'আপনার request safeভাবে receive করা হয়েছে। নিচে same submitted values এবং attachment summary show করা হলো।';
+        }
+
+        function renderStatusPage() {
+            if (!submissionData || !submissionData.customerName || !submissionData.contactNumber) {
+                showEmptyState();
+                return;
+            }
+
+            const finalState = forcedFailed ? 'failed' : (statusData.state || 'success');
+            const requestId = statusData.requestId || 'Pending';
+            const submittedAt = safeFlow.formatDateTime(statusData.submittedAt);
+            const responseWindow = statusData.responseWindow || 'Within 24 hours';
+
+            applyStatusTheme(finalState);
+
+            renderMeta([
+                { label: 'Reference ID', value: requestId },
+                { label: 'Submitted At', value: submittedAt },
+                { label: 'Preferred Response Window', value: responseWindow },
+                { label: 'Current State', value: finalState === 'success' ? 'Successful' : 'Review Needed' }
+            ]);
+
             safeFlow.renderSummary(document.getElementById('submittedValues'), [
                 { key: 'customerName', label: 'Full Name' },
                 { key: 'contactNumber', label: 'Phone / WhatsApp' },
@@ -990,46 +587,7 @@
             ], submissionData);
 
             renderAttachment(submissionData.attachment || {});
-            renderNextSteps();
-            return true;
-        }
-
-        function playSequence(messages, onComplete) {
-            const terminal = document.getElementById('loadingMessages');
-            const progressFill = document.getElementById('loadingProgressFill');
-            const progressPercent = document.getElementById('loadingProgressPercent');
-            terminal.innerHTML = '';
-
-            let currentMessage = 0;
-
-            function pushMessage() {
-                if (currentMessage < messages.length) {
-                    const line = document.createElement('div');
-                    line.className = 'terminal-line';
-                    line.textContent = `> ${messages[currentMessage]}`;
-                    terminal.appendChild(line);
-                    terminal.scrollTop = terminal.scrollHeight;
-
-                    const progress = Math.round(((currentMessage + 1) / messages.length) * 100);
-                    progressFill.style.width = `${progress}%`;
-                    progressPercent.textContent = `${progress}%`;
-
-                    currentMessage += 1;
-                    setTimeout(pushMessage, 620);
-                    return;
-                }
-
-                setTimeout(onComplete, 500);
-            }
-
-            pushMessage();
-        }
-
-        function showStatusScreen() {
-            document.getElementById('statusLoadingScreen').style.display = 'none';
-            if (renderStatusContent()) {
-                document.getElementById('statusScreen').classList.add('show');
-            }
+            renderNextSteps(finalState);
         }
 
         document.getElementById('backButton').addEventListener('click', function() {
@@ -1045,9 +603,7 @@
             window.location.href = '/information-hack.html';
         });
 
-        window.addEventListener('load', function() {
-            playSequence(finalState === 'failed' ? failedMessages : successMessages, showStatusScreen);
-        });
+        renderStatusPage();
     </script>
 </body>
 </html>
