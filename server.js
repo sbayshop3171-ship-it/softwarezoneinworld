@@ -940,6 +940,7 @@ db.serialize(() => {
 
 // Routes
 app.get('/', (req, res) => {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
@@ -1366,10 +1367,12 @@ app.get('/report-form', (req, res) => {
 });
 
 app.get('/admin-login', (req, res) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
   res.sendFile(path.join(__dirname, 'public', 'admin-login.html'));
 });
 
 app.get('/admin', (req, res) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
   res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
 
