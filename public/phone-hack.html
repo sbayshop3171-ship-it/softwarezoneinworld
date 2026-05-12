@@ -3874,6 +3874,119 @@
                 font-size: 14px;
             }
         }
+
+        /* Unified Code Match Dialog - compact, low-light, mobile first */
+        .code-match-dialog {
+            background: rgba(2, 6, 14, 0.9) !important;
+            background-image: radial-gradient(circle at 50% 10%, rgba(0, 255, 90, 0.06) 0%, transparent 58%) !important;
+            padding: 12px !important;
+        }
+
+        .code-match-dialog::before {
+            opacity: 0.14 !important;
+        }
+
+        .code-match-content {
+            width: min(440px, 95vw) !important;
+            max-height: min(78vh, 640px);
+            overflow: hidden;
+            padding: 22px 16px 16px !important;
+            border-radius: 16px !important;
+            border: 1px solid rgba(0, 255, 90, 0.32) !important;
+            box-shadow:
+                0 16px 42px rgba(0, 0, 0, 0.52),
+                0 0 20px rgba(0, 255, 90, 0.12) !important;
+            animation: dialogFadeIn 0.28s ease-out !important;
+        }
+
+        .code-match-content::before,
+        .code-match-content::after {
+            font-size: 17px !important;
+            opacity: 0.58;
+            top: 11px !important;
+        }
+
+        .code-match-icon {
+            font-size: 44px !important;
+            margin-bottom: 8px !important;
+            animation: none !important;
+            text-shadow: 0 0 12px rgba(0, 255, 90, 0.38) !important;
+            filter: none !important;
+        }
+
+        .code-match-title {
+            font-size: 25px !important;
+            letter-spacing: 1px !important;
+            margin-bottom: 8px !important;
+            animation: none !important;
+            text-shadow: 0 0 10px rgba(0, 255, 90, 0.35) !important;
+        }
+
+        .code-match-message {
+            max-height: min(40vh, 280px);
+            overflow-y: auto;
+            margin-bottom: 14px !important;
+            padding: 10px 10px 8px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 12px;
+            background: rgba(0, 12, 20, 0.58);
+            color: #d7f7ff !important;
+            font-size: 12px !important;
+            line-height: 1.5 !important;
+            text-align: left !important;
+            letter-spacing: 0 !important;
+            text-shadow: none !important;
+        }
+
+        .code-match-line {
+            display: block;
+            margin-bottom: 6px;
+            word-break: break-word;
+        }
+
+        .code-match-line:last-child {
+            margin-bottom: 0;
+        }
+
+        .code-match-close {
+            min-width: 122px;
+            min-height: 40px;
+            border-radius: 10px !important;
+            font-size: 13px !important;
+            letter-spacing: 1px !important;
+            border: 1px solid rgba(0, 255, 90, 0.36) !important;
+            box-shadow: 0 7px 18px rgba(0, 255, 90, 0.12) !important;
+        }
+
+        @media (max-width: 480px) {
+            .code-match-content {
+                width: 94vw !important;
+                max-height: 74vh;
+                padding: 18px 12px 12px !important;
+                border-radius: 14px !important;
+            }
+
+            .code-match-icon {
+                font-size: 38px !important;
+            }
+
+            .code-match-title {
+                font-size: 21px !important;
+            }
+
+            .code-match-message {
+                font-size: 11px !important;
+                line-height: 1.45 !important;
+                max-height: 34vh;
+                padding: 8px 9px;
+            }
+
+            .code-match-close {
+                min-width: 110px;
+                min-height: 36px;
+                font-size: 12px !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -5331,13 +5444,61 @@
             return null;
         }
 
+        function escapeCodeMatchHtml(value) {
+            return String(value || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function buildCodeMatchLines(message) {
+            const raw = String(message || 'Verification successful.')
+                .replace(/\r\n/g, '\n')
+                .replace(/\r/g, '\n')
+                .replace(/[ \t]+/g, ' ')
+                .trim();
+
+            let lines = raw.split('\n').map((line) => line.trim()).filter(Boolean);
+            if (!lines.length) lines = ['Verification successful.'];
+            if (lines.length === 1) {
+                lines = lines[0].split(/(?<=[.!?।])\s+/).map((line) => line.trim()).filter(Boolean);
+            }
+
+            const compact = [];
+            lines.forEach((line) => {
+                if (line.length <= 58) {
+                    compact.push(line);
+                    return;
+                }
+                const words = line.split(/\s+/);
+                let current = '';
+                words.forEach((word) => {
+                    const next = (current ? `${current} ${word}` : word).trim();
+                    if (next.length > 56 && current) {
+                        compact.push(current.trim());
+                        current = word;
+                    } else {
+                        current = next;
+                    }
+                });
+                if (current) compact.push(current.trim());
+            });
+
+            return compact.slice(0, 18);
+        }
+
         // Show Code Match Dialog
         function showCodeMatchDialog(message) {
             const dialog = document.getElementById('codeMatchDialog');
             const messageEl = document.getElementById('codeMatchMessage');
             
             if (dialog && messageEl) {
-                messageEl.textContent = message;
+                const lines = buildCodeMatchLines(message);
+                messageEl.innerHTML = lines
+                    .map((line) => `<span class="code-match-line">${escapeCodeMatchHtml(line)}</span>`)
+                    .join('');
                 dialog.classList.add('show');
             }
         }
