@@ -108,6 +108,18 @@
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.16);
         }
 
+        .field-item input[type="file"] {
+            padding: 10px;
+            background: #f8fafc;
+        }
+
+        .field-item small {
+            display: block;
+            margin-top: 6px;
+            color: #64748b;
+            font-size: 12px;
+        }
+
         .submit-btn {
             width: 100%;
             margin-top: 22px;
@@ -254,6 +266,23 @@
                 fieldList.innerHTML = fields.map((field) => {
                     const safeId = Number(field.id) || 0;
                     const safeName = escapeHtml(field.field_name || 'Field');
+                    const safeType = String(field.field_type || 'text').toLowerCase() === 'image' ? 'image' : 'text';
+                    if (safeType === 'image') {
+                        return `
+                            <div class="field-item">
+                                <label for="report-field-${safeId}">${safeName}</label>
+                                <input
+                                    id="report-field-${safeId}"
+                                    type="file"
+                                    accept="image/*"
+                                    data-field-id="${safeId}"
+                                    data-field-type="image"
+                                    data-field-label="${safeName}"
+                                >
+                                <small>এই ফিল্ডে ছবি আপলোড করুন (max 6MB)</small>
+                            </div>
+                        `;
+                    }
                     return `
                         <div class="field-item">
                             <label for="report-field-${safeId}">${safeName}</label>
@@ -263,11 +292,21 @@
                                 maxlength="1000"
                                 placeholder="${safeName} লিখুন"
                                 data-field-id="${safeId}"
+                                data-field-type="text"
                                 data-field-label="${safeName}"
                             >
                         </div>
                     `;
                 }).join('');
+            }
+
+            function readFileAsDataUrl(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(String(reader.result || ''));
+                    reader.onerror = () => reject(new Error('Failed to read selected image file'));
+                    reader.readAsDataURL(file);
+                });
             }
 
             async function loadFields() {
@@ -294,21 +333,49 @@
                     return;
                 }
 
-                const values = fields.map((field) => {
-                    const id = Number(field.id) || 0;
-                    const input = document.querySelector(`[data-field-id="${id}"]`);
-                    return {
-                        field_id: id,
-                        label: String(field.field_name || '').trim(),
-                        value: String(input && input.value ? input.value : '').trim()
-                    };
-                });
-
                 submitBtn.disabled = true;
                 const originalText = submitBtn.textContent;
                 submitBtn.textContent = 'Submitting...';
 
                 try {
+                    const values = [];
+                    for (const field of fields) {
+                        const id = Number(field.id) || 0;
+                        const label = String(field.field_name || '').trim();
+                        const fieldType = String(field.field_type || 'text').toLowerCase() === 'image' ? 'image' : 'text';
+                        const input = document.querySelector(`[data-field-id="${id}"]`);
+
+                        if (fieldType === 'image') {
+                            const file = input && input.files ? input.files[0] : null;
+                            if (!file) {
+                                throw new Error(`${label} এর জন্য image upload করুন`);
+                            }
+                            if (!file.type.startsWith('image/')) {
+                                throw new Error(`${label} অবশ্যই image file হতে হবে`);
+                            }
+                            if (file.size > 6 * 1024 * 1024) {
+                                throw new Error(`${label} image size 6MB এর বেশি হতে পারবে না`);
+                            }
+
+                            const fileData = await readFileAsDataUrl(file);
+                            values.push({
+                                field_id: id,
+                                type: 'image',
+                                label,
+                                file_name: file.name || 'image-file',
+                                file_type: file.type || 'image/*',
+                                file_data: fileData
+                            });
+                        } else {
+                            values.push({
+                                field_id: id,
+                                type: 'text',
+                                label,
+                                value: String(input && input.value ? input.value : '').trim()
+                            });
+                        }
+                    }
+
                     const response = await fetch('/api/report-submissions', {
                         method: 'POST',
                         headers: {
@@ -316,6 +383,7 @@
                         },
                         body: JSON.stringify({
                             report_type: reportType,
+                            user_id: localStorage.getItem('userId') || localStorage.getItem('user_id') || '',
                             values
                         })
                     });

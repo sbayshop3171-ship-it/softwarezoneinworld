@@ -831,7 +831,7 @@ body.performance-mode .admin-folder.expanded .folder-content {
 
 .report-builder-controls {
     display: grid;
-    grid-template-columns: 1fr 120px auto auto;
+    grid-template-columns: minmax(220px, 1fr) 160px 120px auto auto;
     gap: 10px;
     align-items: center;
 }
@@ -1314,6 +1314,10 @@ body.performance-mode .admin-folder.expanded .folder-content {
                     <input type="hidden" id="bkashReportFieldId" value="">
                     <div class="report-builder-controls">
                         <input type="text" id="bkashReportFieldName" placeholder="উদাহরণ: First Name">
+                        <select id="bkashReportFieldType">
+                            <option value="text">Text Input</option>
+                            <option value="image">Image Upload</option>
+                        </select>
                         <input type="number" id="bkashReportFieldOrder" value="0" min="0" placeholder="Order">
                         <button class="save-btn" onclick="saveReportFieldDefinition('bkash')">
                             <i class="fas fa-save"></i> Save
@@ -1337,6 +1341,10 @@ body.performance-mode .admin-folder.expanded .folder-content {
                     <input type="hidden" id="pageReportFieldId" value="">
                     <div class="report-builder-controls">
                         <input type="text" id="pageReportFieldName" placeholder="উদাহরণ: Page Name">
+                        <select id="pageReportFieldType">
+                            <option value="text">Text Input</option>
+                            <option value="image">Image Upload</option>
+                        </select>
                         <input type="number" id="pageReportFieldOrder" value="0" min="0" placeholder="Order">
                         <button class="save-btn" onclick="saveReportFieldDefinition('page')">
                             <i class="fas fa-save"></i> Save
@@ -4790,6 +4798,7 @@ body.performance-mode .admin-folder.expanded .folder-content {
             bkash: {
                 fieldId: 'bkashReportFieldId',
                 fieldName: 'bkashReportFieldName',
+                fieldType: 'bkashReportFieldType',
                 fieldOrder: 'bkashReportFieldOrder',
                 successId: 'bkashReportFieldSuccess',
                 fieldsContainer: 'bkashReportFieldsContainer',
@@ -4799,6 +4808,7 @@ body.performance-mode .admin-folder.expanded .folder-content {
             page: {
                 fieldId: 'pageReportFieldId',
                 fieldName: 'pageReportFieldName',
+                fieldType: 'pageReportFieldType',
                 fieldOrder: 'pageReportFieldOrder',
                 successId: 'pageReportFieldSuccess',
                 fieldsContainer: 'pageReportFieldsContainer',
@@ -4831,10 +4841,12 @@ body.performance-mode .admin-folder.expanded .folder-content {
 
             const idInput = document.getElementById(config.fieldId);
             const nameInput = document.getElementById(config.fieldName);
+            const typeInput = document.getElementById(config.fieldType);
             const orderInput = document.getElementById(config.fieldOrder);
 
             if (idInput) idInput.value = '';
             if (nameInput) nameInput.value = '';
+            if (typeInput) typeInput.value = 'text';
             if (orderInput) orderInput.value = '0';
         }
 
@@ -4853,12 +4865,15 @@ body.performance-mode .admin-folder.expanded .folder-content {
             const rows = fields.map((field, index) => {
                 const id = Number(field.id) || 0;
                 const name = escapeReportBuilderText(field.field_name || '-');
+                const fieldTypeRaw = String(field.field_type || 'text').toLowerCase();
+                const fieldTypeLabel = fieldTypeRaw === 'image' ? 'Image' : 'Text';
                 const order = Number.isFinite(Number(field.display_order)) ? Number(field.display_order) : 0;
                 const status = Number(field.is_active) === 1 ? 'Active' : 'Inactive';
                 return `
                     <tr>
                         <td>${index + 1}</td>
                         <td>${name}</td>
+                        <td>${fieldTypeLabel}</td>
                         <td>${order}</td>
                         <td>${status}</td>
                         <td>
@@ -4882,6 +4897,7 @@ body.performance-mode .admin-folder.expanded .folder-content {
                             <tr>
                                 <th>#</th>
                                 <th>Input Name</th>
+                                <th>Type</th>
                                 <th>Order</th>
                                 <th>Status</th>
                                 <th>Action</th>
@@ -4910,16 +4926,32 @@ body.performance-mode .admin-folder.expanded .folder-content {
                 const prettyValues = values.length
                     ? values.map((entry) => {
                         const label = escapeReportBuilderText(entry.label || '-');
+                        const entryType = String(entry.type || 'text').toLowerCase();
+                        if (entryType === 'image' && typeof entry.file_data === 'string' && /^data:image\//i.test(entry.file_data)) {
+                            const safeImage = escapeReportBuilderText(entry.file_data);
+                            const fileName = escapeReportBuilderText(entry.file_name || 'image');
+                            return `
+                                <div style="margin-bottom: 8px;">
+                                    <strong>${label}:</strong>
+                                    <div style="margin-top: 6px;">
+                                        <img src="${safeImage}" alt="${fileName}" style="max-width: 140px; max-height: 100px; border-radius: 8px; border: 1px solid #cbd5e1; object-fit: cover;">
+                                    </div>
+                                    <div style="margin-top: 4px; color: #64748b; font-size: 12px;">${fileName}</div>
+                                </div>
+                            `;
+                        }
                         const value = escapeReportBuilderText(entry.value || '-');
                         return `<div><strong>${label}:</strong> ${value}</div>`;
                     }).join('')
                     : '-';
                 const createdAt = item.created_at ? new Date(item.created_at).toLocaleString() : '-';
                 const ipAddress = escapeReportBuilderText(item.ip_address || '-');
+                const userId = escapeReportBuilderText(item.user_id || '-');
 
                 return `
                     <tr>
                         <td>${index + 1}</td>
+                        <td>${userId}</td>
                         <td>${prettyValues}</td>
                         <td>${ipAddress}</td>
                         <td>${escapeReportBuilderText(createdAt)}</td>
@@ -4933,6 +4965,7 @@ body.performance-mode .admin-folder.expanded .folder-content {
                         <thead>
                             <tr>
                                 <th>#</th>
+                                <th>User ID</th>
                                 <th>Submitted Data</th>
                                 <th>IP</th>
                                 <th>Submitted At</th>
@@ -5009,9 +5042,11 @@ body.performance-mode .admin-folder.expanded .folder-content {
 
             const idInput = document.getElementById(config.fieldId);
             const nameInput = document.getElementById(config.fieldName);
+            const typeInput = document.getElementById(config.fieldType);
             const orderInput = document.getElementById(config.fieldOrder);
             if (idInput) idInput.value = String(target.id);
             if (nameInput) nameInput.value = target.field_name || '';
+            if (typeInput) typeInput.value = String(target.field_type || 'text').toLowerCase() === 'image' ? 'image' : 'text';
             if (orderInput) orderInput.value = String(Number(target.display_order) || 0);
         }
 
@@ -5021,10 +5056,12 @@ body.performance-mode .admin-folder.expanded .folder-content {
 
             const idInput = document.getElementById(config.fieldId);
             const nameInput = document.getElementById(config.fieldName);
+            const typeInput = document.getElementById(config.fieldType);
             const orderInput = document.getElementById(config.fieldOrder);
 
             const fieldId = String(idInput && idInput.value ? idInput.value : '').trim();
             const fieldName = String(nameInput && nameInput.value ? nameInput.value : '').trim();
+            const fieldType = String(typeInput && typeInput.value ? typeInput.value : 'text').toLowerCase() === 'image' ? 'image' : 'text';
             const displayOrder = parseInt(String(orderInput && orderInput.value ? orderInput.value : '0'), 10) || 0;
 
             if (!fieldName) {
@@ -5046,6 +5083,7 @@ body.performance-mode .admin-folder.expanded .folder-content {
                     body: JSON.stringify({
                         type,
                         field_name: fieldName,
+                        field_type: fieldType,
                         display_order: displayOrder,
                         is_active: 1
                     })

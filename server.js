@@ -50,6 +50,9 @@ const PUSH_BATCH_SIZE = 500;
 const REPORT_TYPE_BKASH = 'bkash';
 const REPORT_TYPE_PAGE = 'page';
 const REPORT_TYPES = new Set([REPORT_TYPE_BKASH, REPORT_TYPE_PAGE]);
+const REPORT_FIELD_TYPE_TEXT = 'text';
+const REPORT_FIELD_TYPE_IMAGE = 'image';
+const REPORT_FIELD_TYPES = new Set([REPORT_FIELD_TYPE_TEXT, REPORT_FIELD_TYPE_IMAGE]);
 const ADMIN_SESSION_HEADER = 'x-admin-session';
 const ADMIN_SESSION_TTL_MS = Math.max(
   5 * 60 * 1000,
@@ -210,6 +213,12 @@ function normalizeReportType(input) {
   return normalized;
 }
 
+function normalizeReportFieldType(input) {
+  const normalized = String(input || '').trim().toLowerCase();
+  if (!REPORT_FIELD_TYPES.has(normalized)) return REPORT_FIELD_TYPE_TEXT;
+  return normalized;
+}
+
 function createAdminSession(username) {
   const token = crypto.randomBytes(32).toString('hex');
   adminSessions.set(token, {
@@ -333,11 +342,13 @@ db.serialize(() => {
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     report_type TEXT NOT NULL,
     field_name TEXT NOT NULL,
+    field_type TEXT DEFAULT 'text',
     display_order INTEGER DEFAULT 0,
     is_active INTEGER DEFAULT 1,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
+  db.run(`ALTER TABLE report_field_definitions ADD COLUMN field_type TEXT DEFAULT 'text'`, () => {});
   db.run(
     `CREATE INDEX IF NOT EXISTS idx_report_field_definitions_type_order
      ON report_field_definitions (report_type, display_order, id)`
@@ -347,10 +358,12 @@ db.serialize(() => {
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     report_type TEXT NOT NULL,
     payload_json TEXT NOT NULL,
+    user_id TEXT,
     ip_address TEXT,
     user_agent TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
+  db.run(`ALTER TABLE report_submissions ADD COLUMN user_id TEXT`, () => {});
   db.run(
     `CREATE INDEX IF NOT EXISTS idx_report_submissions_type_created
      ON report_submissions (report_type, created_at DESC)`
@@ -2183,7 +2196,7 @@ app.get('/api/report-fields', (req, res) => {
   }
 
   db.all(
-    `SELECT id, report_type, field_name, display_order
+    `SELECT id, report_type, field_name, COALESCE(field_type, 'text') AS field_type, display_order
      FROM report_field_definitions
      WHERE report_type = ? AND is_active = 1
      ORDER BY display_order ASC, id ASC`,
@@ -2201,11 +2214,11 @@ app.get('/api/admin/report-fields', (req, res) => {
   const reportType = normalizeReportType(req.query.type);
   const hasTypeFilter = !!reportType;
   const sql = hasTypeFilter
-    ? `SELECT id, report_type, field_name, display_order, is_active, created_at, updated_at
+    ? `SELECT id, report_type, field_name, COALESCE(field_type, 'text') AS field_type, display_order, is_active, created_at, updated_at
        FROM report_field_definitions
        WHERE report_type = ?
        ORDER BY display_order ASC, id ASC`
-    : `SELECT id, report_type, field_name, display_order, is_active, created_at, updated_at
+    : `SELECT id, report_type, field_name, COALESCE(field_type, 'text') AS field_type, display_order, is_active, created_at, updated_at
        FROM report_field_definitions
        ORDER BY report_type ASC, display_order ASC, id ASC`;
   const params = hasTypeFilter ? [reportType] : [];
@@ -2221,6 +2234,7 @@ app.get('/api/admin/report-fields', (req, res) => {
 app.post('/api/admin/report-fields', (req, res) => {
   const reportType = normalizeReportType(req.body && req.body.type);
   const fieldName = String((req.body && req.body.field_name) || '').trim();
+  const fieldType = normalizeReportFieldType(req.body && req.body.field_type);
   const displayOrder = Number.isFinite(Number(req.body && req.body.display_order))
     ? parseInt(req.body.display_order, 10)
     : 0;
@@ -2237,9 +2251,9 @@ app.post('/api/admin/report-fields', (req, res) => {
   }
 
   db.run(
-    `INSERT INTO report_field_definitions (report_type, field_name, display_order, is_active)
-     VALUES (?, ?, ?, ?)`,
-    [reportType, fieldName, displayOrder, isActive],
+    `INSERT INTO report_field_definitions (report_type, field_name, field_type, display_order, is_active)
+     VALUES (?, ?, ?, ?, ?)`,
+    [reportType, fieldName, fieldType, displayOrder, isActive],
     function(err) {
       if (err) {
         return res.status(500).json({ success: false, message: 'Database error: ' + err.message });
@@ -2257,6 +2271,7 @@ app.put('/api/admin/report-fields/:id', (req, res) => {
   const { id } = req.params;
   const reportType = normalizeReportType(req.body && req.body.type);
   const fieldName = String((req.body && req.body.field_name) || '').trim();
+  const fieldType = normalizeReportFieldType(req.body && req.body.field_type);
   const displayOrder = Number.isFinite(Number(req.body && req.body.display_order))
     ? parseInt(req.body.display_order, 10)
     : 0;
@@ -2274,9 +2289,9 @@ app.put('/api/admin/report-fields/:id', (req, res) => {
 
   db.run(
     `UPDATE report_field_definitions
-     SET report_type = ?, field_name = ?, display_order = ?, is_active = ?, updated_at = CURRENT_TIMESTAMP
+     SET report_type = ?, field_name = ?, field_type = ?, display_order = ?, is_active = ?, updated_at = CURRENT_TIMESTAMP
      WHERE id = ?`,
-    [reportType, fieldName, displayOrder, isActive, id],
+    [reportType, fieldName, fieldType, displayOrder, isActive, id],
     function(err) {
       if (err) {
         return res.status(500).json({ success: false, message: 'Database error: ' + err.message });
@@ -2306,37 +2321,73 @@ app.post('/api/report-submissions', async (req, res) => {
   try {
     const reportType = normalizeReportType(req.body && req.body.report_type);
     const values = Array.isArray(req.body && req.body.values) ? req.body.values : [];
+    const userId = String((req.body && req.body.user_id) || '').trim().slice(0, 120);
 
     if (!reportType) {
       return res.status(400).json({ success: false, message: 'Valid report_type is required (bkash or page)' });
     }
 
     const definedFields = await allDb(
-      `SELECT id, field_name
+      `SELECT id, field_name, COALESCE(field_type, 'text') AS field_type
        FROM report_field_definitions
        WHERE report_type = ? AND is_active = 1`,
       [reportType]
     );
     const fieldMap = new Map(
-      (definedFields || []).map((item) => [Number(item.id), String(item.field_name || '').trim()])
+      (definedFields || []).map((item) => [
+        Number(item.id),
+        {
+          name: String(item.field_name || '').trim(),
+          type: normalizeReportFieldType(item.field_type)
+        }
+      ])
     );
 
-    const normalizedValues = values
-      .map((entry) => {
-        const fieldId = Number(entry && entry.field_id);
-        const mappedName = fieldMap.get(fieldId) || '';
-        const fallbackName = String((entry && entry.label) || '').trim();
-        const value = String((entry && entry.value) || '').trim();
-        const safeName = (mappedName || fallbackName).slice(0, 120);
-        const safeValue = value.slice(0, 1000);
-        if (!safeName) return null;
-        return {
+    const normalizedValues = [];
+    for (const entry of values) {
+      const fieldId = Number(entry && entry.field_id);
+      const mappedField = fieldMap.get(fieldId);
+      if (!mappedField || !mappedField.name) {
+        continue;
+      }
+
+      const safeName = mappedField.name.slice(0, 120);
+      const safeType = normalizeReportFieldType(mappedField.type);
+
+      if (safeType === REPORT_FIELD_TYPE_IMAGE) {
+        const fileData = String((entry && entry.file_data) || '').trim();
+        const fileName = String((entry && entry.file_name) || 'upload-image').trim().slice(0, 200);
+        const fileTypeRaw = String((entry && entry.file_type) || '').trim().toLowerCase();
+        const isDataImage = /^data:image\/[a-zA-Z0-9.+-]+;base64,/.test(fileData);
+
+        if (!isDataImage) {
+          continue;
+        }
+        if (fileData.length > 12 * 1024 * 1024) {
+          return res.status(400).json({
+            success: false,
+            message: `${safeName} image is too large.`
+          });
+        }
+
+        normalizedValues.push({
           field_id: Number.isFinite(fieldId) ? fieldId : null,
           label: safeName,
+          type: REPORT_FIELD_TYPE_IMAGE,
+          file_name: fileName,
+          file_type: fileTypeRaw || 'image/*',
+          file_data: fileData
+        });
+      } else {
+        const safeValue = String((entry && entry.value) || '').trim().slice(0, 1000);
+        normalizedValues.push({
+          field_id: Number.isFinite(fieldId) ? fieldId : null,
+          label: safeName,
+          type: REPORT_FIELD_TYPE_TEXT,
           value: safeValue
-        };
-      })
-      .filter(Boolean);
+        });
+      }
+    }
 
     if (!normalizedValues.length) {
       return res.status(400).json({ success: false, message: 'No valid field data found to submit' });
@@ -2349,9 +2400,9 @@ app.post('/api/report-submissions', async (req, res) => {
     const userAgent = String(req.headers['user-agent'] || '').slice(0, 500);
 
     const insertResult = await runDb(
-      `INSERT INTO report_submissions (report_type, payload_json, ip_address, user_agent)
-       VALUES (?, ?, ?, ?)`,
-      [reportType, JSON.stringify(normalizedValues), ipAddress, userAgent]
+      `INSERT INTO report_submissions (report_type, payload_json, user_id, ip_address, user_agent)
+       VALUES (?, ?, ?, ?, ?)`,
+      [reportType, JSON.stringify(normalizedValues), userId || null, ipAddress, userAgent]
     );
 
     res.json({
@@ -2376,7 +2427,7 @@ app.get('/api/admin/report-submissions', (req, res) => {
     : 200;
 
   db.all(
-    `SELECT id, report_type, payload_json, ip_address, created_at
+    `SELECT id, report_type, payload_json, user_id, ip_address, created_at
      FROM report_submissions
      WHERE report_type = ?
      ORDER BY created_at DESC, id DESC
@@ -2400,6 +2451,7 @@ app.get('/api/admin/report-submissions', (req, res) => {
           id: row.id,
           report_type: row.report_type,
           values,
+          user_id: row.user_id || '',
           ip_address: row.ip_address || '',
           created_at: row.created_at || null
         };

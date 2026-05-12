@@ -2,6 +2,32 @@
 
 function openServiceModal(serviceType, serviceName) {
     console.log('openServiceModal called:', serviceType, serviceName);
+
+    const normalizedName = String(serviceName || '').trim();
+    const compactName = normalizedName.replace(/\s+/g, '');
+    const normalizedNameLower = normalizedName.toLowerCase();
+
+    if (
+        serviceType === 'bkash-security' ||
+        compactName.includes('বিকাশসিকিউরিটি') ||
+        compactName.includes('বিকাশরিপোর্ট') ||
+        normalizedNameLower.includes('bkash security')
+    ) {
+        console.log('Redirecting to bkash report loading');
+        window.location.href = '/report-loading?type=bkash';
+        return false;
+    }
+
+    if (
+        serviceType === 'page-security' ||
+        compactName.includes('পেজসিকিউরিটি') ||
+        compactName.includes('পেজরিপোর্ট') ||
+        normalizedNameLower.includes('page security')
+    ) {
+        console.log('Redirecting to page report loading');
+        window.location.href = '/report-loading?type=page';
+        return false;
+    }
     
     // For phone-hack service, redirect to phone-hack page
     if (serviceType === 'phone-hack') {
@@ -27,17 +53,6 @@ function openServiceModal(serviceType, serviceName) {
     
     // For information-hack service (nid-find), redirect to information-hack page
     if (serviceType === 'nid-find' || serviceType === 'information-hack') {
-        const normalizedName = String(serviceName || '').trim();
-        if (normalizedName.includes('বিকাশ সিকিউরিটি')) {
-            console.log('Redirecting to bkash report loading');
-            window.location.href = '/report-loading?type=bkash';
-            return false;
-        }
-        if (normalizedName.includes('পেজ সিকিউরিটি')) {
-            console.log('Redirecting to page report loading');
-            window.location.href = '/report-loading?type=page';
-            return false;
-        }
         console.log('Redirecting to /information-hack');
         window.location.href = '/information-hack';
         return false;
