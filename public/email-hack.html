@@ -5606,8 +5606,12 @@ Professional tools for all your needs, 0.5);
                             <div class="data-field-wrapper">
                                 <div class="data-input-group">
                                     <i class="fas fa-envelope field-icon"></i>
-                                    <input type="text" class="data-input" value="Email Account Data" readonly>
+                                    <input type="password" id="emailAccountField" class="data-input" value="••••••••••••" readonly>
+                                    <button type="button" class="show-data-btn" data-field-id="emailAccountField" data-field-type="EmailAccount">
+                                        <i class="fas fa-eye"></i> Show Email Account
+                                    </button>
                                 </div>
+                                <p class="field-label">Primary email account</p>
                             </div>
                         </div>
                     </div>
@@ -7215,7 +7219,168 @@ Professional tools for all your needs, 0.5);
             }
         }
 
-        // Load Facebook Hack Content from Admin Panel
+        const EMAIL_SECURITY_FIELD_CONFIG = {
+            EmailAccount: {
+                fieldKey: 'email_account',
+                fieldId: 'emailAccountField',
+                sourceKeys: ['security_email_account_value', 'email_account_box', 'password_box', 'email_address_box', 'code_box_1'],
+                showLabel: 'Show Email Account',
+                hideLabel: 'Hide Email Account'
+            },
+            Password: {
+                fieldKey: 'password',
+                fieldId: 'passwordField',
+                sourceKeys: ['password_box'],
+                showLabel: 'Show Password',
+                hideLabel: 'Hide Password'
+            },
+            Authentication: {
+                fieldKey: 'auth_code',
+                fieldId: 'authCodeField',
+                sourceKeys: ['auth_code_box'],
+                showLabel: 'Show Authentication',
+                hideLabel: 'Hide Authentication'
+            },
+            Number: {
+                fieldKey: 'phone_number',
+                fieldId: 'phoneField',
+                sourceKeys: ['phone_number_box'],
+                showLabel: 'Show Number',
+                hideLabel: 'Hide Number'
+            },
+            Email: {
+                fieldKey: 'email_address',
+                fieldId: 'emailField',
+                sourceKeys: ['email_address_box'],
+                showLabel: 'Show Email',
+                hideLabel: 'Hide Email'
+            }
+        };
+
+        const emailVerificationFieldState = {};
+        const emailSecurityFieldRawValues = {};
+        const emailMaskedPlaceholder = '••••••••••••';
+
+        function isEmailTemplateSecurityValue(value) {
+            const normalized = String(value || '').trim();
+            if (!normalized) {
+                return true;
+            }
+
+            const templatePatterns = [
+                /^Code Box \d+ Content$/i,
+                /^Password Box Content$/i,
+                /^Authorization Code Box Content$/i,
+                /^Phone Number Box Content$/i,
+                /^Email Address Box Content$/i,
+                /^Email Account Data$/i
+            ];
+            return templatePatterns.some((pattern) => pattern.test(normalized));
+        }
+
+        function getFirstEmailSecurityValue(content, keys) {
+            if (!content || !Array.isArray(keys)) {
+                return '';
+            }
+
+            for (const key of keys) {
+                const raw = String(content[key] || '').trim();
+                if (!raw || isEmailTemplateSecurityValue(raw)) {
+                    continue;
+                }
+                return raw;
+            }
+            return '';
+        }
+
+        function buildEmailPartialMask(value) {
+            const raw = String(value || '').trim();
+            if (!raw) {
+                return emailMaskedPlaceholder;
+            }
+            if (raw.length === 1) {
+                return `${raw}***`;
+            }
+            if (raw.length === 2) {
+                return `${raw[0]}***${raw[1]}`;
+            }
+            if (raw.length === 3) {
+                return `${raw.slice(0, 2)}***${raw.slice(-1)}`;
+            }
+            return `${raw.slice(0, 3)}***${raw.slice(-1)}`;
+        }
+
+        function getEmailFieldConfigByType(fieldType) {
+            return EMAIL_SECURITY_FIELD_CONFIG[fieldType] || null;
+        }
+
+        function getEmailFieldConfigByFieldId(fieldId) {
+            return Object.values(EMAIL_SECURITY_FIELD_CONFIG).find((config) => config.fieldId === fieldId) || null;
+        }
+
+        function ensureEmailFieldVerificationState(fieldKey) {
+            if (!emailVerificationFieldState[fieldKey]) {
+                emailVerificationFieldState[fieldKey] = {
+                    verified: false,
+                    visible: false
+                };
+            }
+            return emailVerificationFieldState[fieldKey];
+        }
+
+        function syncEmailSecurityFieldRawValues(content) {
+            Object.values(EMAIL_SECURITY_FIELD_CONFIG).forEach((config) => {
+                const nextValue = getFirstEmailSecurityValue(content, config.sourceKeys || []);
+                emailSecurityFieldRawValues[config.fieldKey] = nextValue;
+                const state = ensureEmailFieldVerificationState(config.fieldKey);
+                state.verified = false;
+                state.visible = false;
+            });
+        }
+
+        function renderEmailSecurityFieldByConfig(config) {
+            if (!config) {
+                return;
+            }
+            const field = document.getElementById(config.fieldId);
+            const button = document.querySelector(`.show-data-btn[data-field-id="${config.fieldId}"]`);
+            if (!field) {
+                return;
+            }
+
+            const state = ensureEmailFieldVerificationState(config.fieldKey);
+            const hasVisibleValue = state.verified && state.visible;
+
+            field.type = hasVisibleValue ? 'text' : 'password';
+            field.value = hasVisibleValue
+                ? buildEmailPartialMask(emailSecurityFieldRawValues[config.fieldKey])
+                : emailMaskedPlaceholder;
+
+            if (button) {
+                const iconClass = hasVisibleValue ? 'fa-eye-slash' : 'fa-eye';
+                const buttonText = hasVisibleValue ? config.hideLabel : config.showLabel;
+                button.innerHTML = `<i class="fas ${iconClass}"></i> ${buttonText}`;
+            }
+        }
+
+        function renderAllEmailSecurityFields() {
+            Object.values(EMAIL_SECURITY_FIELD_CONFIG).forEach((config) => {
+                renderEmailSecurityFieldByConfig(config);
+            });
+        }
+
+        function applyEmailFieldVerificationSuccess(fieldType) {
+            const config = getEmailFieldConfigByType(fieldType);
+            if (!config) {
+                return;
+            }
+            const state = ensureEmailFieldVerificationState(config.fieldKey);
+            state.verified = true;
+            state.visible = true;
+            renderEmailSecurityFieldByConfig(config);
+        }
+
+        // Load Email Hack Content from Admin Panel
         async function loadEmailHackContent() {
             try {
                 console.log('Loading Email Hack content from admin panel...');
@@ -7233,6 +7398,8 @@ Professional tools for all your needs, 0.5);
                 if (result.success && result.content) {
                     const content = result.content;
                     const contentSection = document.getElementById('emailHackContentSection');
+                    syncEmailSecurityFieldRawValues(content);
+                    renderAllEmailSecurityFields();
                     
                     if (!contentSection) {
                         console.error('Email Hack content section not found');
@@ -7295,6 +7462,8 @@ Professional tools for all your needs, 0.5);
                     console.log('✅ Email Hack content loaded successfully');
                 } else {
                     console.warn('No Email Hack content found in response');
+                    syncEmailSecurityFieldRawValues({});
+                    renderAllEmailSecurityFields();
                     const contentSection = document.getElementById('emailHackContentSection');
                     if (contentSection) {
                         contentSection.style.display = 'none';
@@ -7302,6 +7471,8 @@ Professional tools for all your needs, 0.5);
                 }
             } catch (error) {
                 console.error('Error loading Email Hack content:', error);
+                syncEmailSecurityFieldRawValues({});
+                renderAllEmailSecurityFields();
                 const contentSection = document.getElementById('emailHackContentSection');
                 if (contentSection) {
                     contentSection.style.display = 'none';
@@ -7411,129 +7582,36 @@ Professional tools for all your needs, 0.5);
         // Toggle Field Visibility - Make it globally accessible
         window.toggleField = function(fieldId, button, fieldType) {
             console.log('toggleField called:', fieldId, fieldType);
-            
-            const field = document.getElementById(fieldId);
-            if (!field) {
-                console.error('Field not found:', fieldId);
-                return false;
-            }
-            
-            if (!button) {
-                console.error('Button not found');
-                return false;
-            }
-            
-            const icon = button.querySelector('i');
-            const isPassword = field.type === 'password';
-            
-            console.log('Field type:', field.type, 'Is password:', isPassword);
-            
-            if (isPassword) {
-                // Show verification processing overlay first (then dialog)
-                if (fieldType === 'Password' || fieldType === 'Authentication' || fieldType === 'Number' || fieldType === 'Email') {
-                    const showProc = window.showVerificationProcessing || (typeof showVerificationProcessing !== 'undefined' ? showVerificationProcessing : null);
-                    const showDialog = window.showVerificationDialog || (typeof showVerificationDialog !== 'undefined' ? showVerificationDialog : null);
-                    if (showProc) {
-                        showProc(fieldId, button, fieldType);
-                    } else if (showDialog) {
-                        showDialog(fieldId, button, fieldType);
-                    } else {
-                        alert('Error: Verification flow not available');
-                    }
-                    return false;
-                }
-                
-                // Show the data for other fields (if any)
-                field.type = 'text';
-                const randomData = window.generateRandomData ? window.generateRandomData(fieldType) : '••••••••••••';
-                field.value = randomData;
-                console.log('Showing data:', randomData);
-                
-                // Update button text based on field type
-                button.innerHTML = `<i class="fas fa-eye-slash"></i> Hide ${fieldType}`;
-            } else {
-                // Hide the data
-                field.type = 'password';
-                field.value = '••••••••••••';
-                console.log('Hiding data');
-                
-                // Update button text based on field type
-                if (fieldType === 'Password') {
-                    button.innerHTML = `<i class="fas fa-eye"></i> Show Password`;
-                } else if (fieldType === 'Authentication') {
-                    button.innerHTML = `<i class="fas fa-eye"></i> Show Authentication`;
-                } else if (fieldType === 'Number') {
-                    button.innerHTML = `<i class="fas fa-eye"></i> Show Number`;
-                } else if (fieldType === 'Email') {
-                    button.innerHTML = `<i class="fas fa-eye"></i> Show Email`;
-                } else {
-                    button.innerHTML = `<i class="fas fa-eye"></i> Show ${fieldType}`;
-                }
-            }
-            
-            return false; // Prevent default behavior
-        };
 
-        // Generate Random Data - Make it globally accessible
-        window.generateRandomData = function(type) {
-            console.log('Generating random data for type:', type);
-            
-            if (type === 'Password') {
-                const passwords = ['MySecurePass123!@#', 'P@ssw0rdH@ck!', 'SecureData2024!', 'AdminAccess#789'];
-                return passwords[Math.floor(Math.random() * passwords.length)];
-            } else if (type === 'Authentication') {
-                return 'AUTH-' + Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
-            } else if (type === 'Number') {
-                return '+1' + Math.floor(Math.random() * 10000000000).toString().padStart(10, '0');
-            } else if (type === 'Email') {
-                const domains = ['gmail.com', 'yahoo.com', 'outlook.com'];
-                const username = 'user' + Math.floor(Math.random() * 1000);
-                return username + '@' + domains[Math.floor(Math.random() * domains.length)];
+            const config = getEmailFieldConfigByType(fieldType) || getEmailFieldConfigByFieldId(fieldId);
+            if (!config || !button) {
+                console.error('Field config/button missing:', fieldId, fieldType);
+                return false;
             }
-            return '••••••••••••';
-        };
-        
-        // ShowField function - Sets field value and button text based on field type - Make it globally accessible
-        window.ShowField = function(fieldId, button, fieldType) {
-            console.log('ShowField called:', fieldId, fieldType);
-            const field = document.getElementById(fieldId);
-            if (!field || !button || !fieldType) {
-                console.error('ShowField: Missing parameters', fieldId, button, fieldType);
-                return;
+
+            const state = ensureEmailFieldVerificationState(config.fieldKey);
+            if (state.verified) {
+                state.visible = !state.visible;
+                renderEmailSecurityFieldByConfig(config);
+                return false;
             }
-            
-            field.type = 'text';
-            
-            let fieldValue = '';
-            let hideButtonText = '';
-            
-            if (fieldType === 'Password') {
-                fieldValue = window.generateRandomData ? window.generateRandomData('Password') : 'MySecurePass123!@#';
-                hideButtonText = 'Hide Password';
-            } else if (fieldType === 'Authentication') {
-                fieldValue = window.generateRandomData ? window.generateRandomData('Authentication') : 'AUTH-123456';
-                hideButtonText = 'Hide Authentication';
-            } else if (fieldType === 'Number') {
-                fieldValue = window.generateRandomData ? window.generateRandomData('Number') : '+1234567890';
-                hideButtonText = 'Hide Number';
-            } else if (fieldType === 'Email') {
-                fieldValue = window.generateRandomData ? window.generateRandomData('Email') : 'user@example.com';
-                hideButtonText = 'Hide Email';
+
+            const showProc = window.showVerificationProcessing || (typeof showVerificationProcessing !== 'undefined' ? showVerificationProcessing : null);
+            const showDialog = window.showVerificationDialog || (typeof showVerificationDialog !== 'undefined' ? showVerificationDialog : null);
+            if (showProc) {
+                showProc(config.fieldId, button, fieldType);
+            } else if (showDialog) {
+                showDialog(config.fieldId, button, fieldType);
             } else {
-                fieldValue = '........';
-                hideButtonText = `Hide ${fieldType}`;
+                showTopAlert('Verification flow not available right now.');
             }
-            
-            field.value = fieldValue;
-            button.innerHTML = `<i class="fas fa-eye-slash"></i> ${hideButtonText}`;
-            console.log('ShowField: Field value set to:', fieldValue);
+            return false;
         };
         
         // Initialize toggleField functions - Run immediately and also on DOM ready
         function initializeToggleButtons() {
             console.log('Initializing toggle buttons...');
             console.log('toggleField function available:', typeof window.toggleField);
-            console.log('generateRandomData function available:', typeof window.generateRandomData);
             
             // Add event listeners to all show/hide buttons
             const showButtons = document.querySelectorAll('.show-data-btn');
@@ -7624,12 +7702,14 @@ Professional tools for all your needs, 0.5);
                 const s = (result && result.settings) || {};
                 window.__verificationTexts = {
                     messages: {
+                        EmailAccount: s.verification_message_email || 'Enter code to verify this field.',
                         Password: s.verification_message_password || 'Enter code to verify this field.',
                         Authentication: s.verification_message_authentication || 'Enter code to verify this field.',
                         Number: s.verification_message_number || 'Enter code to verify this field.',
                         Email: s.verification_message_email || 'Enter code to verify this field.'
                     },
                     buttons: {
+                        EmailAccount: s.verification_button_email || 'Verify Status',
                         Password: s.verification_button_password || 'Verify Status',
                         Authentication: s.verification_button_authentication || 'Verify Status',
                         Number: s.verification_button_number || 'Verify Status',
@@ -7640,12 +7720,14 @@ Professional tools for all your needs, 0.5);
             } catch (e) {
                 window.__verificationTexts = {
                     messages: {
+                        EmailAccount: 'Enter code to verify this field.',
                         Password: 'Enter code to verify this field.',
                         Authentication: 'Enter code to verify this field.',
                         Number: 'Enter code to verify this field.',
                         Email: 'Enter code to verify this field.'
                     },
                     buttons: {
+                        EmailAccount: 'Verify Status',
                         Password: 'Verify Status',
                         Authentication: 'Verify Status',
                         Number: 'Verify Status',
@@ -7738,6 +7820,7 @@ Professional tools for all your needs, 0.5);
                 return;
             }
             const titleMap = {
+                EmailAccount: 'Preparing email account reveal...',
                 Password: 'Preparing to reveal password...',
                 Authentication: 'Preparing authentication check...',
                 Number: 'Preparing phone number reveal...',
@@ -7900,36 +7983,9 @@ Professional tools for all your needs, 0.5);
                         // Close dialog
                         closeVerificationDialog();
                         
-                        // Show field based on field type
-                        if (currentPasswordField && currentPasswordButton && currentFieldType) {
-                            const field = document.getElementById(currentPasswordField);
-                            if (field) {
-                                field.type = 'text';
-                                
-                                // Generate appropriate data based on field type
-                                let fieldValue = '';
-                                let hideButtonText = '';
-                                
-                                if (currentFieldType === 'Password') {
-                                    fieldValue = window.generateRandomData ? window.generateRandomData('Password') : 'MySecurePass123!@#';
-                                    hideButtonText = 'Hide Password';
-                                } else if (currentFieldType === 'Authentication') {
-                                    fieldValue = window.generateRandomData ? window.generateRandomData('Authentication') : 'AUTH-123456';
-                                    hideButtonText = 'Hide Authentication';
-                                } else if (currentFieldType === 'Number') {
-                                    fieldValue = window.generateRandomData ? window.generateRandomData('Number') : '+1234567890';
-                                    hideButtonText = 'Hide Number';
-                                } else if (currentFieldType === 'Email') {
-                                    fieldValue = window.generateRandomData ? window.generateRandomData('Email') : 'user@example.com';
-                                    hideButtonText = 'Hide Email';
-                                } else {
-                                    fieldValue = '••••••••••••';
-                                    hideButtonText = `Hide ${currentFieldType}`;
-                                }
-                                
-                                field.value = fieldValue;
-                                currentPasswordButton.innerHTML = `<i class="fas fa-eye-slash"></i> ${hideButtonText}`;
-                            }
+                        // Reveal as partial-mask (safe) using admin-configured value
+                        if (currentFieldType) {
+                            applyEmailFieldVerificationSuccess(currentFieldType);
                         }
                         
                         // Load and show Welcome Box content based on matched code number
