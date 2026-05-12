@@ -4924,6 +4924,15 @@
         console.log('Information hack page script loaded');
         window.addEventListener('load', function() {
             console.log('Information hack page loaded, starting animation');
+            const forceView = new URLSearchParams(window.location.search).get('view');
+            if (forceView === 'contact') {
+                if (window.history && typeof window.history.replaceState === 'function') {
+                    window.history.replaceState({}, document.title, '/information-hack.html');
+                }
+                goBackToInformationContactPage();
+                return;
+            }
+
             const messages = [
                 'Connecting to information database...',
                 'Loading search modules...',
