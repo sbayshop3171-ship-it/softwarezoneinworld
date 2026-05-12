@@ -1473,11 +1473,41 @@
 
         @media (max-width: 560px) {
             .social-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 8px;
+            }
+
+            .social-card {
+                padding: 10px 8px;
+                border-radius: 12px;
+            }
+
+            .social-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+                margin-bottom: 7px;
+                border-radius: 10px;
+            }
+
+            .social-name {
+                font-size: 14px;
+                margin-bottom: 5px;
+            }
+
+            .social-description {
+                display: none;
+            }
+
+            .social-link-btn {
+                padding: 7px 8px;
+                border-radius: 12px;
+                font-size: 11px;
             }
 
             .recommendations-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 8px;
             }
 
             .top-whatsapp-item {
@@ -1492,15 +1522,33 @@
 
         @media (max-width: 420px) {
             body {
-                padding: 10px;
+                padding: 8px;
             }
 
             .header-title {
-                font-size: 26px;
+                font-size: 24px;
             }
 
             .social-card {
-                padding: 12px 10px;
+                padding: 9px 7px;
+            }
+
+            .social-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+                margin-bottom: 6px;
+            }
+
+            .social-name {
+                font-size: 13px;
+                margin-bottom: 4px;
+            }
+
+            .social-link-btn {
+                font-size: 10px;
+                padding: 6px 6px;
+                border-radius: 10px;
             }
 
             .service-modal-title {
