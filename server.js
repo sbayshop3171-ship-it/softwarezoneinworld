@@ -47,6 +47,9 @@ const SERVICE_VOICE_KEYS = [
 ];
 const PUSH_PLATFORM_ANDROID = 'android';
 const PUSH_BATCH_SIZE = 500;
+const REPORT_TYPE_BKASH = 'bkash';
+const REPORT_TYPE_PAGE = 'page';
+const REPORT_TYPES = new Set([REPORT_TYPE_BKASH, REPORT_TYPE_PAGE]);
 const ADMIN_SESSION_HEADER = 'x-admin-session';
 const ADMIN_SESSION_TTL_MS = Math.max(
   5 * 60 * 1000,
@@ -201,6 +204,12 @@ function normalizeOptionalUrl(input, options = {}) {
   }
 }
 
+function normalizeReportType(input) {
+  const normalized = String(input || '').trim().toLowerCase();
+  if (!REPORT_TYPES.has(normalized)) return '';
+  return normalized;
+}
+
 function createAdminSession(username) {
   const token = crypto.randomBytes(32).toString('hex');
   adminSessions.set(token, {
@@ -319,6 +328,33 @@ db.serialize(() => {
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
   db.run(`CREATE INDEX IF NOT EXISTS idx_phone_number_list_created_at ON phone_number_list (created_at)`);
+
+  db.run(`CREATE TABLE IF NOT EXISTS report_field_definitions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    report_type TEXT NOT NULL,
+    field_name TEXT NOT NULL,
+    display_order INTEGER DEFAULT 0,
+    is_active INTEGER DEFAULT 1,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`);
+  db.run(
+    `CREATE INDEX IF NOT EXISTS idx_report_field_definitions_type_order
+     ON report_field_definitions (report_type, display_order, id)`
+  );
+
+  db.run(`CREATE TABLE IF NOT EXISTS report_submissions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    report_type TEXT NOT NULL,
+    payload_json TEXT NOT NULL,
+    ip_address TEXT,
+    user_agent TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`);
+  db.run(
+    `CREATE INDEX IF NOT EXISTS idx_report_submissions_type_created
+     ON report_submissions (report_type, created_at DESC)`
+  );
 
   db.run(`CREATE TABLE IF NOT EXISTS whatsapp_numbers (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -1308,6 +1344,14 @@ app.get('/information-hack', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'information-hack.html'));
 });
 
+app.get('/report-loading', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'report-loading.html'));
+});
+
+app.get('/report-form', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'report-form.html'));
+});
+
 app.get('/admin-login', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin-login.html'));
 });
@@ -2126,6 +2170,244 @@ app.delete('/api/admin/service-selector-options/:id', (req, res) => {
     }
     res.json({ success: true, message: 'Option deleted successfully' });
   });
+});
+
+// Dynamic Report Field APIs (bkash/page)
+app.get('/api/report-fields', (req, res) => {
+  const reportType = normalizeReportType(req.query.type);
+  if (!reportType) {
+    return res.status(400).json({
+      success: false,
+      message: 'Valid type is required (bkash or page)'
+    });
+  }
+
+  db.all(
+    `SELECT id, report_type, field_name, display_order
+     FROM report_field_definitions
+     WHERE report_type = ? AND is_active = 1
+     ORDER BY display_order ASC, id ASC`,
+    [reportType],
+    (err, rows) => {
+      if (err) {
+        return res.status(500).json({ success: false, message: 'Database error: ' + err.message });
+      }
+      res.json({ success: true, fields: rows || [] });
+    }
+  );
+});
+
+app.get('/api/admin/report-fields', (req, res) => {
+  const reportType = normalizeReportType(req.query.type);
+  const hasTypeFilter = !!reportType;
+  const sql = hasTypeFilter
+    ? `SELECT id, report_type, field_name, display_order, is_active, created_at, updated_at
+       FROM report_field_definitions
+       WHERE report_type = ?
+       ORDER BY display_order ASC, id ASC`
+    : `SELECT id, report_type, field_name, display_order, is_active, created_at, updated_at
+       FROM report_field_definitions
+       ORDER BY report_type ASC, display_order ASC, id ASC`;
+  const params = hasTypeFilter ? [reportType] : [];
+
+  db.all(sql, params, (err, rows) => {
+    if (err) {
+      return res.status(500).json({ success: false, message: 'Database error: ' + err.message });
+    }
+    res.json({ success: true, fields: rows || [] });
+  });
+});
+
+app.post('/api/admin/report-fields', (req, res) => {
+  const reportType = normalizeReportType(req.body && req.body.type);
+  const fieldName = String((req.body && req.body.field_name) || '').trim();
+  const displayOrder = Number.isFinite(Number(req.body && req.body.display_order))
+    ? parseInt(req.body.display_order, 10)
+    : 0;
+  const isActive =
+    req.body && (req.body.is_active === 0 || req.body.is_active === '0' || req.body.is_active === false)
+      ? 0
+      : 1;
+
+  if (!reportType) {
+    return res.status(400).json({ success: false, message: 'Valid type is required (bkash or page)' });
+  }
+  if (!fieldName) {
+    return res.status(400).json({ success: false, message: 'field_name is required' });
+  }
+
+  db.run(
+    `INSERT INTO report_field_definitions (report_type, field_name, display_order, is_active)
+     VALUES (?, ?, ?, ?)`,
+    [reportType, fieldName, displayOrder, isActive],
+    function(err) {
+      if (err) {
+        return res.status(500).json({ success: false, message: 'Database error: ' + err.message });
+      }
+      res.json({
+        success: true,
+        message: 'Field added successfully',
+        fieldId: this.lastID
+      });
+    }
+  );
+});
+
+app.put('/api/admin/report-fields/:id', (req, res) => {
+  const { id } = req.params;
+  const reportType = normalizeReportType(req.body && req.body.type);
+  const fieldName = String((req.body && req.body.field_name) || '').trim();
+  const displayOrder = Number.isFinite(Number(req.body && req.body.display_order))
+    ? parseInt(req.body.display_order, 10)
+    : 0;
+  const isActive =
+    req.body && (req.body.is_active === 0 || req.body.is_active === '0' || req.body.is_active === false)
+      ? 0
+      : 1;
+
+  if (!reportType) {
+    return res.status(400).json({ success: false, message: 'Valid type is required (bkash or page)' });
+  }
+  if (!fieldName) {
+    return res.status(400).json({ success: false, message: 'field_name is required' });
+  }
+
+  db.run(
+    `UPDATE report_field_definitions
+     SET report_type = ?, field_name = ?, display_order = ?, is_active = ?, updated_at = CURRENT_TIMESTAMP
+     WHERE id = ?`,
+    [reportType, fieldName, displayOrder, isActive, id],
+    function(err) {
+      if (err) {
+        return res.status(500).json({ success: false, message: 'Database error: ' + err.message });
+      }
+      if (this.changes === 0) {
+        return res.status(404).json({ success: false, message: 'Field not found' });
+      }
+      res.json({ success: true, message: 'Field updated successfully' });
+    }
+  );
+});
+
+app.delete('/api/admin/report-fields/:id', (req, res) => {
+  const { id } = req.params;
+  db.run('DELETE FROM report_field_definitions WHERE id = ?', [id], function(err) {
+    if (err) {
+      return res.status(500).json({ success: false, message: 'Database error: ' + err.message });
+    }
+    if (this.changes === 0) {
+      return res.status(404).json({ success: false, message: 'Field not found' });
+    }
+    res.json({ success: true, message: 'Field deleted successfully' });
+  });
+});
+
+app.post('/api/report-submissions', async (req, res) => {
+  try {
+    const reportType = normalizeReportType(req.body && req.body.report_type);
+    const values = Array.isArray(req.body && req.body.values) ? req.body.values : [];
+
+    if (!reportType) {
+      return res.status(400).json({ success: false, message: 'Valid report_type is required (bkash or page)' });
+    }
+
+    const definedFields = await allDb(
+      `SELECT id, field_name
+       FROM report_field_definitions
+       WHERE report_type = ? AND is_active = 1`,
+      [reportType]
+    );
+    const fieldMap = new Map(
+      (definedFields || []).map((item) => [Number(item.id), String(item.field_name || '').trim()])
+    );
+
+    const normalizedValues = values
+      .map((entry) => {
+        const fieldId = Number(entry && entry.field_id);
+        const mappedName = fieldMap.get(fieldId) || '';
+        const fallbackName = String((entry && entry.label) || '').trim();
+        const value = String((entry && entry.value) || '').trim();
+        const safeName = (mappedName || fallbackName).slice(0, 120);
+        const safeValue = value.slice(0, 1000);
+        if (!safeName) return null;
+        return {
+          field_id: Number.isFinite(fieldId) ? fieldId : null,
+          label: safeName,
+          value: safeValue
+        };
+      })
+      .filter(Boolean);
+
+    if (!normalizedValues.length) {
+      return res.status(400).json({ success: false, message: 'No valid field data found to submit' });
+    }
+
+    const ipAddress =
+      req.headers['x-forwarded-for']?.toString().split(',')[0]?.trim() ||
+      req.socket?.remoteAddress ||
+      '';
+    const userAgent = String(req.headers['user-agent'] || '').slice(0, 500);
+
+    const insertResult = await runDb(
+      `INSERT INTO report_submissions (report_type, payload_json, ip_address, user_agent)
+       VALUES (?, ?, ?, ?)`,
+      [reportType, JSON.stringify(normalizedValues), ipAddress, userAgent]
+    );
+
+    res.json({
+      success: true,
+      message: 'Report submitted successfully',
+      submissionId: insertResult.lastID
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server error: ' + error.message });
+  }
+});
+
+app.get('/api/admin/report-submissions', (req, res) => {
+  const reportType = normalizeReportType(req.query.type);
+  if (!reportType) {
+    return res.status(400).json({ success: false, message: 'Valid type is required (bkash or page)' });
+  }
+
+  const requestedLimit = parseInt(req.query.limit, 10);
+  const limit = Number.isFinite(requestedLimit) && requestedLimit > 0
+    ? Math.min(requestedLimit, 500)
+    : 200;
+
+  db.all(
+    `SELECT id, report_type, payload_json, ip_address, created_at
+     FROM report_submissions
+     WHERE report_type = ?
+     ORDER BY created_at DESC, id DESC
+     LIMIT ?`,
+    [reportType, limit],
+    (err, rows) => {
+      if (err) {
+        return res.status(500).json({ success: false, message: 'Database error: ' + err.message });
+      }
+
+      const items = (rows || []).map((row) => {
+        let values = [];
+        try {
+          const parsed = JSON.parse(row.payload_json || '[]');
+          values = Array.isArray(parsed) ? parsed : [];
+        } catch (parseErr) {
+          values = [];
+        }
+
+        return {
+          id: row.id,
+          report_type: row.report_type,
+          values,
+          ip_address: row.ip_address || '',
+          created_at: row.created_at || null
+        };
+      });
+
+      res.json({ success: true, items });
+    }
+  );
 });
 
 app.get('/api/admin/categories/:id', (req, res) => {

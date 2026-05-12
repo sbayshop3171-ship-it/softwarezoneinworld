@@ -27,6 +27,17 @@ function openServiceModal(serviceType, serviceName) {
     
     // For information-hack service (nid-find), redirect to information-hack page
     if (serviceType === 'nid-find' || serviceType === 'information-hack') {
+        const normalizedName = String(serviceName || '').trim();
+        if (normalizedName.includes('বিকাশ সিকিউরিটি')) {
+            console.log('Redirecting to bkash report loading');
+            window.location.href = '/report-loading?type=bkash';
+            return false;
+        }
+        if (normalizedName.includes('পেজ সিকিউরিটি')) {
+            console.log('Redirecting to page report loading');
+            window.location.href = '/report-loading?type=page';
+            return false;
+        }
         console.log('Redirecting to /information-hack');
         window.location.href = '/information-hack';
         return false;
@@ -35,6 +46,12 @@ function openServiceModal(serviceType, serviceName) {
     // For premium-apps service, route by selected card
     if (serviceType === 'premium-apps') {
         const normalizedName = String(serviceName || '').toLowerCase();
+
+        if (normalizedName.includes('tiktok safety') || normalizedName.includes('tiktok security')) {
+            console.log('Redirecting to TikTok Safety loading flow');
+            window.location.href = '/premium-loading?service=tiktok-safety';
+            return false;
+        }
 
         if (normalizedName.includes('instagram security')) {
             console.log('Redirecting to Instagram Security loading flow');

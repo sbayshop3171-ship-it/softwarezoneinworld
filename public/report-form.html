@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Report Form</title>
+    <style>
+        :root {
+            color-scheme: light;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at 10% 10%, #eef8ff 0%, #f8fbff 45%, #f4f4f5 100%);
+            font-family: 'Rajdhani', 'Segoe UI', sans-serif;
+            color: #0f172a;
+            padding: 20px 16px 28px;
+        }
+
+        .page {
+            width: min(100%, 470px);
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            border: 1px solid #cbd5e1;
+            border-radius: 999px;
+            background: #ffffff;
+            color: #0f172a;
+            padding: 9px 16px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 26px rgba(15, 23, 42, 0.1);
+        }
+
+        .card {
+            margin-top: 14px;
+            background: #ffffff;
+            border: 1px solid #dbe3ee;
+            border-radius: 22px;
+            padding: 22px 18px;
+            box-shadow: 0 14px 36px rgba(15, 23, 42, 0.08);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 999px;
+            border: 1px solid #bfdbfe;
+            color: #1d4ed8;
+            padding: 6px 13px;
+            background: #eff6ff;
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin-top: 10px;
+            font-size: clamp(30px, 8vw, 42px);
+            line-height: 1.06;
+            color: #0f172a;
+        }
+
+        .subtitle {
+            margin-top: 10px;
+            color: #475569;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .field-list {
+            margin-top: 22px;
+            display: grid;
+            gap: 14px;
+        }
+
+        .field-item label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 15px;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .field-item input {
+            width: 100%;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            background: #ffffff;
+            color: #0f172a;
+            font-size: 16px;
+            padding: 12px 13px;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .field-item input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.16);
+        }
+
+        .submit-btn {
+            width: 100%;
+            margin-top: 22px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #1d4ed8, #2563eb 60%, #38bdf8);
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 0.03em;
+            padding: 13px 14px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 22px rgba(37, 99, 235, 0.28);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .empty-box,
+        .status-box {
+            margin-top: 18px;
+            border-radius: 12px;
+            padding: 12px 13px;
+            border: 1px solid #dbe3ee;
+            background: #f8fafc;
+            color: #334155;
+            font-size: 14px;
+            line-height: 1.45;
+        }
+
+        .status-box.ok {
+            border-color: #86efac;
+            background: #f0fdf4;
+            color: #14532d;
+        }
+
+        .status-box.error {
+            border-color: #fecaca;
+            background: #fef2f2;
+            color: #7f1d1d;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 20px 15px;
+                border-radius: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <button class="back-btn" type="button" onclick="window.location.href='/'">← Back</button>
+
+        <main class="card">
+            <span class="badge" id="reportTypeBadge">Report</span>
+            <h1 id="reportTitle">Dynamic Form</h1>
+            <p class="subtitle">Admin panel থেকে যেসব field name add করবেন, সেগুলো এখানে auto show হবে।</p>
+
+            <form id="reportForm" novalidate>
+                <div id="fieldList" class="field-list"></div>
+                <button id="submitBtn" class="submit-btn" type="submit">Submit Report</button>
+            </form>
+
+            <div id="emptyBox" class="empty-box" style="display:none;"></div>
+            <div id="statusBox" class="status-box" style="display:none;"></div>
+        </main>
+    </div>
+
+    <script>
+        (function initDynamicReportPage() {
+            const typeMap = {
+                bkash: {
+                    badge: 'Bkash Report',
+                    title: 'বিকাশ রিপোর্ট ফর্ম'
+                },
+                page: {
+                    badge: 'Page Report',
+                    title: 'পেজ রিপোর্ট ফর্ম'
+                }
+            };
+
+            const params = new URLSearchParams(window.location.search || '');
+            const rawType = String(params.get('type') || '').trim().toLowerCase();
+            const reportType = rawType === 'bkash' || rawType === 'page' ? rawType : 'bkash';
+
+            const reportForm = document.getElementById('reportForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const fieldList = document.getElementById('fieldList');
+            const emptyBox = document.getElementById('emptyBox');
+            const statusBox = document.getElementById('statusBox');
+            const reportTypeBadge = document.getElementById('reportTypeBadge');
+            const reportTitle = document.getElementById('reportTitle');
+
+            let fields = [];
+
+            if (reportTypeBadge) reportTypeBadge.textContent = typeMap[reportType].badge;
+            if (reportTitle) reportTitle.textContent = typeMap[reportType].title;
+
+            function escapeHtml(value) {
+                return String(value || '')
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;');
+            }
+
+            function showStatus(message, mode) {
+                if (!statusBox) return;
+                statusBox.className = 'status-box';
+                if (mode === 'ok') statusBox.classList.add('ok');
+                if (mode === 'error') statusBox.classList.add('error');
+                statusBox.textContent = message;
+                statusBox.style.display = 'block';
+            }
+
+            function renderFields(list) {
+                fields = Array.isArray(list) ? list : [];
+                if (!fieldList) return;
+
+                if (fields.length === 0) {
+                    fieldList.innerHTML = '';
+                    if (emptyBox) {
+                        emptyBox.style.display = 'block';
+                        emptyBox.textContent = 'এই রিপোর্টের জন্য এখনো কোন input field add করা হয়নি। Admin panel থেকে field name add করুন।';
+                    }
+                    if (submitBtn) submitBtn.disabled = true;
+                    return;
+                }
+
+                if (emptyBox) emptyBox.style.display = 'none';
+                if (submitBtn) submitBtn.disabled = false;
+
+                fieldList.innerHTML = fields.map((field) => {
+                    const safeId = Number(field.id) || 0;
+                    const safeName = escapeHtml(field.field_name || 'Field');
+                    return `
+                        <div class="field-item">
+                            <label for="report-field-${safeId}">${safeName}</label>
+                            <input
+                                id="report-field-${safeId}"
+                                type="text"
+                                maxlength="1000"
+                                placeholder="${safeName} লিখুন"
+                                data-field-id="${safeId}"
+                                data-field-label="${safeName}"
+                            >
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            async function loadFields() {
+                try {
+                    const response = await fetch(`/api/report-fields?type=${encodeURIComponent(reportType)}`, {
+                        cache: 'no-cache'
+                    });
+                    const result = await response.json();
+                    if (!response.ok || !result.success) {
+                        throw new Error(result.message || 'Failed to load fields');
+                    }
+
+                    renderFields(Array.isArray(result.fields) ? result.fields : []);
+                } catch (error) {
+                    renderFields([]);
+                    showStatus(`Field load failed: ${error.message}`, 'error');
+                }
+            }
+
+            async function submitReport(event) {
+                event.preventDefault();
+                if (!Array.isArray(fields) || fields.length === 0) {
+                    showStatus('No fields available for submit.', 'error');
+                    return;
+                }
+
+                const values = fields.map((field) => {
+                    const id = Number(field.id) || 0;
+                    const input = document.querySelector(`[data-field-id="${id}"]`);
+                    return {
+                        field_id: id,
+                        label: String(field.field_name || '').trim(),
+                        value: String(input && input.value ? input.value : '').trim()
+                    };
+                });
+
+                submitBtn.disabled = true;
+                const originalText = submitBtn.textContent;
+                submitBtn.textContent = 'Submitting...';
+
+                try {
+                    const response = await fetch('/api/report-submissions', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            report_type: reportType,
+                            values
+                        })
+                    });
+                    const result = await response.json();
+
+                    if (!response.ok || !result.success) {
+                        throw new Error(result.message || 'Submit failed');
+                    }
+
+                    reportForm.reset();
+                    showStatus('রিপোর্ট ডেটা সফলভাবে সেভ হয়েছে।', 'ok');
+                } catch (error) {
+                    showStatus(`Submit failed: ${error.message}`, 'error');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                }
+            }
+
+            if (reportForm) {
+                reportForm.addEventListener('submit', submitReport);
+            }
+
+            loadFields();
+        })();
+    </script>
+</body>
+</html>

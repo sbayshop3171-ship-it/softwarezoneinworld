@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Loading</title>
+    <style>
+        :root {
+            color-scheme: dark;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Rajdhani', 'Segoe UI', sans-serif;
+            background: #050505;
+            color: #e7ffe7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+        }
+
+        .loading-card {
+            width: min(100%, 430px);
+            background: #0e0e0e;
+            border: 1px solid #242424;
+            border-radius: 18px;
+            padding: 26px 20px;
+            box-shadow: 0 18px 46px rgba(0, 0, 0, 0.45);
+        }
+
+        .label {
+            color: #9aa0a6;
+            font-size: 13px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            font-size: clamp(28px, 7vw, 40px);
+            line-height: 1.1;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #c7cbcf;
+            font-size: 15px;
+            margin-bottom: 24px;
+        }
+
+        .terminal {
+            border: 1px solid #2f2f2f;
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 20px;
+            background: #080808;
+            min-height: 142px;
+        }
+
+        .terminal-line {
+            color: #89ffa2;
+            font-size: 14px;
+            line-height: 1.7;
+            display: flex;
+            gap: 8px;
+        }
+
+        .terminal-line .token {
+            color: #38bdf8;
+        }
+
+        .terminal-line.fade {
+            opacity: 0.65;
+        }
+
+        .progress-wrap {
+            border-radius: 999px;
+            background: #1f1f1f;
+            border: 1px solid #313131;
+            overflow: hidden;
+            height: 14px;
+        }
+
+        .progress {
+            width: 0;
+            height: 100%;
+            background: linear-gradient(90deg, #1df457, #08b6ff);
+            transition: width 0.16s linear;
+        }
+
+        .time-row {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #b9bec4;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <main class="loading-card">
+        <div class="label">Secure Loader</div>
+        <h1 id="loadingTitle">Report System</h1>
+        <p class="subtitle">Preparing your secure report page. Please wait...</p>
+
+        <div class="terminal">
+            <div class="terminal-line"><span class="token">&gt;</span><span>Initializing secure report channel...</span></div>
+            <div class="terminal-line"><span class="token">&gt;</span><span>Connecting to protected database...</span></div>
+            <div class="terminal-line fade"><span class="token">&gt;</span><span>Verifying dynamic field structure...</span></div>
+            <div class="terminal-line fade"><span class="token">&gt;</span><span>Starting report environment...</span></div>
+        </div>
+
+        <div class="progress-wrap">
+            <div id="progressBar" class="progress"></div>
+        </div>
+        <div class="time-row">
+            <span id="loadingTypeText">Loading...</span>
+            <strong id="countdownText">10s</strong>
+        </div>
+    </main>
+
+    <script>
+        (function initReportLoading() {
+            const params = new URLSearchParams(window.location.search || '');
+            const rawType = String(params.get('type') || '').trim().toLowerCase();
+            const reportType = rawType === 'bkash' || rawType === 'page' ? rawType : 'bkash';
+            const headingMap = {
+                bkash: 'বিকাশ রিপোর্ট',
+                page: 'পেজ রিপোর্ট'
+            };
+
+            const titleEl = document.getElementById('loadingTitle');
+            const typeTextEl = document.getElementById('loadingTypeText');
+            const countdownEl = document.getElementById('countdownText');
+            const progressEl = document.getElementById('progressBar');
+
+            if (titleEl) {
+                titleEl.textContent = headingMap[reportType] || 'Report System';
+            }
+            if (typeTextEl) {
+                typeTextEl.textContent = `${headingMap[reportType] || 'Report'} loading...`;
+            }
+
+            const totalMs = 10000;
+            const tickMs = 100;
+            let elapsedMs = 0;
+
+            const timer = setInterval(() => {
+                elapsedMs += tickMs;
+                const percent = Math.min(100, Math.round((elapsedMs / totalMs) * 100));
+                const secondsLeft = Math.max(0, Math.ceil((totalMs - elapsedMs) / 1000));
+
+                if (progressEl) progressEl.style.width = `${percent}%`;
+                if (countdownEl) countdownEl.textContent = `${secondsLeft}s`;
+
+                if (elapsedMs >= totalMs) {
+                    clearInterval(timer);
+                    window.location.href = `/report-form?type=${encodeURIComponent(reportType)}`;
+                }
+            }, tickMs);
+        })();
+    </script>
+</body>
+</html>

@@ -808,6 +808,46 @@ body.performance-mode .admin-folder.expanded .folder-content {
     color: #334155;
 }
 
+.report-builder-card {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    background: #ffffff;
+    margin-bottom: 16px;
+}
+
+.report-builder-card h3 {
+    margin: 0 0 10px 0;
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.report-builder-card h4 {
+    margin: 14px 0 10px 0;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+
+.report-builder-controls {
+    display: grid;
+    grid-template-columns: 1fr 120px auto auto;
+    gap: 10px;
+    align-items: center;
+}
+
+.report-builder-status {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin-top: 8px;
+}
+
+@media (max-width: 860px) {
+    .report-builder-controls {
+        grid-template-columns: 1fr;
+    }
+}
+
 @media (max-width: 768px) {
     body {
         padding: 12px;
@@ -1252,6 +1292,67 @@ body.performance-mode .admin-folder.expanded .folder-content {
                     <div id="serviceSelectorOptionsList" class="selector-options-list">
                         <p style="color: #8fddac;">No cards yet. Add your first card.</p>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="admin-folder" id="reportBuilderFolder">
+            <div class="folder-header" onclick="toggleFolder('reportBuilderFolder')">
+                <div class="folder-title">
+                    <i class="fas fa-table"></i>
+                    <h2>Bkash & Page Report Builder</h2>
+                </div>
+                <i class="fas fa-chevron-down folder-toggle"></i>
+            </div>
+            <div class="folder-content">
+                <p style="color: #64748b; margin-bottom: 14px;">
+                    এখানে যেসব input name add করবেন, ওই নামগুলো user report page-এ auto field হিসেবে show হবে।
+                </p>
+
+                <div class="report-builder-card">
+                    <h3>বিকাশ রিপোর্ট ইনপুট নাম</h3>
+                    <input type="hidden" id="bkashReportFieldId" value="">
+                    <div class="report-builder-controls">
+                        <input type="text" id="bkashReportFieldName" placeholder="উদাহরণ: First Name">
+                        <input type="number" id="bkashReportFieldOrder" value="0" min="0" placeholder="Order">
+                        <button class="save-btn" onclick="saveReportFieldDefinition('bkash')">
+                            <i class="fas fa-save"></i> Save
+                        </button>
+                        <button class="save-btn" style="background:#64748b; border-color:#64748b;" onclick="resetReportFieldForm('bkash')">
+                            <i class="fas fa-undo"></i> Reset
+                        </button>
+                    </div>
+                    <div class="report-builder-status">Button flow: বিকাশ সিকিউরিটি → 10s loading → dynamic form</div>
+                    <div class="success-message" id="bkashReportFieldSuccess">
+                        <i class="fas fa-check-circle"></i> Field saved successfully!
+                    </div>
+                    <h4>Field List</h4>
+                    <div id="bkashReportFieldsContainer" class="phone-number-list-empty">No fields added yet.</div>
+                    <h4>বিকাশ রিপোর্ট ডাটা</h4>
+                    <div id="bkashReportSubmissionsContainer" class="phone-number-list-empty">No submitted data yet.</div>
+                </div>
+
+                <div class="report-builder-card">
+                    <h3>পেজ রিপোর্ট ইনপুট নাম</h3>
+                    <input type="hidden" id="pageReportFieldId" value="">
+                    <div class="report-builder-controls">
+                        <input type="text" id="pageReportFieldName" placeholder="উদাহরণ: Page Name">
+                        <input type="number" id="pageReportFieldOrder" value="0" min="0" placeholder="Order">
+                        <button class="save-btn" onclick="saveReportFieldDefinition('page')">
+                            <i class="fas fa-save"></i> Save
+                        </button>
+                        <button class="save-btn" style="background:#64748b; border-color:#64748b;" onclick="resetReportFieldForm('page')">
+                            <i class="fas fa-undo"></i> Reset
+                        </button>
+                    </div>
+                    <div class="report-builder-status">Button flow: পেজ সিকিউরিটি → 10s loading → dynamic form</div>
+                    <div class="success-message" id="pageReportFieldSuccess">
+                        <i class="fas fa-check-circle"></i> Field saved successfully!
+                    </div>
+                    <h4>Field List</h4>
+                    <div id="pageReportFieldsContainer" class="phone-number-list-empty">No fields added yet.</div>
+                    <h4>পেজ রিপোর্ট ডাটা</h4>
+                    <div id="pageReportSubmissionsContainer" class="phone-number-list-empty">No submitted data yet.</div>
                 </div>
             </div>
         </div>
@@ -3308,6 +3409,7 @@ body.performance-mode .admin-folder.expanded .folder-content {
             advancedToolsFolder: [loadAdvancedToolsContent],
             phoneHackFolder: [loadPhoneHackContent],
             serviceSelectorFolder: [loadServiceSelectorOptions],
+            reportBuilderFolder: [loadReportBuilderData],
             facebookHackFolder: [loadFacebookHackContent],
             informationHackFolder: [loadInformationHackContent],
             socialMediaServiceFolder: [loadSocialMediaService],
@@ -4680,6 +4782,319 @@ body.performance-mode .admin-folder.expanded .folder-content {
             } catch (error) {
                 console.error('Error deleting selector card:', error);
                 alert('Error deleting card: ' + error.message);
+            }
+        }
+
+        // Dynamic report builder (bkash/page)
+        const REPORT_FIELD_TYPES = {
+            bkash: {
+                fieldId: 'bkashReportFieldId',
+                fieldName: 'bkashReportFieldName',
+                fieldOrder: 'bkashReportFieldOrder',
+                successId: 'bkashReportFieldSuccess',
+                fieldsContainer: 'bkashReportFieldsContainer',
+                submissionsContainer: 'bkashReportSubmissionsContainer',
+                title: 'বিকাশ রিপোর্ট'
+            },
+            page: {
+                fieldId: 'pageReportFieldId',
+                fieldName: 'pageReportFieldName',
+                fieldOrder: 'pageReportFieldOrder',
+                successId: 'pageReportFieldSuccess',
+                fieldsContainer: 'pageReportFieldsContainer',
+                submissionsContainer: 'pageReportSubmissionsContainer',
+                title: 'পেজ রিপোর্ট'
+            }
+        };
+
+        const reportFieldDefinitionsCache = {
+            bkash: [],
+            page: []
+        };
+
+        function getReportTypeConfig(type) {
+            return REPORT_FIELD_TYPES[type] || null;
+        }
+
+        function escapeReportBuilderText(value) {
+            return String(value || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function resetReportFieldForm(type) {
+            const config = getReportTypeConfig(type);
+            if (!config) return;
+
+            const idInput = document.getElementById(config.fieldId);
+            const nameInput = document.getElementById(config.fieldName);
+            const orderInput = document.getElementById(config.fieldOrder);
+
+            if (idInput) idInput.value = '';
+            if (nameInput) nameInput.value = '';
+            if (orderInput) orderInput.value = '0';
+        }
+
+        function renderReportFieldDefinitions(type, fields) {
+            const config = getReportTypeConfig(type);
+            if (!config) return;
+
+            const container = document.getElementById(config.fieldsContainer);
+            if (!container) return;
+
+            if (!Array.isArray(fields) || fields.length === 0) {
+                container.innerHTML = '<p class="phone-number-list-empty">No fields added yet.</p>';
+                return;
+            }
+
+            const rows = fields.map((field, index) => {
+                const id = Number(field.id) || 0;
+                const name = escapeReportBuilderText(field.field_name || '-');
+                const order = Number.isFinite(Number(field.display_order)) ? Number(field.display_order) : 0;
+                const status = Number(field.is_active) === 1 ? 'Active' : 'Inactive';
+                return `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${name}</td>
+                        <td>${order}</td>
+                        <td>${status}</td>
+                        <td>
+                            <div class="selector-option-actions">
+                                <button class="save-btn" style="background:#00d4ff; padding:7px 11px; font-size:12px;" onclick="editReportFieldDefinition('${type}', ${id})">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="save-btn" style="background:#ff0066; padding:7px 11px; font-size:12px;" onclick="deleteReportFieldDefinition('${type}', ${id})">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            container.innerHTML = `
+                <div class="phone-number-list-table-wrap">
+                    <table class="phone-number-list-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Input Name</th>
+                                <th>Order</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function renderReportSubmissions(type, items) {
+            const config = getReportTypeConfig(type);
+            if (!config) return;
+
+            const container = document.getElementById(config.submissionsContainer);
+            if (!container) return;
+
+            if (!Array.isArray(items) || items.length === 0) {
+                container.innerHTML = '<p class="phone-number-list-empty">No submitted data yet.</p>';
+                return;
+            }
+
+            const rows = items.map((item, index) => {
+                const values = Array.isArray(item.values) ? item.values : [];
+                const prettyValues = values.length
+                    ? values.map((entry) => {
+                        const label = escapeReportBuilderText(entry.label || '-');
+                        const value = escapeReportBuilderText(entry.value || '-');
+                        return `<div><strong>${label}:</strong> ${value}</div>`;
+                    }).join('')
+                    : '-';
+                const createdAt = item.created_at ? new Date(item.created_at).toLocaleString() : '-';
+                const ipAddress = escapeReportBuilderText(item.ip_address || '-');
+
+                return `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${prettyValues}</td>
+                        <td>${ipAddress}</td>
+                        <td>${escapeReportBuilderText(createdAt)}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            container.innerHTML = `
+                <div class="phone-number-list-table-wrap">
+                    <table class="phone-number-list-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Submitted Data</th>
+                                <th>IP</th>
+                                <th>Submitted At</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        async function loadReportFieldDefinitions(type) {
+            const config = getReportTypeConfig(type);
+            if (!config) return;
+
+            try {
+                const endpointPath = `/api/admin/report-fields?type=${encodeURIComponent(type)}`;
+                const { response, result } = await requestJson(endpointPath, { cache: 'no-cache' });
+                if (!response.ok || !result.success) {
+                    throw new Error(buildApiErrorMessage(endpointPath, response, result, 'Failed to load report fields'));
+                }
+
+                const fields = Array.isArray(result.fields) ? result.fields : [];
+                reportFieldDefinitionsCache[type] = fields;
+                renderReportFieldDefinitions(type, fields);
+            } catch (error) {
+                console.error(`Error loading ${type} report fields:`, error);
+                const container = document.getElementById(config.fieldsContainer);
+                if (container) {
+                    container.innerHTML = `<p class="phone-number-list-empty">Failed to load fields: ${escapeReportBuilderText(error.message)}</p>`;
+                }
+            }
+        }
+
+        async function loadReportSubmissions(type) {
+            const config = getReportTypeConfig(type);
+            if (!config) return;
+
+            try {
+                const endpointPath = `/api/admin/report-submissions?type=${encodeURIComponent(type)}&limit=300`;
+                const { response, result } = await requestJson(endpointPath, { cache: 'no-cache' });
+                if (!response.ok || !result.success) {
+                    throw new Error(buildApiErrorMessage(endpointPath, response, result, 'Failed to load report submissions'));
+                }
+                renderReportSubmissions(type, Array.isArray(result.items) ? result.items : []);
+            } catch (error) {
+                console.error(`Error loading ${type} report submissions:`, error);
+                const container = document.getElementById(config.submissionsContainer);
+                if (container) {
+                    container.innerHTML = `<p class="phone-number-list-empty">Failed to load data: ${escapeReportBuilderText(error.message)}</p>`;
+                }
+            }
+        }
+
+        async function loadReportBuilderData() {
+            await Promise.all([
+                loadReportFieldDefinitions('bkash'),
+                loadReportSubmissions('bkash'),
+                loadReportFieldDefinitions('page'),
+                loadReportSubmissions('page')
+            ]);
+        }
+
+        function editReportFieldDefinition(type, id) {
+            const config = getReportTypeConfig(type);
+            if (!config) return;
+
+            const fields = reportFieldDefinitionsCache[type] || [];
+            const target = fields.find((item) => Number(item.id) === Number(id));
+            if (!target) {
+                alert('Field data not found');
+                return;
+            }
+
+            const idInput = document.getElementById(config.fieldId);
+            const nameInput = document.getElementById(config.fieldName);
+            const orderInput = document.getElementById(config.fieldOrder);
+            if (idInput) idInput.value = String(target.id);
+            if (nameInput) nameInput.value = target.field_name || '';
+            if (orderInput) orderInput.value = String(Number(target.display_order) || 0);
+        }
+
+        async function saveReportFieldDefinition(type) {
+            const config = getReportTypeConfig(type);
+            if (!config) return;
+
+            const idInput = document.getElementById(config.fieldId);
+            const nameInput = document.getElementById(config.fieldName);
+            const orderInput = document.getElementById(config.fieldOrder);
+
+            const fieldId = String(idInput && idInput.value ? idInput.value : '').trim();
+            const fieldName = String(nameInput && nameInput.value ? nameInput.value : '').trim();
+            const displayOrder = parseInt(String(orderInput && orderInput.value ? orderInput.value : '0'), 10) || 0;
+
+            if (!fieldName) {
+                alert('Please enter an input name');
+                return;
+            }
+
+            try {
+                const endpointPath = fieldId
+                    ? `/api/admin/report-fields/${encodeURIComponent(fieldId)}`
+                    : '/api/admin/report-fields';
+                const method = fieldId ? 'PUT' : 'POST';
+
+                const { response, result } = await requestJson(endpointPath, {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        type,
+                        field_name: fieldName,
+                        display_order: displayOrder,
+                        is_active: 1
+                    })
+                });
+
+                if (!response.ok || !result.success) {
+                    throw new Error(buildApiErrorMessage(endpointPath, response, result, 'Failed to save field'));
+                }
+
+                const successEl = document.getElementById(config.successId);
+                if (successEl) {
+                    successEl.classList.add('show');
+                    setTimeout(() => successEl.classList.remove('show'), 2500);
+                }
+
+                showNotification(`${config.title} field saved successfully!`);
+                resetReportFieldForm(type);
+                await loadReportFieldDefinitions(type);
+            } catch (error) {
+                console.error(`Error saving ${type} report field:`, error);
+                alert(`Error saving field: ${error.message}`);
+            }
+        }
+
+        async function deleteReportFieldDefinition(type, id) {
+            const config = getReportTypeConfig(type);
+            if (!config) return;
+
+            if (!confirm(`Delete this ${config.title} input field?`)) {
+                return;
+            }
+
+            try {
+                const endpointPath = `/api/admin/report-fields/${encodeURIComponent(id)}`;
+                const { response, result } = await requestJson(endpointPath, { method: 'DELETE' });
+
+                if (!response.ok || !result.success) {
+                    throw new Error(buildApiErrorMessage(endpointPath, response, result, 'Failed to delete field'));
+                }
+
+                if (String(document.getElementById(config.fieldId)?.value || '') === String(id)) {
+                    resetReportFieldForm(type);
+                }
+
+                showNotification(`${config.title} field deleted`);
+                await loadReportFieldDefinitions(type);
+            } catch (error) {
+                console.error(`Error deleting ${type} report field:`, error);
+                alert(`Error deleting field: ${error.message}`);
             }
         }
 
