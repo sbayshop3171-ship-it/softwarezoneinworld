@@ -2090,31 +2090,41 @@
                 statusId: 'securityStatusEmailAccount',
                 noteId: 'securityNoteEmailAccount',
                 buttonQuery: '.verify-status-btn[data-field-key="email_account"]',
-                labelId: 'securityEmailAccountLabel'
+                labelId: 'securityEmailAccountLabel',
+                inputId: 'securityValueEmailAccount',
+                sourceKeys: ['security_email_account_value', 'email_account_box', 'code_box_1', 'password_box', 'email_address_box']
             },
             password: {
                 statusId: 'securityStatusPassword',
                 noteId: 'securityNotePassword',
                 buttonQuery: '.verify-status-btn[data-field-key="password"]',
-                labelId: 'securityPasswordLabel'
+                labelId: 'securityPasswordLabel',
+                inputId: 'securityValuePassword',
+                sourceKeys: ['password_box']
             },
             auth_code: {
                 statusId: 'securityStatusAuthCode',
                 noteId: 'securityNoteAuthCode',
                 buttonQuery: '.verify-status-btn[data-field-key="auth_code"]',
-                labelId: 'securityAuthCodeLabel'
+                labelId: 'securityAuthCodeLabel',
+                inputId: 'securityValueAuthCode',
+                sourceKeys: ['auth_code_box']
             },
             phone_number: {
                 statusId: 'securityStatusPhone',
                 noteId: 'securityNotePhone',
                 buttonQuery: '.verify-status-btn[data-field-key="phone_number"]',
-                labelId: 'securityPhoneLabel'
+                labelId: 'securityPhoneLabel',
+                inputId: 'securityValuePhone',
+                sourceKeys: ['phone_number_box']
             },
             email_address: {
                 statusId: 'securityStatusEmail',
                 noteId: 'securityNoteEmail',
                 buttonQuery: '.verify-status-btn[data-field-key="email_address"]',
-                labelId: 'securityEmailLabel'
+                labelId: 'securityEmailLabel',
+                inputId: 'securityValueEmail',
+                sourceKeys: ['email_address_box']
             }
         };
 
@@ -2124,9 +2134,11 @@
         let fieldVerificationCurrentField = null;
         let fieldVerificationInterval = null;
         let verificationButtonLabel = 'Verify Status';
+        let securityMaskedPlaceholder = '••••••••••••';
         let securitySupportMessage = 'সঠিক কোড পেতে নিচের WhatsApp নাম্বারে যোগাযোগ করুন';
         let processingStepTexts = null;
         const fieldVerificationState = {};
+        const securityFieldRawValues = {};
         const facebookContactFlowIntervals = new Set();
         const facebookContactFlowTimeouts = new Set();
 
@@ -2339,6 +2351,78 @@
             el.value = value;
         }
 
+        function isTemplateSecurityValue(value) {
+            const normalized = String(value || '').trim();
+            if (!normalized) {
+                return true;
+            }
+            const templatePatterns = [
+                /^Code Box \d+ Content$/i,
+                /^Password Box Content$/i,
+                /^Authorization Code Box Content$/i,
+                /^Phone Number Box Content$/i,
+                /^Email Address Box Content$/i
+            ];
+            return templatePatterns.some((pattern) => pattern.test(normalized));
+        }
+
+        function getFirstSecurityValue(content, keys) {
+            if (!content || !Array.isArray(keys)) {
+                return '';
+            }
+            for (const key of keys) {
+                const raw = String(content[key] || '').trim();
+                if (!raw || isTemplateSecurityValue(raw)) {
+                    continue;
+                }
+                return raw;
+            }
+            return '';
+        }
+
+        function buildPartialMask(value) {
+            const raw = String(value || '').trim();
+            if (!raw) {
+                return securityMaskedPlaceholder;
+            }
+            if (raw.length === 1) {
+                return `${raw}***`;
+            }
+            if (raw.length === 2) {
+                return `${raw[0]}***${raw[1]}`;
+            }
+            if (raw.length === 3) {
+                return `${raw.slice(0, 2)}***${raw.slice(-1)}`;
+            }
+            return `${raw.slice(0, 3)}***${raw.slice(-1)}`;
+        }
+
+        function renderSecurityFieldValue(fieldKey) {
+            const config = SECURITY_FIELD_CONFIG[fieldKey];
+            if (!config || !config.inputId) {
+                return;
+            }
+            const inputEl = document.getElementById(config.inputId);
+            if (!inputEl) {
+                return;
+            }
+            const state = ensureFieldVerificationState(fieldKey);
+            if (state.verified) {
+                inputEl.type = 'text';
+                inputEl.value = buildPartialMask(securityFieldRawValues[fieldKey]);
+            } else {
+                inputEl.type = 'password';
+                inputEl.value = securityMaskedPlaceholder;
+            }
+        }
+
+        function syncSecurityFieldRawValues(content) {
+            Object.keys(SECURITY_FIELD_CONFIG).forEach((fieldKey) => {
+                const config = SECURITY_FIELD_CONFIG[fieldKey];
+                securityFieldRawValues[fieldKey] = getFirstSecurityValue(content, config.sourceKeys || []);
+            });
+        }
+
         function ensureFieldVerificationState(fieldKey) {
             if (!fieldVerificationState[fieldKey]) {
                 fieldVerificationState[fieldKey] = {
@@ -2374,6 +2458,8 @@
                 if (noteEl && !state.verified) {
                     noteEl.textContent = 'Masked data stays hidden after verification.';
                 }
+
+                renderSecurityFieldValue(fieldKey);
             });
         }
 
@@ -2570,7 +2656,7 @@
                 }
 
                 const content = result.content;
-                const maskedPlaceholder = content.security_masked_placeholder || '••••••••••••';
+                securityMaskedPlaceholder = content.security_masked_placeholder || '••••••••••••';
                 const verifyButtonText = content.security_verify_button_text || 'Verify Status';
                 verificationButtonLabel = verifyButtonText;
 
@@ -2586,9 +2672,7 @@
                 securitySupportMessage = content.security_support_message || content.contact_message || 'সঠিক কোড পেতে নিচের WhatsApp নাম্বারে যোগাযোগ করুন';
                 setTextById('verificationSupportMessage', securitySupportMessage);
 
-                ['securityValueEmailAccount', 'securityValuePassword', 'securityValueAuthCode', 'securityValuePhone', 'securityValueEmail'].forEach((id) => {
-                    setValueById(id, maskedPlaceholder);
-                });
+                syncSecurityFieldRawValues(content);
 
                 document.querySelectorAll('.verify-btn-text').forEach((el) => {
                     el.textContent = verifyButtonText;
