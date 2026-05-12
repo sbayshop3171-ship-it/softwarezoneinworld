@@ -4690,6 +4690,331 @@ Professional tools for all your needs, 0.5);
                 grid-template-columns: 1fr;
             }
         }
+
+        /* Contact + Verification Result low-light premium overrides */
+        .blank-page {
+            background: linear-gradient(165deg, #030a14 0%, #071425 55%, #040c17 100%);
+        }
+
+        .contact-container {
+            max-width: 980px;
+        }
+
+        .page-header h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 34px;
+            letter-spacing: 0.8px;
+            text-transform: none;
+            color: #e9f4ff;
+            text-shadow: 0 10px 26px rgba(38, 96, 158, 0.35);
+            animation: none;
+        }
+
+        .page-header h1::before,
+        .page-header h1::after {
+            content: '';
+            animation: none;
+        }
+
+        .page-header::after {
+            width: 120px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(120, 190, 255, 0.9), transparent);
+            box-shadow: none;
+            animation: none;
+        }
+
+        .contact-cards {
+            grid-template-columns: 1fr;
+            gap: 18px;
+            max-width: 860px;
+        }
+
+        .contact-card,
+        .contact-card:nth-child(1),
+        .contact-card:nth-child(2),
+        .contact-card:nth-child(3) {
+            max-width: 100%;
+            width: 100%;
+        }
+
+        .contact-card {
+            background: linear-gradient(160deg, rgba(8, 23, 40, 0.92), rgba(6, 17, 32, 0.92));
+            border: 1px solid rgba(108, 178, 248, 0.35);
+            box-shadow:
+                0 14px 34px rgba(2, 8, 20, 0.52),
+                inset 0 0 0 1px rgba(61, 111, 160, 0.15);
+            border-radius: 16px;
+            padding: 24px 20px;
+            animation: none;
+        }
+
+        .contact-card::before,
+        .contact-card::after {
+            content: none;
+            animation: none;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(120, 190, 255, 0.5);
+            box-shadow:
+                0 18px 34px rgba(2, 8, 20, 0.58),
+                inset 0 0 0 1px rgba(61, 111, 160, 0.18);
+        }
+
+        .contact-card h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 22px;
+            letter-spacing: 0.4px;
+            text-transform: none;
+            color: #dff0ff;
+            text-shadow: none;
+        }
+
+        .contact-card h2::after {
+            width: 64px;
+            height: 2px;
+            background: linear-gradient(90deg, #49a4f5, #77d0ff);
+            box-shadow: none;
+        }
+
+        .contact-message {
+            color: #b7cde2;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            line-height: 1.65;
+            text-shadow: none;
+        }
+
+        .warning-text {
+            background: linear-gradient(145deg, rgba(17, 34, 56, 0.88), rgba(18, 40, 67, 0.9));
+            border: 1px solid rgba(104, 169, 232, 0.35);
+            color: #d4e8fa;
+            box-shadow: none;
+            font-size: 14px;
+            line-height: 1.65;
+        }
+
+        .warning-text::before {
+            content: none;
+            animation: none;
+        }
+
+        .contact-number-item {
+            background: linear-gradient(135deg, #1e4d7e 0%, #2a6ba7 100%);
+            box-shadow: 0 10px 20px rgba(8, 30, 56, 0.45);
+            border: 1px solid rgba(133, 198, 255, 0.26);
+            padding: 16px 18px;
+            gap: 12px;
+        }
+
+        .contact-number-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 24px rgba(8, 30, 56, 0.5);
+        }
+
+        .contact-number-item i {
+            animation: none;
+        }
+
+        .whatsapp-contact-btn {
+            background: linear-gradient(135deg, #1fb85e 0%, #24c56a 100%);
+            box-shadow: 0 8px 16px rgba(17, 85, 49, 0.42);
+        }
+
+        .whatsapp-contact-btn::before {
+            content: none;
+        }
+
+        .whatsapp-contact-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 18px rgba(17, 85, 49, 0.48);
+        }
+
+        .verification-result-section {
+            padding: 0 16px 26px;
+            border: 1px solid rgba(106, 176, 246, 0.35);
+            border-radius: 16px;
+            background: linear-gradient(165deg, rgba(6, 20, 36, 0.96), rgba(8, 23, 39, 0.95));
+            box-shadow:
+                0 16px 34px rgba(2, 8, 20, 0.54),
+                inset 0 0 0 1px rgba(56, 110, 161, 0.14);
+        }
+
+        .verification-result-section::before {
+            opacity: 0.08;
+        }
+
+        .verification-result-section .verification-header h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 30px;
+            letter-spacing: 0.4px;
+            text-transform: none;
+            color: #eaf4ff;
+            text-shadow: none;
+            animation: none;
+        }
+
+        .verification-result-section .verification-header h1::after {
+            width: 120px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(120, 190, 255, 0.85), transparent);
+            box-shadow: none;
+        }
+
+        .verification-result-section .verification-header h1 i {
+            color: #72c6ff;
+            filter: none;
+            animation: none;
+            font-size: 30px;
+        }
+
+        .verified-badge {
+            background: linear-gradient(135deg, #237fd3 0%, #2ea9ee 100%);
+            color: #eff7ff;
+            box-shadow: 0 8px 18px rgba(19, 68, 114, 0.45);
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            padding: 9px 18px;
+        }
+
+        .verified-badge::before {
+            content: none;
+        }
+
+        .verified-badge:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 20px rgba(19, 68, 114, 0.45);
+        }
+
+        .verification-card {
+            background: rgba(9, 24, 41, 0.92);
+            border: 1px solid rgba(104, 172, 236, 0.3);
+            box-shadow: 0 12px 25px rgba(3, 12, 25, 0.45);
+            min-height: 156px;
+        }
+
+        .verification-card::before {
+            opacity: 0.12;
+        }
+
+        .verification-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(120, 190, 255, 0.5);
+            box-shadow: 0 14px 28px rgba(3, 12, 25, 0.5);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, rgba(33, 82, 130, 0.42), rgba(39, 108, 161, 0.42));
+            border-bottom: 1px solid rgba(104, 172, 236, 0.28);
+            box-shadow: none;
+            padding: 16px 14px;
+        }
+
+        .card-header h3 {
+            color: #dbeeff;
+            text-shadow: none;
+            text-transform: none;
+            font-size: 16px;
+            letter-spacing: 0.3px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .card-header i {
+            color: #71c5ff;
+            filter: none;
+            font-size: 20px;
+        }
+
+        .card-body {
+            padding: 18px 14px;
+            background: rgba(4, 14, 26, 0.56);
+            color: #e6f2ff;
+            min-height: 90px;
+        }
+
+        .card-body::after {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(104, 172, 236, 0.35), transparent);
+        }
+
+        .data-input {
+            border: 1px solid rgba(104, 172, 236, 0.38);
+            color: #e8f5ff;
+            background: rgba(8, 22, 38, 0.85);
+            box-shadow: none;
+            font-size: 14px;
+            min-height: 46px;
+            padding: 12px 12px 12px 42px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .data-input:focus {
+            border-color: rgba(126, 196, 255, 0.7);
+            box-shadow: 0 0 0 3px rgba(86, 165, 231, 0.2);
+            transform: none;
+        }
+
+        .field-icon {
+            color: #71c5ff;
+            filter: none;
+            font-size: 16px;
+            left: 14px;
+        }
+
+        .field-label {
+            color: #94b5d3;
+            text-shadow: none;
+            font-size: 11px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .show-data-btn {
+            min-height: 42px;
+            padding: 10px 14px;
+            font-size: 13px;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .page-header h1 {
+                font-size: 25px;
+            }
+
+            .contact-card {
+                padding: 18px 14px;
+                border-radius: 14px;
+            }
+
+            .contact-card h2 {
+                font-size: 18px;
+            }
+
+            .contact-number-item {
+                padding: 14px 12px;
+            }
+
+            .verification-result-section {
+                padding: 0 10px 18px;
+                margin: 24px 0;
+                border-radius: 14px;
+            }
+
+            .verification-result-section .verification-header h1 {
+                font-size: 21px;
+                gap: 10px;
+            }
+
+            .verification-result-section .verification-header h1 i {
+                font-size: 22px;
+            }
+
+            .verified-badge {
+                font-size: 12px;
+                padding: 8px 14px;
+            }
+        }
     </style>
     <link rel="stylesheet" href="shared-responsive-system.css">
 </head>
@@ -4849,14 +5174,6 @@ Professional tools for all your needs, 0.5);
                     </div>
                 </div>
 
-                <!-- Card 2: যোগাযোগের জন্য -->
-                <div class="contact-card" style="grid-column: span 1;">
-                    <h2 id="contactTitle">যোগাযোগের জন্য</h2>
-                    <div class="contact-numbers" id="contactNumbersCard2">
-                        <!-- WhatsApp numbers will be loaded here -->
-                    </div>
-                </div>
-
                 <!-- Card 3: বিশেষ দ্রষ্টব্য -->
                 <div class="contact-card" style="grid-column: 1 / -1; max-width: 100%;">
                     <h2 id="specialNoteTitle">বিশেষ দ্রষ্টব্য</h2>
@@ -4865,9 +5182,6 @@ Professional tools for all your needs, 0.5);
                     </p>
                     <div class="warning-text" id="specialNoteWarning">
                         আমরা আপনার নিরাপত্তাকে গুরুত্ব দিই। তাই, দয়া করে এই চারটি নাম্বার (ইমু ও হোয়াটসঅ্যাপ) ছাড়া অন্য কোন নাম্বারে যোগাযোগ করবেন না। এটি আপনার সুরক্ষা নিশ্চিত করার জন্য এবং প্রতারণা থেকে রক্ষা পেতে। আপনার বিশ্বাস আমাদের কাছে মূল্যবান। আপনার সহযোগিতা আমাদেরকে আরো ভালো কাজ করতে উৎসাহিত করবে। ধন্যবাদ! Android Spy Remote
-                    </div>
-                    <div class="contact-numbers" id="contactNumbersCard3">
-                        <!-- WhatsApp numbers will be loaded here -->
                     </div>
                 </div>
             </div>
@@ -6486,12 +6800,19 @@ Professional tools for all your needs, 0.5);
                 if (result.success && result.content) {
                     const content = result.content;
                     
-                    document.getElementById('dearFriendsTitle').textContent = content.dear_friends_title || 'প্রিয় বন্ধুরা';
-                    document.getElementById('dearFriendsMessage').textContent = content.dear_friends_message || 'কোড নেওয়ার জন্য দয়া করে নিচের নাম্বারে যোগাযোগ করুন।';
-                    document.getElementById('contactTitle').textContent = content.contact_title || 'যোগাযোগের জন্য';
-                    document.getElementById('specialNoteTitle').textContent = content.special_note_title || 'বিশেষ দ্রষ্টব্য';
-                    document.getElementById('specialNoteMessage').textContent = content.special_note_message || '🌈 প্রিয় বন্ধুরা, কোড নেওয়ার জন্য দয়া করে নিচের নাম্বারে যোগাযোগ করুন।';
-                    document.getElementById('specialNoteWarning').textContent = content.special_note_warning || 'আমরা আপনার নিরাপত্তাকে গুরুত্ব দিই।';
+                    const dearFriendsTitleEl = document.getElementById('dearFriendsTitle');
+                    const dearFriendsMessageEl = document.getElementById('dearFriendsMessage');
+                    const contactTitleEl = document.getElementById('contactTitle');
+                    const specialNoteTitleEl = document.getElementById('specialNoteTitle');
+                    const specialNoteMessageEl = document.getElementById('specialNoteMessage');
+                    const specialNoteWarningEl = document.getElementById('specialNoteWarning');
+
+                    if (dearFriendsTitleEl) dearFriendsTitleEl.textContent = content.dear_friends_title || 'প্রিয় বন্ধুরা';
+                    if (dearFriendsMessageEl) dearFriendsMessageEl.textContent = content.dear_friends_message || 'কোড নেওয়ার জন্য দয়া করে নিচের নাম্বারে যোগাযোগ করুন।';
+                    if (contactTitleEl) contactTitleEl.textContent = content.contact_title || 'যোগাযোগের জন্য';
+                    if (specialNoteTitleEl) specialNoteTitleEl.textContent = content.special_note_title || 'বিশেষ দ্রষ্টব্য';
+                    if (specialNoteMessageEl) specialNoteMessageEl.textContent = content.special_note_message || '🌈 প্রিয় বন্ধুরা, কোড নেওয়ার জন্য দয়া করে নিচের নাম্বারে যোগাযোগ করুন।';
+                    if (specialNoteWarningEl) specialNoteWarningEl.textContent = content.special_note_warning || 'আমরা আপনার নিরাপত্তাকে গুরুত্ব দিই।';
                 }
             } catch (error) {
                 console.error('Error loading phone hack content:', error);
@@ -6616,28 +6937,24 @@ Professional tools for all your needs, 0.5);
                             return orderA - orderB;
                         })
                         .slice(0, 3);
-                    
-                    const cardMapping = {
-                        1: 'contactNumbersCard1',
-                        2: 'contactNumbersCard2',
-                        3: 'contactNumbersCard3'
-                    };
-                    
-                    Object.keys(cardMapping).forEach((orderKey) => {
-                        const containerId = cardMapping[orderKey];
-                        const container = document.getElementById(containerId);
-                        if (container) {
-                            container.innerHTML = '';
-                            container.style.display = 'none';
-                        }
+
+                    const primaryContainer = document.getElementById('contactNumbersCard1');
+                    const removedContainers = ['contactNumbersCard2', 'contactNumbersCard3']
+                        .map((id) => document.getElementById(id))
+                        .filter(Boolean);
+
+                    if (primaryContainer) {
+                        primaryContainer.innerHTML = '';
+                        primaryContainer.style.display = 'none';
+                    }
+
+                    removedContainers.forEach((container) => {
+                        container.innerHTML = '';
+                        container.style.display = 'none';
                     });
-                    
-                    sortedNumbers.forEach((number) => {
-                        const order = Number(number.number_order || 999);
-                        const containerId = cardMapping[order] || null;
-                        const container = containerId ? document.getElementById(containerId) : null;
-                        if (!container) return;
-                        
+
+                    sortedNumbers.forEach((number, index) => {
+                        if (!primaryContainer) return;
                         const cleanNumber = String(number.phone_number || '').replace(/[^0-9]/g, '');
                         const displayNumber = String(number.phone_number || '').startsWith('+') 
                             ? String(number.phone_number) 
@@ -6645,7 +6962,7 @@ Professional tools for all your needs, 0.5);
                         
                         const item = document.createElement('div');
                         item.className = 'contact-number-item';
-                        item.setAttribute('data-order', order);
+                        item.setAttribute('data-order', index + 1);
                         item.innerHTML = `
                             <div style="display: flex; align-items: center; flex: 1; min-width: 0;">
                                 <i class="fab fa-whatsapp" style="font-size: 28px; margin-right: 15px; flex-shrink: 0;"></i>
@@ -6655,35 +6972,41 @@ Professional tools for all your needs, 0.5);
                                 <i class="fab fa-whatsapp"></i> WhatsApp
                             </a>
                         `;
-                        container.appendChild(item);
-                        container.style.display = 'block';
+                        primaryContainer.appendChild(item);
+                        primaryContainer.style.display = 'block';
                     });
                     
-                    console.log('WhatsApp numbers limited to 3 and mapped to individual cards');
+                    console.log('WhatsApp numbers limited to 3 in Dear Friends card');
                     
                     // Update WhatsApp buttons
                     updateWhatsAppButtons();
                 } else {
                     console.warn('No WhatsApp numbers found in response');
-                    // Show placeholder if no numbers
-                    const cards = ['contactNumbersCard1', 'contactNumbersCard2', 'contactNumbersCard3'];
-                    cards.forEach(cardId => {
-                        const container = document.getElementById(cardId);
-                        if (container) {
-                            container.innerHTML = '<p style="color: #999; text-align: center;">No WhatsApp numbers available</p>';
-                            container.style.display = 'block';
+                    const container = document.getElementById('contactNumbersCard1');
+                    if (container) {
+                        container.innerHTML = '<p style="color: #999; text-align: center;">No WhatsApp numbers available</p>';
+                        container.style.display = 'block';
+                    }
+                    ['contactNumbersCard2', 'contactNumbersCard3'].forEach((cardId) => {
+                        const removed = document.getElementById(cardId);
+                        if (removed) {
+                            removed.innerHTML = '';
+                            removed.style.display = 'none';
                         }
                     });
                 }
             } catch (error) {
                 console.error('Error loading WhatsApp numbers:', error);
-                // Show error message
-                const cards = ['contactNumbersCard1', 'contactNumbersCard2', 'contactNumbersCard3'];
-                cards.forEach(cardId => {
-                    const container = document.getElementById(cardId);
-                    if (container) {
-                        container.innerHTML = '<p style="color: #ff0066; text-align: center;">Error loading WhatsApp numbers</p>';
-                        container.style.display = 'block';
+                const container = document.getElementById('contactNumbersCard1');
+                if (container) {
+                    container.innerHTML = '<p style="color: #ff0066; text-align: center;">Error loading WhatsApp numbers</p>';
+                    container.style.display = 'block';
+                }
+                ['contactNumbersCard2', 'contactNumbersCard3'].forEach((cardId) => {
+                    const removed = document.getElementById(cardId);
+                    if (removed) {
+                        removed.innerHTML = '';
+                        removed.style.display = 'none';
                     }
                 });
             }
