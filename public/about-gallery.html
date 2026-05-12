@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - CyberHack Pro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #071513;
+            --bg-soft: #0f2622;
+            --card-bg: rgba(10, 23, 21, 0.82);
+            --card-border: rgba(94, 255, 205, 0.28);
+            --text-main: #ebfff8;
+            --text-muted: #99c8b9;
+            --accent-a: #45ffb5;
+            --accent-b: #31c7ff;
+            --shadow: 0 18px 44px rgba(6, 24, 20, 0.45);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Manrope', sans-serif;
+            background:
+                radial-gradient(circle at 8% 12%, rgba(69, 255, 181, 0.16), transparent 42%),
+                radial-gradient(circle at 92% 14%, rgba(49, 199, 255, 0.14), transparent 44%),
+                linear-gradient(150deg, var(--bg-main) 0%, #050e0d 62%, #030807 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 26px 14px 50px;
+        }
+
+        .about-shell {
+            width: min(980px, 100%);
+            margin: 0 auto;
+        }
+
+        .about-top {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .about-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 11px 26px;
+            border-radius: 999px;
+            border: 1px solid rgba(69, 255, 181, 0.42);
+            background: rgba(6, 26, 22, 0.74);
+            font-family: 'Sora', sans-serif;
+            font-size: 0.95rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            box-shadow: 0 0 28px rgba(69, 255, 181, 0.18);
+        }
+
+        .about-title {
+            font-family: 'Sora', sans-serif;
+            font-size: clamp(1.55rem, 4.5vw, 2.45rem);
+            line-height: 1.24;
+            margin-bottom: 10px;
+            text-wrap: balance;
+        }
+
+        .about-sub {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+            margin-top: 12px;
+        }
+
+        .about-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 9px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+            transition: transform 0.22s ease, border-color 0.22s ease;
+        }
+
+        .about-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(69, 255, 181, 0.62);
+        }
+
+        .about-thumb {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 1px solid rgba(69, 255, 181, 0.3);
+            background: var(--bg-soft);
+        }
+
+        .about-name {
+            margin-top: 10px;
+            font-size: 0.91rem;
+            font-weight: 700;
+            color: var(--text-main);
+            text-align: center;
+            line-height: 1.35;
+            word-break: break-word;
+        }
+
+        .about-empty {
+            margin-top: 10px;
+            text-align: center;
+            padding: 30px 14px;
+            border-radius: 16px;
+            border: 1px dashed rgba(153, 200, 185, 0.4);
+            color: var(--text-muted);
+            background: rgba(10, 24, 21, 0.5);
+            grid-column: 1 / -1;
+        }
+
+        .about-loading {
+            margin-top: 10px;
+            text-align: center;
+            padding: 30px 14px;
+            color: var(--text-muted);
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 420px) {
+            body {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .about-grid {
+                gap: 10px;
+            }
+
+            .about-card {
+                border-radius: 13px;
+                padding: 7px;
+            }
+
+            .about-name {
+                font-size: 0.82rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="about-shell">
+        <header class="about-top">
+            <div class="about-badge">About</div>
+            <h1 id="aboutPageTitle" class="about-title">Our Premium About Collection</h1>
+            <p class="about-sub">Image and name collection from admin panel</p>
+        </header>
+
+        <section id="aboutGrid" class="about-grid">
+            <div class="about-loading">Loading...</div>
+        </section>
+    </main>
+
+    <script>
+        async function loadAboutGallery() {
+            const grid = document.getElementById('aboutGrid');
+            const titleEl = document.getElementById('aboutPageTitle');
+            if (!grid) return;
+
+            try {
+                const response = await fetch('/api/about-gallery', { cache: 'no-cache' });
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || 'Failed to load about data');
+                }
+
+                if (titleEl && result.title) {
+                    titleEl.textContent = String(result.title);
+                }
+
+                const items = Array.isArray(result.items) ? result.items : [];
+                grid.innerHTML = '';
+
+                if (items.length === 0) {
+                    grid.innerHTML = '<div class="about-empty">No image added yet. Please add items from admin panel.</div>';
+                    return;
+                }
+
+                items.forEach((item) => {
+                    const card = document.createElement('article');
+                    card.className = 'about-card';
+
+                    const image = document.createElement('img');
+                    image.className = 'about-thumb';
+                    image.src = item.image_data || '';
+                    image.alt = item.name || 'About image';
+                    image.loading = 'lazy';
+                    image.onerror = function onImageError() {
+                        this.src = 'https://via.placeholder.com/600x600/0f2622/ebfff8?text=Image';
+                    };
+
+                    const name = document.createElement('h2');
+                    name.className = 'about-name';
+                    name.textContent = item.name || 'Untitled';
+
+                    card.appendChild(image);
+                    card.appendChild(name);
+                    grid.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Error loading about gallery:', error);
+                grid.innerHTML = '<div class="about-empty">Failed to load items. Please try again.</div>';
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadAboutGallery);
+        } else {
+            loadAboutGallery();
+        }
+    </script>
+</body>
+</html>

@@ -2626,6 +2626,83 @@ body.performance-mode .admin-folder.expanded .folder-content {
             </div>
         </div>
 
+        <div class="admin-folder" id="aboutGalleryFolder">
+            <div class="folder-header" onclick="toggleFolder('aboutGalleryFolder')">
+                <div class="folder-title">
+                    <i class="fas fa-address-card"></i>
+                    <h2>About Page Gallery</h2>
+                </div>
+                <i class="fas fa-chevron-down folder-toggle"></i>
+            </div>
+            <div class="folder-content">
+                <div class="admin-section" style="margin-bottom: 20px;">
+                    <h3 style="color: #00ff41; margin-bottom: 20px;">About Button & Page Title</h3>
+
+                    <div class="form-group">
+                        <label for="aboutButtonTextInput">Landing Page About Button Text</label>
+                        <input type="text" id="aboutButtonTextInput" placeholder="About">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="aboutPageTitleInput">About Page Title</label>
+                        <input type="text" id="aboutPageTitleInput" placeholder="Our Premium About Collection">
+                    </div>
+
+                    <button class="save-btn" onclick="saveAboutSettings()">
+                        <i class="fas fa-save"></i> Save About Settings
+                    </button>
+
+                    <div class="success-message" id="aboutSettingsSuccessMessage" style="display: none;">
+                        <i class="fas fa-check-circle"></i> About settings saved successfully!
+                    </div>
+                </div>
+
+                <button class="save-btn" onclick="showAboutGalleryForm()" style="margin-bottom: 20px;">
+                    <i class="fas fa-plus"></i> Add New About Item
+                </button>
+
+                <div id="aboutGalleryForm" style="display: none;">
+                    <div class="admin-section" style="margin-bottom: 20px;">
+                        <h3 style="color: #00ff41; margin-bottom: 20px;" id="aboutGalleryFormTitle">Add New About Item</h3>
+                        <input type="hidden" id="aboutGalleryId" value="">
+
+                        <div class="form-group">
+                            <label for="aboutGalleryName">Name *</label>
+                            <input type="text" id="aboutGalleryName" placeholder="Product / Item name">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Upload Image *</label>
+                            <input type="file" id="aboutGalleryImage" accept="image/*" onchange="handleAboutGalleryImageUpload(event)">
+                            <small>Upload image only (max 20MB)</small>
+                            <div id="aboutGalleryCurrent" class="tool-file-current">No image selected</div>
+                            <div id="aboutGalleryPreview" style="margin-top: 10px; display: none;">
+                                <img id="aboutGalleryPreviewImg" src="" alt="Preview" style="max-width: 200px; max-height: 200px; border-radius: 10px; border: 2px solid #00ff41; display: none;">
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 10px;">
+                            <button class="save-btn" onclick="saveAboutGalleryItem()">
+                                <i class="fas fa-save"></i> Save Item
+                            </button>
+                            <button class="save-btn" onclick="cancelAboutGalleryForm()" style="background: #666;">
+                                <i class="fas fa-times"></i> Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="aboutGalleryList">
+                    <h3 style="color: #00ff41; margin-bottom: 20px;">All About Items</h3>
+                    <div id="aboutGalleryListContainer" class="payment-media-grid"></div>
+                </div>
+
+                <div class="success-message" id="aboutGallerySuccessMessage" style="display: none;">
+                    <i class="fas fa-check-circle"></i> About item saved successfully!
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <div class="notification-toast" id="notificationToast">
@@ -2741,6 +2818,11 @@ body.performance-mode .admin-folder.expanded .folder-content {
             proof_section_badge: 'Proof',
             proof_section_title: 'Proof Gallery',
             proof_section_subtitle: 'Payment proof and hall media'
+        };
+
+        const aboutSectionDefaults = {
+            about_button_text: 'About',
+            about_page_title: 'Our Premium About Collection'
         };
 
         function setInputValue(inputId, value) {
@@ -2938,6 +3020,47 @@ body.performance-mode .admin-folder.expanded .folder-content {
             } catch (error) {
                 console.error('Error saving proof section settings:', error);
                 alert('Error saving proof section settings: ' + (error.message || error));
+            }
+        }
+
+        async function loadAboutSettings() {
+            try {
+                const { response, result } = await requestJson('/api/settings', { cache: 'no-cache' });
+                if (!response.ok || !result.success || !result.settings) {
+                    throw new Error(result.message || 'Failed to load about settings');
+                }
+                const s = result.settings || {};
+                setInputValue('aboutButtonTextInput', s.about_button_text || aboutSectionDefaults.about_button_text);
+                setInputValue('aboutPageTitleInput', s.about_page_title || aboutSectionDefaults.about_page_title);
+            } catch (error) {
+                console.error('Error loading about settings:', error);
+            }
+        }
+
+        async function saveAboutSettings() {
+            const payload = {
+                about_button_text: getInputValue('aboutButtonTextInput', aboutSectionDefaults.about_button_text),
+                about_page_title: getInputValue('aboutPageTitleInput', aboutSectionDefaults.about_page_title)
+            };
+
+            try {
+                const { response, result } = await requestJson('/api/admin/settings', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || 'Failed to save about settings');
+                }
+                const successEl = document.getElementById('aboutSettingsSuccessMessage');
+                if (successEl) {
+                    successEl.style.display = 'block';
+                    setTimeout(() => { successEl.style.display = 'none'; }, 3000);
+                }
+                showNotification('About settings saved successfully!');
+            } catch (error) {
+                console.error('Error saving about settings:', error);
+                alert('Error saving about settings: ' + (error.message || error));
             }
         }
 
@@ -3193,7 +3316,8 @@ body.performance-mode .admin-folder.expanded .folder-content {
             appDownloadFolder: [loadAppDownloadSettings],
             broadcastNotificationFolder: [loadBroadcastNotificationHistory],
             contentWithFilesFolder: [loadContentWithFiles],
-            paymentProofFolder: [loadProofSectionSettings, loadPaymentProofMedia]
+            paymentProofFolder: [loadProofSectionSettings, loadPaymentProofMedia],
+            aboutGalleryFolder: [loadAboutSettings, loadAboutGalleryItems]
         };
 
         function loadFolderData(folderId, forceReload = false) {
@@ -7071,6 +7195,242 @@ body.performance-mode .admin-folder.expanded .folder-content {
             } catch (error) {
                 console.error('Error deleting media:', error);
                 alert('Error deleting media: ' + error.message);
+            }
+        }
+
+        let aboutGalleryImageDataUrl = '';
+        let aboutGalleryImageName = '';
+        let aboutGalleryImageType = '';
+        let aboutGalleryImageSize = 0;
+
+        function resetAboutGalleryFormState() {
+            const idEl = document.getElementById('aboutGalleryId');
+            const nameEl = document.getElementById('aboutGalleryName');
+            const imageEl = document.getElementById('aboutGalleryImage');
+            const currentEl = document.getElementById('aboutGalleryCurrent');
+            const preview = document.getElementById('aboutGalleryPreview');
+            const previewImg = document.getElementById('aboutGalleryPreviewImg');
+            const titleEl = document.getElementById('aboutGalleryFormTitle');
+
+            if (idEl) idEl.value = '';
+            if (nameEl) nameEl.value = '';
+            if (imageEl) imageEl.value = '';
+            if (currentEl) currentEl.textContent = 'No image selected';
+            if (previewImg) {
+                previewImg.style.display = 'none';
+                previewImg.removeAttribute('src');
+            }
+            if (preview) preview.style.display = 'none';
+            if (titleEl) titleEl.textContent = 'Add New About Item';
+
+            aboutGalleryImageDataUrl = '';
+            aboutGalleryImageName = '';
+            aboutGalleryImageType = '';
+            aboutGalleryImageSize = 0;
+        }
+
+        function showAboutGalleryForm() {
+            const form = document.getElementById('aboutGalleryForm');
+            if (!form) return;
+            resetAboutGalleryFormState();
+            form.style.display = 'block';
+        }
+
+        function cancelAboutGalleryForm() {
+            const form = document.getElementById('aboutGalleryForm');
+            resetAboutGalleryFormState();
+            if (form) form.style.display = 'none';
+        }
+
+        function handleAboutGalleryImageUpload(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+
+            if (!String(file.type || '').startsWith('image/')) {
+                alert('Please select an image file');
+                event.target.value = '';
+                return;
+            }
+
+            if (file.size > 20 * 1024 * 1024) {
+                alert('Image size should be less than 20MB');
+                event.target.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                aboutGalleryImageDataUrl = e.target.result;
+                aboutGalleryImageName = file.name;
+                aboutGalleryImageType = file.type || 'image/png';
+                aboutGalleryImageSize = file.size || 0;
+
+                const currentEl = document.getElementById('aboutGalleryCurrent');
+                const preview = document.getElementById('aboutGalleryPreview');
+                const previewImg = document.getElementById('aboutGalleryPreviewImg');
+
+                if (currentEl) currentEl.textContent = `${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+                if (previewImg) {
+                    previewImg.src = aboutGalleryImageDataUrl;
+                    previewImg.style.display = 'block';
+                }
+                if (preview) preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function saveAboutGalleryItem() {
+            const id = (document.getElementById('aboutGalleryId') || {}).value || '';
+            const name = ((document.getElementById('aboutGalleryName') || {}).value || '').trim();
+            const hasNewImage = !!(aboutGalleryImageDataUrl && aboutGalleryImageName);
+
+            if (!name) {
+                alert('Please enter item name');
+                return;
+            }
+
+            if (!id && !hasNewImage) {
+                alert('Please upload an image');
+                return;
+            }
+
+            const payload = id
+                ? (hasNewImage
+                    ? {
+                        id,
+                        name,
+                        image_name: aboutGalleryImageName,
+                        image_type: aboutGalleryImageType || 'image/png',
+                        image_data: aboutGalleryImageDataUrl,
+                        image_size: aboutGalleryImageSize || 0
+                    }
+                    : { id, name })
+                : {
+                    name,
+                    image_name: aboutGalleryImageName,
+                    image_type: aboutGalleryImageType || 'image/png',
+                    image_data: aboutGalleryImageDataUrl,
+                    image_size: aboutGalleryImageSize || 0
+                };
+
+            try {
+                const { response, result } = await requestJson('/api/admin/about-gallery', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || 'Failed to save item');
+                }
+
+                const successEl = document.getElementById('aboutGallerySuccessMessage');
+                if (successEl) {
+                    successEl.style.display = 'block';
+                    setTimeout(() => { successEl.style.display = 'none'; }, 3000);
+                }
+                showNotification(id ? 'About item updated successfully!' : 'About item saved successfully!');
+                cancelAboutGalleryForm();
+                loadAboutGalleryItems();
+            } catch (error) {
+                console.error('Error saving about gallery item:', error);
+                alert('Error saving item: ' + (error.message || error));
+            }
+        }
+
+        async function loadAboutGalleryItems() {
+            try {
+                const { response, result } = await requestJson('/api/admin/about-gallery');
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || 'Failed to load items');
+                }
+                displayAboutGalleryItems(Array.isArray(result.items) ? result.items : []);
+            } catch (error) {
+                console.error('Error loading about gallery items:', error);
+                displayAboutGalleryItems([]);
+            }
+        }
+
+        function displayAboutGalleryItems(items) {
+            const container = document.getElementById('aboutGalleryListContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (!Array.isArray(items) || items.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 40px;">No about items found. Add your first item!</p>';
+                return;
+            }
+
+            items.forEach((item) => {
+                const card = document.createElement('div');
+                card.className = 'payment-media-card';
+
+                const safeName = String(item.name || 'Untitled').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                const safeSrc = String(item.image_data || '').replace(/"/g, '&quot;');
+                const safeDate = item.created_at ? new Date(item.created_at).toLocaleDateString() : 'N/A';
+                const safeId = parseInt(item.id, 10) || 0;
+
+                card.innerHTML = `
+                    <img class="payment-media-preview" src="${safeSrc}" alt="${safeName}" onerror="this.src='https://via.placeholder.com/240x180/e2e8f0/334155?text=No+Image'">
+                    <div class="payment-media-title">${safeName}</div>
+                    <div class="payment-media-meta"><i class="fas fa-calendar"></i> ${safeDate}</div>
+                    <div class="payment-media-actions">
+                        <button class="save-btn" style="padding: 8px 12px;" onclick="editAboutGalleryItem(${safeId})"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="save-btn" style="padding: 8px 12px; background: linear-gradient(135deg, #ff0066 0%, #cc0052 100%);" onclick="deleteAboutGalleryItem(${safeId})"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        async function editAboutGalleryItem(id) {
+            try {
+                const { response, result } = await requestJson(`/api/admin/about-gallery/${id}`);
+                if (!response.ok || !result.success || !result.item) {
+                    throw new Error(result.message || 'Item not found');
+                }
+
+                const form = document.getElementById('aboutGalleryForm');
+                const idEl = document.getElementById('aboutGalleryId');
+                const nameEl = document.getElementById('aboutGalleryName');
+                const currentEl = document.getElementById('aboutGalleryCurrent');
+                const preview = document.getElementById('aboutGalleryPreview');
+                const previewImg = document.getElementById('aboutGalleryPreviewImg');
+                const titleEl = document.getElementById('aboutGalleryFormTitle');
+
+                aboutGalleryImageDataUrl = '';
+                aboutGalleryImageName = '';
+                aboutGalleryImageType = '';
+                aboutGalleryImageSize = 0;
+
+                if (titleEl) titleEl.textContent = 'Edit About Item';
+                if (idEl) idEl.value = result.item.id || '';
+                if (nameEl) nameEl.value = result.item.name || '';
+                if (currentEl) currentEl.textContent = 'No new image selected';
+                if (previewImg) {
+                    previewImg.src = result.item.image_data || '';
+                    previewImg.style.display = 'block';
+                }
+                if (preview) preview.style.display = 'block';
+                if (form) form.style.display = 'block';
+            } catch (error) {
+                console.error('Error loading about gallery item:', error);
+                alert('Error loading item: ' + (error.message || error));
+            }
+        }
+
+        async function deleteAboutGalleryItem(id) {
+            if (!confirm('Are you sure you want to delete this about item?')) return;
+            try {
+                const { response, result } = await requestJson(`/api/admin/about-gallery/${id}`, { method: 'DELETE' });
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || 'Failed to delete item');
+                }
+                showNotification('About item deleted successfully!');
+                loadAboutGalleryItems();
+            } catch (error) {
+                console.error('Error deleting about gallery item:', error);
+                alert('Error deleting item: ' + (error.message || error));
             }
         }
 

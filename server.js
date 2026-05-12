@@ -832,6 +832,23 @@ db.serialize(() => {
   });
   db.run(`ALTER TABLE payment_proof_media ADD COLUMN category TEXT`, () => {});
 
+  db.run(`CREATE TABLE IF NOT EXISTS about_gallery_items (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    image_name TEXT NOT NULL,
+    image_type TEXT NOT NULL,
+    image_data TEXT NOT NULL,
+    image_size INTEGER,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`, (err) => {
+    if (err) {
+      console.error('Error creating about_gallery_items table:', err);
+    } else {
+      console.log('about_gallery_items table created/verified');
+    }
+  });
+
   // Insert default settings
   db.run(`INSERT OR IGNORE INTO site_settings (setting_key, setting_value) VALUES ('hero_title', 'Welcome to CyberHack Pro')`);
   db.run(`INSERT OR IGNORE INTO site_settings (setting_key, setting_value) VALUES ('hero_subtitle', 'Premium Hacking Services')`);
@@ -852,6 +869,8 @@ db.serialize(() => {
   db.run(`INSERT OR IGNORE INTO site_settings (setting_key, setting_value) VALUES ('proof_section_badge', 'Proof')`);
   db.run(`INSERT OR IGNORE INTO site_settings (setting_key, setting_value) VALUES ('proof_section_title', 'Proof Gallery')`);
   db.run(`INSERT OR IGNORE INTO site_settings (setting_key, setting_value) VALUES ('proof_section_subtitle', 'Payment proof and hall media')`);
+  db.run(`INSERT OR IGNORE INTO site_settings (setting_key, setting_value) VALUES ('about_button_text', 'About')`);
+  db.run(`INSERT OR IGNORE INTO site_settings (setting_key, setting_value) VALUES ('about_page_title', 'Our Premium About Collection')`);
   db.run(`INSERT OR IGNORE INTO site_settings (setting_key, setting_value) VALUES ('reviews_section_badge', 'Client Reviews')`);
   db.run(`INSERT OR IGNORE INTO site_settings (setting_key, setting_value) VALUES ('reviews_section_title', 'What Our Clients Say')`);
   db.run(`INSERT OR IGNORE INTO site_settings (setting_key, setting_value) VALUES ('reviews_section_subtitle', 'Real feedback from satisfied customers worldwide')`);
@@ -889,6 +908,10 @@ app.get('/premium-apps', (req, res) => {
 
 app.get('/premium-apps-products', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'premium-apps-products.html'));
+});
+
+app.get('/about-gallery', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'about-gallery.html'));
 });
 
 app.get('/login', (req, res) => {
@@ -3518,6 +3541,160 @@ app.delete('/api/admin/payment-proof-media/:id', (req, res) => {
       return res.status(404).json({ success: false, message: 'Media not found' });
     }
     res.json({ success: true, message: 'Media deleted successfully' });
+  });
+});
+
+app.get('/api/admin/about-gallery', (req, res) => {
+  db.all(
+    'SELECT id, name, image_name, image_type, image_data, image_size, created_at, updated_at FROM about_gallery_items ORDER BY created_at DESC',
+    (err, rows) => {
+      if (err) {
+        console.error('Database error loading about gallery items:', err);
+        return res.status(500).json({ success: false, message: 'Database error: ' + err.message });
+      }
+      res.json({ success: true, items: Array.isArray(rows) ? rows : [] });
+    }
+  );
+});
+
+app.get('/api/about-gallery', async (req, res) => {
+  try {
+    const [titleRow, rows] = await Promise.all([
+      getDb('SELECT setting_value FROM site_settings WHERE setting_key = ?', ['about_page_title']),
+      allDb('SELECT id, name, image_name, image_type, image_data, image_size, created_at, updated_at FROM about_gallery_items ORDER BY created_at DESC')
+    ]);
+
+    res.json({
+      success: true,
+      title: (titleRow && titleRow.setting_value) ? String(titleRow.setting_value) : 'Our Premium About Collection',
+      items: Array.isArray(rows) ? rows : []
+    });
+  } catch (error) {
+    console.error('Database error loading public about gallery:', error);
+    res.status(500).json({ success: false, message: 'Database error: ' + error.message });
+  }
+});
+
+app.get('/api/admin/about-gallery/:id', (req, res) => {
+  const { id } = req.params;
+  if (!id || isNaN(parseInt(id, 10))) {
+    return res.status(400).json({ success: false, message: 'Invalid item ID' });
+  }
+
+  db.get(
+    'SELECT id, name, image_name, image_type, image_data, image_size, created_at, updated_at FROM about_gallery_items WHERE id = ?',
+    [id],
+    (err, row) => {
+      if (err) {
+        console.error('Database error loading about gallery item:', err);
+        return res.status(500).json({ success: false, message: 'Database error: ' + err.message });
+      }
+      if (!row) {
+        return res.status(404).json({ success: false, message: 'Item not found' });
+      }
+      res.json({ success: true, item: row });
+    }
+  );
+});
+
+app.post('/api/admin/about-gallery', (req, res) => {
+  try {
+    const { id, name, image_name, image_type, image_data, image_size } = req.body || {};
+    const cleanName = String(name || '').trim();
+    const hasNewImage = typeof image_data === 'string' && image_data.length > 0;
+
+    if (!cleanName) {
+      return res.status(400).json({ success: false, message: 'Name is required' });
+    }
+
+    if (!id && !hasNewImage) {
+      return res.status(400).json({ success: false, message: 'Image is required' });
+    }
+
+    if (hasNewImage) {
+      const isImageType = String(image_type || '').startsWith('image/');
+      if (!isImageType) {
+        return res.status(400).json({ success: false, message: 'Only image files are allowed' });
+      }
+      if (image_data.length > 50 * 1024 * 1024) {
+        return res.status(400).json({ success: false, message: 'Image data is too large' });
+      }
+    }
+
+    if (id) {
+      if (hasNewImage) {
+        db.run(
+          `UPDATE about_gallery_items
+           SET name = ?, image_name = ?, image_type = ?, image_data = ?, image_size = ?, updated_at = CURRENT_TIMESTAMP
+           WHERE id = ?`,
+          [
+            cleanName,
+            image_name || 'about-image',
+            image_type || 'image/png',
+            image_data,
+            parseInt(image_size, 10) || 0,
+            id
+          ],
+          function(err) {
+            if (err) {
+              return res.status(500).json({ success: false, message: 'Database error: ' + err.message });
+            }
+            if (this.changes === 0) {
+              return res.status(404).json({ success: false, message: 'Item not found' });
+            }
+            res.json({ success: true, message: 'Item updated successfully', id });
+          }
+        );
+      } else {
+        db.run(
+          'UPDATE about_gallery_items SET name = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+          [cleanName, id],
+          function(err) {
+            if (err) {
+              return res.status(500).json({ success: false, message: 'Database error: ' + err.message });
+            }
+            if (this.changes === 0) {
+              return res.status(404).json({ success: false, message: 'Item not found' });
+            }
+            res.json({ success: true, message: 'Item updated successfully', id });
+          }
+        );
+      }
+      return;
+    }
+
+    db.run(
+      `INSERT INTO about_gallery_items (name, image_name, image_type, image_data, image_size)
+       VALUES (?, ?, ?, ?, ?)`,
+      [
+        cleanName,
+        image_name || 'about-image',
+        image_type || 'image/png',
+        image_data,
+        parseInt(image_size, 10) || 0
+      ],
+      function(err) {
+        if (err) {
+          return res.status(500).json({ success: false, message: 'Database error: ' + err.message });
+        }
+        res.json({ success: true, message: 'Item added successfully', id: this.lastID });
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server error: ' + error.message });
+  }
+});
+
+app.delete('/api/admin/about-gallery/:id', (req, res) => {
+  const { id } = req.params;
+  db.run('DELETE FROM about_gallery_items WHERE id = ?', [id], function(err) {
+    if (err) {
+      return res.status(500).json({ success: false, message: 'Database error: ' + err.message });
+    }
+    if (this.changes === 0) {
+      return res.status(404).json({ success: false, message: 'Item not found' });
+    }
+    res.json({ success: true, message: 'Item deleted successfully' });
   });
 });
 

@@ -575,6 +575,9 @@ window.loadSiteSettings = async function() {
             if (settings.proof_section_subtitle && document.getElementById('proof-section-subtitle')) {
                 document.getElementById('proof-section-subtitle').textContent = settings.proof_section_subtitle;
             }
+            if (settings.about_button_text && document.getElementById('about-entry-text')) {
+                document.getElementById('about-entry-text').textContent = settings.about_button_text;
+            }
 
             if (settings.reviews_section_badge && document.getElementById('review-section-badge')) {
                 document.getElementById('review-section-badge').textContent = settings.reviews_section_badge;
