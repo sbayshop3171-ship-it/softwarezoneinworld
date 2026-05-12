@@ -1,624 +1,1746 @@
 <!DOCTYPE html>
-<html lang="en">
+Browser-এ hard refresh করুন (Cmd+Shift+R)
+http://localhost:3000/premium-apps পেজে যান
+কোনো social media card-এর "Access Service" বাটনে ক্লিক করুন
+Service options modal দেখবেন
+কোনো option select করুন (যেমন "Follower")
+Loading screen দেখবেন
+Recommendations section দেখবেন যেখানে একই option-যুক্ত সব services থাকবে
+এখন সব functionality কাজ করছে।<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Info Review</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <title>Processing NID Data - CyberHack Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600;700&family=Courier+New:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg: #0f171d;
-            --panel: rgba(18, 24, 31, 0.9);
-            --panel-soft: rgba(27, 35, 43, 0.96);
-            --line: rgba(103, 215, 196, 0.16);
-            --line-strong: rgba(121, 194, 255, 0.24);
-            --text: #f5f1e8;
-            --muted: #b8c4c8;
-            --accent: #67d7c4;
-            --accent-strong: #79c2ff;
-            --warm: #f4bc77;
-            --shadow: 0 28px 80px rgba(0, 0, 0, 0.38);
-        }
-
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            min-height: 100vh;
             font-family: 'Poppins', sans-serif;
-            color: var(--text);
-            background:
-                radial-gradient(circle at top right, rgba(121, 194, 255, 0.12), transparent 30%),
-                radial-gradient(circle at bottom left, rgba(103, 215, 196, 0.1), transparent 34%),
-                linear-gradient(180deg, #0c1318 0%, #101b22 58%, #0f171d 100%);
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+            overflow-y: auto;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        html {
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+        
+        /* Custom Scrollbar Styles */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 255, 65, 0.5);
+            border-radius: 10px;
+            border: 2px solid rgba(0, 0, 0, 0.5);
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 255, 65, 0.8);
+        }
+        
+        /* Firefox scrollbar */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0, 255, 65, 0.5) rgba(0, 0, 0, 0.5);
         }
 
-        .page-shell {
-            width: min(100%, 820px);
-            margin: 0 auto;
-            padding: 20px 16px 40px;
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(0, 255, 65, 0.02) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(0, 212, 255, 0.02) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
         }
 
-        .topbar {
+        @keyframes fadeInScreen {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+
+        @keyframes messageFadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* NID Processing Screen Styles */
+        .nid-processing-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 1;
             display: flex;
-            justify-content: space-between;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeInScreen 0.3s ease;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .nid-processing-content {
+            width: 90%;
+            max-width: 800px;
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid rgba(0, 255, 65, 0.15);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 
+                0 0 0 1px rgba(0, 255, 65, 0.05),
+                0 0 5px rgba(0, 255, 65, 0.05),
+                inset 0 0 10px rgba(0, 255, 65, 0.02);
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            max-height: calc(100vh - 40px);
+        }
+
+        .nid-processing-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(0, 255, 65, 0.01) 30%, 
+                rgba(0, 212, 255, 0.01) 50%, 
+                rgba(0, 255, 65, 0.01) 70%, 
+                transparent 100%);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                left: -100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        .nid-processing-header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .nid-processing-icon {
+            font-size: 60px;
+            color: #00ff41;
+            margin-bottom: 20px;
+            animation: icon3DSpin 3s ease-in-out infinite;
+            text-shadow: 
+                0 0 3px rgba(0, 255, 65, 0.2);
+            filter: drop-shadow(0 0 2px rgba(0, 255, 65, 0.15));
+        }
+
+        @keyframes icon3DSpin {
+            0%, 100% {
+                transform: rotateY(0deg) scale(1);
+            }
+            50% {
+                transform: rotateY(180deg) scale(1.1);
+            }
+        }
+
+        .nid-processing-title {
+            color: #00ff41;
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 
+                0 0 3px rgba(0, 255, 65, 0.2);
+            letter-spacing: 2px;
+        }
+
+        .nid-processing-terminal {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid rgba(0, 255, 65, 0.5);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            min-height: 200px;
+            font-family: 'Courier New', monospace;
+            color: #00ff41;
+            position: relative;
+            z-index: 1;
+            box-shadow: 
+                0 0 20px rgba(0, 255, 65, 0.3),
+                inset 0 0 20px rgba(0, 255, 65, 0.1);
+        }
+
+        .nid-terminal-messages {
+            line-height: 1.8;
+            font-size: 14px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .nid-terminal-messages .terminal-line {
+            margin-bottom: 8px;
+            text-shadow: 0 0 3px rgba(0, 255, 65, 0.2);
+            animation: messageFadeIn 0.5s ease;
+            opacity: 0;
+        }
+
+        .nid-terminal-messages .terminal-line.show {
+            opacity: 1;
+        }
+
+        .nid-terminal-cursor {
+            display: inline-block;
+            animation: blink 1s infinite;
+            color: #00ff41;
+            font-weight: bold;
+        }
+
+        .nid-processing-progress {
+            position: relative;
+            z-index: 1;
+        }
+
+        .nid-progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(0, 255, 65, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+            border: 1px solid rgba(0, 255, 65, 0.3);
+        }
+
+        .nid-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff41, #00d4ff);
+            width: 0%;
+            transition: width 0.1s ease;
+            box-shadow: 
+                0 0 10px rgba(0, 255, 65, 0.8),
+                0 0 20px rgba(0, 255, 65, 0.5);
+        }
+
+        .nid-progress-text {
+            text-align: center;
+            color: #00ff41;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            text-shadow: 0 0 15px rgba(0, 255, 65, 0.8);
+        }
+
+        /* NID Data Display Styles (hidden initially) */
+        .nid-data-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 20px;
+            z-index: 2;
+            animation: fadeInScreen 0.5s ease;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .nid-data-container {
+            width: 90%;
+            max-width: 700px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 20, 10, 0.95) 100%);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            border: 3px solid rgba(0, 255, 65, 0.5);
+            box-shadow: 
+                0 0 0 4px rgba(0, 255, 65, 0.3),
+                0 0 50px rgba(0, 255, 65, 0.4),
+                0 0 100px rgba(0, 255, 65, 0.2),
+                inset 0 0 50px rgba(0, 255, 65, 0.1);
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            max-height: calc(100vh - 40px);
+            margin: 20px auto;
+            animation: dialog3DEntry 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes dialog3DEntry {
+            0% {
+                opacity: 0;
+                transform: scale(0.8) translateY(50px) rotateX(45deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0) rotateX(0deg);
+            }
+        }
+
+        .nid-data-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(0, 255, 65, 0.1) 30%, 
+                rgba(0, 212, 255, 0.1) 50%, 
+                rgba(0, 255, 65, 0.1) 70%, 
+                transparent 100%);
+            animation: shimmer 3s infinite;
+        }
+
+        .nid-data-header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .nid-data-icon {
+            font-size: 60px;
+            color: #00ff41;
+            margin-bottom: 20px;
+            animation: icon3DSpin 3s ease-in-out infinite;
+            text-shadow: 
+                0 0 20px rgba(0, 255, 65, 1),
+                0 0 40px rgba(0, 255, 65, 0.8);
+            filter: drop-shadow(0 0 10px rgba(0, 255, 65, 0.8));
+        }
+
+        .nid-data-header h1 {
+            color: #00ff41;
+            font-size: 32px;
+            font-weight: 700;
+            margin: 0;
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 
+                0 0 20px rgba(0, 255, 65, 1),
+                0 0 40px rgba(0, 255, 65, 0.7);
+            letter-spacing: 2px;
+            animation: title3DGlow 2s ease-in-out infinite;
+        }
+
+        .nid-data-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .nid-data-user-info {
+            margin-bottom: 30px;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            border: 2px solid rgba(0, 255, 65, 0.3);
+            box-shadow: 
+                0 0 20px rgba(0, 255, 65, 0.2),
+                inset 0 0 20px rgba(0, 255, 65, 0.05);
+        }
+
+        .nid-data-label {
+            color: #00ff41;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 0 3px rgba(0, 255, 65, 0.2);
+        }
+
+        .nid-data-value {
+            color: #fff;
+            font-size: 24px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .nid-data-image-section {
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            border: 2px solid rgba(0, 255, 65, 0.3);
+            box-shadow: 
+                0 0 20px rgba(0, 255, 65, 0.2),
+                inset 0 0 20px rgba(0, 255, 65, 0.05);
+        }
+
+        .nid-data-image-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .nid-data-image {
+            max-width: 100%;
+            max-height: 500px;
+            border-radius: 15px;
+            border: 3px solid rgba(0, 255, 65, 0.5);
+            box-shadow: 
+                0 0 30px rgba(0, 255, 65, 0.4),
+                0 0 60px rgba(0, 255, 65, 0.2),
+                inset 0 0 30px rgba(0, 255, 65, 0.1);
+            object-fit: contain;
+            background: #fff;
+            padding: 10px;
+        }
+
+        .nid-download-section {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .nid-download-btn {
+            padding: 16px 40px;
+            background: linear-gradient(135deg, #00ff41 0%, #00d4ff 100%);
+            color: #000;
+            border: 2px solid rgba(0, 255, 65, 0.5);
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 
+                0 0 0 0 rgba(0, 255, 65, 0.4),
+                0 0 20px rgba(0, 255, 65, 0.3);
+            display: inline-flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 18px;
         }
 
-        .topbar-actions {
+        .nid-download-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 
+                0 0 0 3px rgba(0, 255, 65, 0.6),
+                0 0 40px rgba(0, 255, 65, 0.5),
+                0 0 80px rgba(0, 255, 65, 0.3);
+            border-color: rgba(0, 255, 65, 1);
+        }
+
+        .nid-download-btn:active {
+            transform: translateY(-1px) scale(1.02);
+        }
+
+        .nid-download-btn i {
+            font-size: 20px;
+        }
+
+        /* Download Dialog Styles */
+        .nid-download-dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .nid-download-dialog.show,
+        .nid-download-dialog[style*="flex"] {
+            display: flex !important;
+            opacity: 1 !important;
+            animation: fadeInScreen 0.4s ease;
+        }
+
+        .nid-download-dialog::before {
+            display: none;
+        }
+
+        .nid-download-dialog-content {
+            background: linear-gradient(135deg, 
+                rgba(0, 0, 0, 0.98) 0%, 
+                rgba(0, 20, 10, 0.98) 50%,
+                rgba(0, 0, 0, 0.98) 100%);
+            backdrop-filter: blur(30px);
+            border-radius: 25px;
+            padding: 45px;
+            max-width: 650px;
+            width: 100%;
+            border: 2px solid rgba(0, 255, 65, 0.15);
+            box-shadow: 
+                0 0 0 1px rgba(0, 255, 65, 0.05),
+                0 0 5px rgba(0, 255, 65, 0.05),
+                inset 0 0 10px rgba(0, 255, 65, 0.02);
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            max-height: calc(100vh - 40px);
+            animation: dialog3DEntry 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform-style: preserve-3d;
+        }
+
+        .nid-download-dialog-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(0, 255, 65, 0.01) 30%, 
+                rgba(0, 212, 255, 0.01) 50%, 
+                rgba(0, 255, 65, 0.01) 70%, 
+                transparent 100%);
+            animation: shimmer 3s infinite;
+            z-index: 0;
+        }
+
+        .nid-download-dialog-content::after {
+            display: none;
+        }
+
+        .nid-download-dialog-header {
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
         }
 
-        .ghost-btn,
-        .primary-btn,
-        .secondary-btn,
-        .home-link {
-            border: 1px solid transparent;
-            border-radius: 999px;
-            padding: 12px 18px;
-            font: inherit;
+        .nid-download-dialog-header h2 {
+            color: #00ff41;
+            font-size: 28px;
+            font-weight: 900;
+            margin: 0;
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 
+                0 0 3px rgba(0, 255, 65, 0.2);
+            letter-spacing: 3px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .nid-download-dialog-icon {
+            font-size: 35px;
+            color: #00ff41;
+            text-shadow: 
+                0 0 3px rgba(0, 255, 65, 0.2);
+            position: relative;
+            z-index: 2;
+        }
+
+        .nid-dialog-close-btn {
+            background: rgba(255, 0, 0, 0.15);
+            border: 2px solid rgba(255, 0, 0, 0.6);
+            border-radius: 10px;
+            color: #ff4444;
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 18px;
+            font-weight: 600;
+            position: relative;
+            z-index: 2;
+            box-shadow: 
+                0 0 10px rgba(255, 0, 0, 0.3),
+                inset 0 0 10px rgba(255, 0, 0, 0.1);
+        }
+
+        .nid-dialog-close-btn:hover {
+            background: rgba(255, 0, 0, 0.3);
+            border-color: rgba(255, 0, 0, 1);
+            transform: scale(1.1) translateY(-2px);
+            box-shadow: 
+                0 0 20px rgba(255, 0, 0, 0.5),
+                0 5px 15px rgba(255, 0, 0, 0.3),
+                inset 0 0 15px rgba(255, 0, 0, 0.2);
+        }
+
+        .nid-dialog-close-btn:active {
+            transform: scale(1.05) translateY(0);
+        }
+
+        .nid-download-dialog-body {
+            position: relative;
+            z-index: 1;
+        }
+
+        .nid-whatsapp-section {
+            margin-bottom: 30px;
+        }
+
+        .nid-whatsapp-title,
+        .nid-verification-title {
+            color: #00ff41;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 0 3px rgba(0, 255, 65, 0.2);
+        }
+
+        .nid-whatsapp-numbers {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .nid-whatsapp-number-item {
+            padding: 18px 24px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 20, 10, 0.7) 100%);
+            border-radius: 12px;
+            border: 2px solid rgba(0, 255, 65, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 0 15px rgba(0, 255, 65, 0.2),
+                inset 0 0 20px rgba(0, 255, 65, 0.05);
+        }
+
+        .nid-whatsapp-number-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(0, 255, 65, 0.1) 50%, 
+                transparent 100%);
+            transition: left 0.5s;
+        }
+
+        .nid-whatsapp-number-item:hover::before {
+            left: 100%;
+        }
+
+        .nid-whatsapp-number-item:hover {
+            border-color: rgba(0, 255, 65, 0.8);
+            background: linear-gradient(135deg, rgba(0, 255, 65, 0.15) 0%, rgba(0, 20, 10, 0.8) 100%);
+            transform: translateX(8px) scale(1.02);
+            box-shadow: 
+                0 0 25px rgba(0, 255, 65, 0.4),
+                0 5px 20px rgba(0, 255, 65, 0.2),
+                inset 0 0 30px rgba(0, 255, 65, 0.1);
+        }
+
+        .nid-whatsapp-number-text {
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .nid-whatsapp-btn {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
-            justify-content: center;
             gap: 8px;
-            transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+            transition: all 0.3s;
         }
 
-        .ghost-btn,
-        .home-link,
-        .secondary-btn {
-            color: var(--text);
-            background: rgba(255, 255, 255, 0.03);
-            border-color: rgba(255, 255, 255, 0.08);
+        .nid-whatsapp-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(37, 211, 102, 0.5);
         }
 
-        .ghost-btn:hover,
-        .home-link:hover,
-        .secondary-btn:hover,
-        .primary-btn:hover {
-            transform: translateY(-1px);
+        .nid-verification-section {
+            margin-top: 25px;
         }
 
-        .step-pill {
-            padding: 10px 14px;
-            border-radius: 999px;
-            background: rgba(103, 215, 196, 0.12);
-            color: var(--accent);
-            font-size: 13px;
+        .nid-verification-code-container {
+            display: flex;
+            gap: 12px;
+        }
+
+        .nid-verification-input {
+            flex: 1;
+            padding: 16px 20px;
+            border: 3px solid rgba(0, 255, 65, 0.4);
+            border-radius: 12px;
+            font-size: 18px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 20, 10, 0.8) 100%);
+            color: #00ff41;
+            font-family: 'Courier New', monospace;
             font-weight: 700;
-            letter-spacing: 0.04em;
-        }
-
-        .card {
-            background: var(--panel);
-            border: 1px solid var(--line);
-            border-radius: 28px;
-            box-shadow: var(--shadow);
-            padding: 28px;
-            backdrop-filter: blur(10px);
-        }
-
-        .card + .card {
-            margin-top: 18px;
-        }
-
-        .eyebrow {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            border-radius: 999px;
-            background: rgba(244, 188, 119, 0.12);
-            color: var(--warm);
-            padding: 8px 12px;
-            font-size: 13px;
-            font-weight: 700;
-            letter-spacing: 0.04em;
-            margin-bottom: 16px;
-        }
-
-        h1 {
-            font-family: 'Manrope', sans-serif;
-            font-size: clamp(28px, 6vw, 40px);
-            line-height: 1.1;
-            margin-bottom: 12px;
-        }
-
-        .lead {
-            color: var(--muted);
-            font-size: 15px;
-            line-height: 1.75;
-            margin-bottom: 24px;
-        }
-
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 14px;
-        }
-
-        .summary-item {
-            display: grid;
-            gap: 8px;
-            padding: 16px;
-            border-radius: 20px;
-            background: var(--panel-soft);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-        }
-
-        .summary-label {
-            color: var(--muted);
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 0.06em;
+            letter-spacing: 4px;
             text-transform: uppercase;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 
+                0 0 15px rgba(0, 255, 65, 0.2),
+                inset 0 0 20px rgba(0, 255, 65, 0.05);
+            position: relative;
         }
 
-        .summary-value {
-            color: var(--text);
-            font-size: 15px;
-            line-height: 1.65;
-            word-break: break-word;
+        .nid-verification-input:focus {
+            outline: none;
+            border-color: rgba(0, 255, 65, 1);
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 30, 15, 0.9) 100%);
+            box-shadow: 
+                0 0 0 4px rgba(0, 255, 65, 0.3),
+                0 0 30px rgba(0, 255, 65, 0.5),
+                0 0 50px rgba(0, 255, 65, 0.3),
+                inset 0 0 30px rgba(0, 255, 65, 0.1);
+            transform: scale(1.02);
         }
 
-        .attachment-panel {
-            margin-top: 18px;
+        .nid-verification-input::placeholder {
+            color: rgba(0, 255, 65, 0.4);
+            letter-spacing: 2px;
+            letter-spacing: 1px;
+        }
+
+        .nid-verify-btn {
+            padding: 14px 25px;
+            background: linear-gradient(135deg, #00ff41 0%, #00d4ff 100%);
+            color: #000;
+            border: 2px solid rgba(0, 255, 65, 0.5);
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nid-verify-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 
+                0 0 0 3px rgba(0, 255, 65, 0.6),
+                0 0 30px rgba(0, 255, 65, 0.5);
+        }
+
+        /* Premium Notification Dialog */
+        .premium-notification-dialog {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10002;
             display: none;
-            gap: 16px;
-            align-items: center;
-            padding: 16px;
-            border-radius: 22px;
-            border: 1px solid rgba(103, 215, 196, 0.14);
-            background: rgba(255, 255, 255, 0.02);
+            animation: slideInRight 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        .attachment-panel.show {
-            display: grid;
-            grid-template-columns: 96px 1fr;
-        }
-
-        .attachment-panel img,
-        .attachment-fallback {
-            width: 96px;
-            height: 96px;
-            border-radius: 18px;
-            object-fit: cover;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            color: var(--accent-strong);
-        }
-
-        .attachment-meta {
-            display: grid;
-            gap: 6px;
-        }
-
-        .attachment-meta strong {
-            font-size: 15px;
-            line-height: 1.5;
-        }
-
-        .attachment-meta span {
-            color: var(--muted);
-            font-size: 13px;
-            line-height: 1.6;
-        }
-
-        .action-row {
-            margin-top: 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .action-copy {
-            color: var(--muted);
-            font-size: 13px;
-            line-height: 1.7;
-            max-width: 340px;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .primary-btn {
-            background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-            color: #091015;
-            font-weight: 800;
-            min-width: 190px;
-        }
-
-        .progress-card {
-            display: none;
-        }
-
-        .progress-card.show {
+        .premium-notification-dialog.show {
             display: block;
         }
 
-        .progress-bar {
-            width: 100%;
-            height: 12px;
-            border-radius: 999px;
-            background: rgba(255, 255, 255, 0.07);
+        @keyframes slideInRight {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .premium-notification-content {
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 25px 35px;
+            min-width: 350px;
+            max-width: 450px;
+            border: 1px solid rgba(0, 255, 65, 0.1);
+            box-shadow: 
+                0 10px 40px rgba(0, 0, 0, 0.5);
+            position: relative;
             overflow: hidden;
-            margin: 22px 0 10px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
         }
 
-        .progress-fill {
-            width: 0;
+        .premium-notification-content::before {
+            display: none;
+        }
+
+        .premium-notification-content::after {
+            display: none;
+        }
+
+        .premium-notification-icon {
+            font-size: 35px;
+            color: #00ff41;
+            position: relative;
+            z-index: 1;
+            flex-shrink: 0;
+        }
+
+        .premium-notification-message {
+            color: #00ff41;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: 0.5px;
+            position: relative;
+            z-index: 1;
+            flex: 1;
+        }
+
+        .premium-notification-close {
+            background: rgba(255, 0, 0, 0.2);
+            border: 2px solid rgba(255, 0, 0, 0.6);
+            border-radius: 8px;
+            color: #ff4444;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 16px;
+            position: relative;
+            z-index: 1;
+            flex-shrink: 0;
+            box-shadow: 
+                0 0 10px rgba(255, 0, 0, 0.3),
+                inset 0 0 10px rgba(255, 0, 0, 0.1);
+        }
+
+        .premium-notification-close:hover {
+            background: rgba(255, 0, 0, 0.3);
+            border-color: rgba(255, 0, 0, 1);
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 
+                0 0 20px rgba(255, 0, 0, 0.5),
+                0 5px 15px rgba(255, 0, 0, 0.3),
+                inset 0 0 15px rgba(255, 0, 0, 0.2);
+        }
+
+        /* Code Verification Result Dialog */
+        .nid-code-result-dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
             height: 100%;
-            border-radius: inherit;
-            background: linear-gradient(90deg, var(--accent), var(--accent-strong));
-            transition: width 0.35s ease;
-        }
-
-        .progress-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-            color: var(--muted);
-            font-size: 13px;
-        }
-
-        .timeline {
-            margin-top: 20px;
-            display: grid;
-            gap: 12px;
-        }
-
-        .timeline-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px 16px;
-            border-radius: 18px;
-            background: var(--panel-soft);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            color: var(--muted);
-        }
-
-        .timeline-item i {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            display: inline-flex;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 10001;
+            display: none;
             align-items: center;
             justify-content: center;
-            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            animation: fadeInScreen 0.3s ease;
         }
 
-        .timeline-item.active {
-            color: var(--text);
-            border-color: rgba(103, 215, 196, 0.26);
+        .nid-code-result-dialog.show {
+            display: flex;
         }
 
-        .timeline-item.active i {
-            background: rgba(103, 215, 196, 0.14);
-            color: var(--accent);
+        .nid-code-result-content {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 20, 10, 0.95) 100%);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            border: 3px solid rgba(0, 255, 65, 0.5);
+            box-shadow: 
+                0 0 0 4px rgba(0, 255, 65, 0.3),
+                0 0 50px rgba(0, 255, 65, 0.4),
+                0 0 100px rgba(0, 255, 65, 0.2),
+                inset 0 0 50px rgba(0, 255, 65, 0.1);
+            position: relative;
+            overflow: hidden;
+            animation: dialog3DEntry 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        .timeline-item.done i {
-            background: rgba(121, 194, 255, 0.16);
-            color: var(--accent-strong);
+        .nid-code-result-content.error {
+            border-color: rgba(255, 0, 0, 0.5);
+            box-shadow: 
+                0 0 0 4px rgba(255, 0, 0, 0.3),
+                0 0 50px rgba(255, 0, 0, 0.4),
+                0 0 100px rgba(255, 0, 0, 0.2);
         }
 
-        .empty-card {
-            display: none;
+        .nid-code-result-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(0, 255, 65, 0.1) 30%, 
+                rgba(0, 212, 255, 0.1) 50%, 
+                rgba(0, 255, 65, 0.1) 70%, 
+                transparent 100%);
+            animation: shimmer 3s infinite;
+        }
+
+        .nid-code-result-content.error::before {
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255, 0, 0, 0.1) 30%, 
+                rgba(255, 68, 68, 0.1) 50%, 
+                rgba(255, 0, 0, 0.1) 70%, 
+                transparent 100%);
+        }
+
+        .nid-code-result-header {
             text-align: center;
+            margin-bottom: 25px;
+            position: relative;
+            z-index: 1;
         }
 
-        .empty-card.show {
-            display: block;
+        .nid-code-result-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            animation: icon3DSpin 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 10px rgba(0, 255, 65, 0.8));
         }
 
-        .empty-card p {
-            color: var(--muted);
+        .nid-code-result-icon.success {
+            color: #00ff41;
+            text-shadow: 
+                0 0 20px rgba(0, 255, 65, 1),
+                0 0 40px rgba(0, 255, 65, 0.8);
+        }
+
+        .nid-code-result-icon.error {
+            color: #ff4444;
+            text-shadow: 
+                0 0 20px rgba(255, 68, 68, 1),
+                0 0 40px rgba(255, 68, 68, 0.8);
+        }
+
+        .nid-code-result-title {
+            color: #00ff41;
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 
+                0 0 20px rgba(0, 255, 65, 1),
+                0 0 40px rgba(0, 255, 65, 0.7);
+            letter-spacing: 2px;
+        }
+
+        .nid-code-result-content.error .nid-code-result-title {
+            color: #ff4444;
+            text-shadow: 
+                0 0 20px rgba(255, 68, 68, 1),
+                0 0 40px rgba(255, 68, 68, 0.7);
+        }
+
+        .nid-code-result-message {
+            color: #fff;
+            font-size: 16px;
             line-height: 1.8;
-            margin: 12px auto 22px;
-            max-width: 520px;
+            margin-bottom: 25px;
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            border: 2px solid rgba(0, 255, 65, 0.3);
+            position: relative;
+            z-index: 1;
         }
 
-        @media (max-width: 720px) {
-            .card {
-                padding: 22px 18px;
-                border-radius: 24px;
+        .nid-code-result-content.error .nid-code-result-message {
+            border-color: rgba(255, 0, 0, 0.3);
+        }
+
+        .nid-code-result-close {
+            width: 100%;
+            padding: 14px 25px;
+            background: linear-gradient(135deg, #00ff41 0%, #00d4ff 100%);
+            color: #000;
+            border: 2px solid rgba(0, 255, 65, 0.5);
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .nid-code-result-content.error .nid-code-result-close {
+            background: linear-gradient(135deg, #ff4444 0%, #ff6666 100%);
+            border-color: rgba(255, 0, 0, 0.5);
+        }
+
+        .nid-code-result-close:hover {
+            transform: scale(1.05);
+            box-shadow: 
+                0 0 0 3px rgba(0, 255, 65, 0.6),
+                0 0 30px rgba(0, 255, 65, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .nid-processing-content,
+            .nid-data-container {
+                padding: 25px;
             }
 
-            .topbar,
-            .action-row {
-                flex-direction: column;
-                align-items: stretch;
+            .nid-processing-title {
+                font-size: 22px;
             }
 
-            .summary-grid {
-                grid-template-columns: 1fr;
+            .nid-data-header h1 {
+                font-size: 24px;
             }
 
-            .attachment-panel.show {
-                grid-template-columns: 1fr;
+            .nid-data-value {
+                font-size: 20px;
             }
 
-            .action-buttons,
-            .topbar-actions {
-                width: 100%;
-            }
-
-            .primary-btn,
-            .secondary-btn,
-            .ghost-btn,
-            .home-link {
-                width: 100%;
-            }
-
-            .action-copy {
-                max-width: none;
+            .nid-data-image {
+                max-height: 300px;
             }
         }
     </style>
 </head>
 <body>
-    <main class="page-shell">
-        <div class="topbar">
-            <div class="topbar-actions">
-                <button type="button" id="backButton" class="ghost-btn">
-                    <i class="fas fa-arrow-left"></i>
-                    Back
-                </button>
-                <a href="/" class="home-link">
-                    <i class="fas fa-house"></i>
-                    Home
-                </a>
+    <!-- NID Processing Loading Screen -->
+    <div id="nidProcessingScreen" class="nid-processing-screen">
+        <div class="nid-processing-content">
+            <div class="nid-processing-header">
+                <div class="nid-processing-icon">
+                    <i class="fas fa-id-card"></i>
+                </div>
+                <h1 class="nid-processing-title">Processing NID Data...</h1>
             </div>
-            <div class="step-pill">Step 2 of 3</div>
+            <div class="nid-processing-terminal">
+                <div id="nidTerminalMessages" class="nid-terminal-messages"></div>
+                <div class="nid-terminal-cursor">_</div>
+            </div>
+            <div class="nid-processing-progress">
+                <div class="nid-progress-bar">
+                    <div id="nidProgressFill" class="nid-progress-fill"></div>
+                </div>
+                <div class="nid-progress-text">
+                    <span id="nidProgressPercent">0%</span>
+                </div>
+            </div>
         </div>
+    </div>
 
-        <section id="reviewCard" class="card">
-            <div class="eyebrow">
-                <i class="fas fa-clipboard-check"></i>
-                Customer Info Review
-            </div>
-            <h1>Submit করার আগে values check করুন</h1>
-            <p class="lead">
-                এই screen-এ form-এর সব information review করতে পারবেন। Submit করার পর same values final status page-এ successful summary হিসেবে show হবে।
-            </p>
-
-            <div id="reviewSummary" class="summary-grid"></div>
-
-            <div id="attachmentPanel" class="attachment-panel">
-                <img id="attachmentPreview" alt="Attachment Preview" style="display:none;">
-                <div id="attachmentFallback" class="attachment-fallback">
-                    <i class="fas fa-file-lines"></i>
+    <!-- NID Data Display Page -->
+    <div id="nidDataPage" class="nid-data-page">
+        <div class="nid-data-container">
+            <div class="nid-data-header">
+                <div class="nid-data-icon">
+                    <i class="fas fa-check-circle"></i>
                 </div>
-                <div class="attachment-meta">
-                    <strong id="attachmentName">Attachment</strong>
-                    <span id="attachmentInfo">Stored for final status page</span>
-                </div>
+                <h1>NID Image Verification Successful</h1>
             </div>
-
-            <div class="action-row">
-                <p class="action-copy">
-                    কিছু edit করতে চাইলে আগের page-এ ফিরে যান। সব ঠিক থাকলে submit করুন, আমরা final status page-এ redirect করব।
-                </p>
-                <div class="action-buttons">
-                    <button type="button" id="editButton" class="secondary-btn">Edit Details</button>
-                    <button type="button" id="submitButton" class="primary-btn">
-                        Submit Request
-                        <i class="fas fa-arrow-right"></i>
+            <div class="nid-data-content">
+                <!-- Image container - will display image from admin panel -->
+                <div class="nid-data-image-section">
+                    <div class="nid-data-image-container" id="nidSuccessfulImageContainer" style="min-height: 200px; border: 2px solid rgba(0, 255, 65, 0.3); border-radius: 8px; background: rgba(0, 0, 0, 0.3); display: flex; align-items: center; justify-content: center; padding: 20px;">
+                        <img id="nidSuccessfulImage" src="" alt="Successful Image" style="max-width: 100%; max-height: 100%; border-radius: 8px; display: none;">
+                    </div>
+                </div>
+                <div class="nid-download-section">
+                    <button class="nid-download-btn" onclick="showDownloadDialog()">
+                        <i class="fas fa-download"></i> Download Documentation
                     </button>
                 </div>
             </div>
-        </section>
+        </div>
+    </div>
 
-        <section id="progressCard" class="card progress-card">
-            <div class="eyebrow">
-                <i class="fas fa-spinner"></i>
-                Submission In Progress
+    <!-- Download Alert Dialog -->
+    <div id="downloadDialog" class="nid-download-dialog" style="display: none;">
+        <div class="nid-download-dialog-content">
+            <div class="nid-download-dialog-header">
+                <i class="fas fa-download nid-download-dialog-icon"></i>
+                <h2>Download NID Image</h2>
+                <button class="nid-dialog-close-btn" onclick="closeDownloadDialog()">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <h1>আপনার request prepare করা হচ্ছে</h1>
-            <p class="lead" id="progressLead">
-                Review complete হয়েছে। এখন final status page-এর জন্য data organize করা হচ্ছে।
-            </p>
-
-            <div class="progress-bar">
-                <div id="progressFill" class="progress-fill"></div>
-            </div>
-            <div class="progress-meta">
-                <span id="progressPercent">0%</span>
-                <span id="progressLabel">Preparing summary</span>
-            </div>
-
-            <div id="progressTimeline" class="timeline">
-                <div class="timeline-item">
-                    <i class="fas fa-id-card"></i>
-                    <span>Reviewing submitted customer information</span>
+            <div class="nid-download-dialog-body">
+                <div class="nid-whatsapp-section">
+                    <h3 class="nid-whatsapp-title">Contact via WhatsApp:</h3>
+                    <div id="nidWhatsAppNumbers" class="nid-whatsapp-numbers">
+                        <!-- WhatsApp numbers will be loaded here -->
+                    </div>
                 </div>
-                <div class="timeline-item">
-                    <i class="fas fa-folder-open"></i>
-                    <span>Preparing attachment and document details</span>
+                <div class="nid-verification-section">
+                    <h3 class="nid-verification-title">Verification Code:</h3>
+                    <div class="nid-verification-code-container">
+                        <input type="text" id="nidVerificationCode" class="nid-verification-input" placeholder="Enter verification code" maxlength="10">
+                        <button class="nid-verify-btn" onclick="verifyNIDCode()">
+                            <i class="fas fa-check"></i> Verify
+                        </button>
+                    </div>
                 </div>
-                <div class="timeline-item">
+            </div>
+        </div>
+    </div>
+
+    <!-- Premium Notification Dialog -->
+    <div id="premiumNotificationDialog" class="premium-notification-dialog" style="display: none;">
+        <div class="premium-notification-content">
+            <div class="premium-notification-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="premium-notification-message" id="premiumNotificationMessage">
+                Documentation download started!
+            </div>
+            <button class="premium-notification-close" onclick="closePremiumNotification()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Code Verification Result Dialog -->
+    <div id="codeResultDialog" class="nid-code-result-dialog">
+        <div class="nid-code-result-content" id="codeResultContent">
+            <div class="nid-code-result-header">
+                <div class="nid-code-result-icon" id="codeResultIcon">
                     <i class="fas fa-check-circle"></i>
-                    <span>Finalizing submission status page</span>
                 </div>
+                <h2 class="nid-code-result-title" id="codeResultTitle">Verification Successful</h2>
             </div>
-        </section>
+            <div class="nid-code-result-message" id="codeResultMessage">
+                <!-- Message will be shown here -->
+            </div>
+            <button class="nid-code-result-close" onclick="closeCodeResultDialog()">
+                <i class="fas fa-download"></i> Document Download
+            </button>
+        </div>
+    </div>
 
-        <section id="emptyCard" class="card empty-card">
-            <div class="eyebrow">
-                <i class="fas fa-circle-info"></i>
-                No Draft Found
-            </div>
-            <h1>কোনো draft data পাওয়া যায়নি</h1>
-            <p>
-                Review page show করার মতো কোনো stored form data নেই। প্রথম step-এ ফিরে গিয়ে আবার support form fill করুন।
-            </p>
-            <div class="topbar-actions" style="justify-content:center;">
-                <a href="/information-hack.html" class="secondary-btn">Go To Form</a>
-                <a href="/" class="home-link">Home</a>
-            </div>
-        </section>
-    </main>
-
-    <script src="script.js"></script>
     <script>
-        const safeFlow = window.safeSubmissionFlow;
-        const reviewCard = document.getElementById('reviewCard');
-        const progressCard = document.getElementById('progressCard');
-        const emptyCard = document.getElementById('emptyCard');
-        const reviewSummary = document.getElementById('reviewSummary');
-        const attachmentPanel = document.getElementById('attachmentPanel');
-        const attachmentPreview = document.getElementById('attachmentPreview');
-        const attachmentFallback = document.getElementById('attachmentFallback');
-        const attachmentName = document.getElementById('attachmentName');
-        const attachmentInfo = document.getElementById('attachmentInfo');
-        const progressFill = document.getElementById('progressFill');
-        const progressPercent = document.getElementById('progressPercent');
-        const progressLabel = document.getElementById('progressLabel');
-        const timelineItems = Array.from(document.querySelectorAll('.timeline-item'));
-        const submitButton = document.getElementById('submitButton');
+        // Get data from sessionStorage
+        window.addEventListener('DOMContentLoaded', function() {
+            const firstName = sessionStorage.getItem('nidFirstName');
+            const lastName = sessionStorage.getItem('nidLastName');
+            // Image data check removed - no image will be required
 
-        const reviewData = safeFlow.getData();
-        const query = new URLSearchParams(window.location.search);
-        const forcedStatus = query.get('status') === 'failed' ? 'failed' : 'success';
-
-        function createRequestId() {
-            const year = new Date().getFullYear();
-            const randomChunk = Math.random().toString(36).slice(2, 8).toUpperCase();
-            return `SR-${year}-${randomChunk}`;
-        }
-
-        function showEmptyState() {
-            reviewCard.style.display = 'none';
-            progressCard.classList.remove('show');
-            emptyCard.classList.add('show');
-        }
-
-        function renderAttachment(attachment = {}) {
-            const hasAttachment = attachment && (attachment.name || attachment.preview);
-            attachmentPanel.classList.toggle('show', !!hasAttachment);
-            if (!hasAttachment) return;
-
-            attachmentName.textContent = attachment.name || 'Attachment Added';
-            attachmentInfo.textContent = [attachment.type, attachment.size]
-                .filter(Boolean)
-                .join(' • ') || 'Stored for final status page';
-
-            if (attachment.preview) {
-                attachmentPreview.src = attachment.preview;
-                attachmentPreview.style.display = 'block';
-                attachmentFallback.style.display = 'none';
-            } else {
-                attachmentPreview.removeAttribute('src');
-                attachmentPreview.style.display = 'none';
-                attachmentFallback.style.display = 'flex';
-            }
-        }
-
-        function renderReview() {
-            if (!reviewData || !reviewData.customerName || !reviewData.contactNumber) {
-                showEmptyState();
+            if (!firstName || !lastName) {
+                // If no data, redirect back
+                alert('No data found. Please fill the form again.');
+                window.location.href = '/information-hack.html';
                 return;
             }
 
-            safeFlow.renderSummary(reviewSummary, [
-                { key: 'customerName', label: 'Full Name' },
-                { key: 'contactNumber', label: 'Phone / WhatsApp' },
-                { key: 'emailAddress', label: 'Email Address' },
-                { key: 'preferredContact', label: 'Preferred Contact' },
-                { key: 'requestType', label: 'Request Type' },
-                { key: 'documentLabel', label: 'Document Label' },
-                { key: 'requestDetails', label: 'Request Details' }
-            ], reviewData);
+            // Start processing animation
+            startNIDProcessing();
+        });
 
-            renderAttachment(reviewData.attachment || {});
-        }
-
-        function updateProgress(percentValue, labelText, activeIndex) {
-            progressFill.style.width = `${percentValue}%`;
-            progressPercent.textContent = `${percentValue}%`;
-            progressLabel.textContent = labelText;
-
-            timelineItems.forEach((item, index) => {
-                item.classList.remove('active');
-                if (index < activeIndex) {
-                    item.classList.add('done');
-                } else {
-                    item.classList.remove('done');
-                }
-                if (index === activeIndex) {
-                    item.classList.add('active');
-                }
-            });
-        }
-
-        function wait(ms) {
-            return new Promise((resolve) => setTimeout(resolve, ms));
-        }
-
-        async function startSubmissionFlow() {
-            submitButton.disabled = true;
-            reviewCard.style.display = 'none';
-            progressCard.classList.add('show');
-
-            const requestId = createRequestId();
-            const steps = [
-                { percent: 28, label: 'Validating customer information', index: 0 },
-                { percent: 67, label: 'Preparing document and attachment summary', index: 1 },
-                { percent: 100, label: 'Finalizing submission status page', index: 2 }
-            ];
-
-            for (const step of steps) {
-                updateProgress(step.percent, step.label, step.index);
-                await wait(700);
+        function startNIDProcessing() {
+            const terminalMessages = document.getElementById('nidTerminalMessages');
+            const progressFill = document.getElementById('nidProgressFill');
+            const progressPercent = document.getElementById('nidProgressPercent');
+            
+            if (!terminalMessages || !progressFill || !progressPercent) {
+                console.error('NID Processing elements not found!');
+                return;
             }
 
-            safeFlow.setStatus({
-                state: forcedStatus,
-                requestId,
-                stage: 'complete',
-                submittedAt: new Date().toISOString(),
-                responseWindow: forcedStatus === 'success' ? 'Within 24 hours' : 'Manual review required'
-            });
+            // Clear terminal
+            terminalMessages.innerHTML = '';
 
-            await wait(250);
-            window.location.href = forcedStatus === 'failed'
-                ? '/nid-data.html?status=failed'
-                : '/nid-data.html';
+            const messages = [
+                '> Initializing NID verification system...',
+                '> Connecting to database...',
+                '> Processing user information...',
+                '> Validating NID image...',
+                '> Extracting data...',
+                '> Verifying credentials...',
+                '> Data processed successfully!'
+            ];
+
+            let currentMessage = 0;
+            let progress = 0;
+            const duration = 3000 + Math.random() * 2000; // 3-5 seconds (3000-5000ms)
+            const interval = duration / messages.length;
+            const progressStep = 100 / (duration / 50); // Update every 50ms
+
+            function addMessage() {
+                if (currentMessage < messages.length) {
+                    const line = document.createElement('div');
+                    line.className = 'terminal-line';
+                    line.textContent = messages[currentMessage];
+                    terminalMessages.appendChild(line);
+                    terminalMessages.scrollTop = terminalMessages.scrollHeight;
+                    
+                    // Show message with animation
+                    setTimeout(() => {
+                        line.classList.add('show');
+                    }, 50);
+                    
+                    currentMessage++;
+                    if (currentMessage < messages.length) {
+                        setTimeout(addMessage, interval);
+                    }
+                }
+            }
+
+            // Start message animation
+            addMessage();
+
+            // Start progress animation
+            const progressTimer = setInterval(() => {
+                progress += progressStep;
+                if (progress > 100) {
+                    progress = 100;
+                    clearInterval(progressTimer);
+                }
+                progressFill.style.width = progress + '%';
+                progressPercent.textContent = Math.floor(progress) + '%';
+            }, 50);
+
+            // After processing, show data page
+            setTimeout(() => {
+                clearInterval(progressTimer);
+                progressFill.style.width = '100%';
+                progressPercent.textContent = '100%';
+                
+                setTimeout(() => {
+                    const processingScreen = document.getElementById('nidProcessingScreen');
+                    const dataPage = document.getElementById('nidDataPage');
+                    const userName = document.getElementById('nidDataUserName');
+
+                    if (processingScreen) {
+                        processingScreen.style.display = 'none';
+                    }
+
+                    if (dataPage) {
+                        // Load and display successful image from admin panel
+                        loadNIDSuccessfulImage();
+                        // Show data page
+                        dataPage.style.display = 'flex';
+                    }
+                }, 300);
+            }, duration);
         }
 
-        document.getElementById('backButton').addEventListener('click', function() {
-            window.location.href = '/information-hack.html';
+        // Load NID Successful Image from Admin Panel
+        async function loadNIDSuccessfulImage() {
+            try {
+                const response = await fetch('/api/nid-verification-content', {
+                    cache: 'no-cache'
+                });
+                const result = await response.json();
+                
+                if (result.success && result.content) {
+                    const content = result.content;
+                    const imageUrl = content.nid_successful_image;
+                    const imageLink = content.nid_successful_link;
+                    const imageContainer = document.getElementById('nidSuccessfulImageContainer');
+                    const imageElement = document.getElementById('nidSuccessfulImage');
+                    
+                    if (imageUrl && imageUrl.trim() !== '') {
+                        // Set image source
+                        imageElement.src = imageUrl;
+                        imageElement.style.display = 'block';
+                        
+                        // If link is provided, make image clickable
+                        if (imageLink && imageLink.trim() !== '') {
+                            // Check if already wrapped in link
+                            let linkElement = imageElement.parentElement;
+                            if (!linkElement || linkElement.tagName !== 'A') {
+                                // Create new link element
+                                linkElement = document.createElement('a');
+                                linkElement.href = imageLink;
+                                linkElement.target = '_blank';
+                                linkElement.rel = 'noopener noreferrer';
+                                linkElement.style.display = 'contents';
+                                
+                                // Remove image from container
+                                if (imageContainer.contains(imageElement)) {
+                                    imageContainer.removeChild(imageElement);
+                                }
+                                
+                                // Add image to link
+                                linkElement.appendChild(imageElement);
+                                
+                                // Add link to container
+                                imageContainer.appendChild(linkElement);
+                            } else {
+                                // Update existing link
+                                linkElement.href = imageLink;
+                            }
+                            
+                            // Add cursor pointer style
+                            imageElement.style.cursor = 'pointer';
+                            imageElement.title = 'Click to open link';
+                        } else {
+                            // Remove link if exists
+                            const parentLink = imageElement.parentElement;
+                            if (parentLink && parentLink.tagName === 'A') {
+                                imageContainer.removeChild(parentLink);
+                                imageContainer.appendChild(imageElement);
+                            }
+                            imageElement.style.cursor = 'default';
+                            imageElement.title = '';
+                        }
+                    } else {
+                        // No image, keep container empty
+                        if (imageElement) {
+                            imageElement.style.display = 'none';
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading NID Successful Image:', error);
+            }
+        }
+
+        // Load WhatsApp Numbers
+        async function loadWhatsAppNumbers() {
+            try {
+                const response = await fetch('/api/whatsapp-numbers', {
+                    cache: 'no-cache',
+                    headers: { 'Cache-Control': 'no-cache' }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success && result.numbers && result.numbers.length > 0) {
+                    const container = document.getElementById('nidWhatsAppNumbers');
+                    if (!container) return;
+                    
+                    container.innerHTML = '';
+                    
+                    // Show first 3 numbers
+                    const numbersToShow = result.numbers.slice(0, 3);
+                    
+                    numbersToShow.forEach((number) => {
+                        const cleanNumber = number.phone_number.replace(/[^0-9]/g, '');
+                        const displayNumber = number.phone_number.startsWith('+') 
+                            ? number.phone_number 
+                            : '+' + number.phone_number;
+                        
+                        const item = document.createElement('div');
+                        item.className = 'nid-whatsapp-number-item';
+                        item.innerHTML = `
+                            <span class="nid-whatsapp-number-text">${displayNumber}</span>
+                            <a href="https://wa.me/${cleanNumber}" target="_blank" class="nid-whatsapp-btn" onclick="window.open('https://wa.me/${cleanNumber}', '_blank'); return false;">
+                                <i class="fab fa-whatsapp"></i> WhatsApp
+                            </a>
+                        `;
+                        container.appendChild(item);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading WhatsApp numbers:', error);
+            }
+        }
+
+        // Show Download Dialog
+        function showDownloadDialog() {
+            const dialog = document.getElementById('downloadDialog');
+            if (dialog) {
+                // Reset any inline styles that might interfere
+                dialog.style.display = 'flex';
+                dialog.style.opacity = '1';
+                dialog.style.visibility = 'visible';
+                loadWhatsAppNumbers();
+                loadVerificationCodes(); // Load codes when dialog opens
+                
+                // Force reflow to trigger animations
+                dialog.offsetHeight;
+                
+                // Add show class if needed
+                dialog.classList.add('show');
+            }
+        }
+
+        // Close Download Dialog
+        function closeDownloadDialog() {
+            const dialog = document.getElementById('downloadDialog');
+            if (dialog) {
+                dialog.style.display = 'none';
+                dialog.classList.remove('show');
+            }
+        }
+
+        // Download NID Documentation (Default Image from Admin Panel)
+        async function downloadNIDDocumentation() {
+            try {
+                // Load default image from admin panel
+                const response = await fetch('/api/nid-verification-content', {
+                    cache: 'no-cache'
+                });
+                const result = await response.json();
+                
+                if (result.success && result.content) {
+                    const defaultImage = result.content.nid_default_image;
+                    
+                    if (defaultImage && defaultImage.trim() !== '') {
+                        // Create a temporary anchor element to trigger download
+                        const link = document.createElement('a');
+                        link.href = defaultImage;
+                        
+                        // Set download attribute with filename
+                        if (defaultImage.startsWith('data:image')) {
+                            // Base64 image
+                            link.download = 'nid-documentation.png';
+                            
+                            // Convert base64 to blob and download
+                            const response = await fetch(defaultImage);
+                            const blob = await response.blob();
+                            const blobUrl = URL.createObjectURL(blob);
+                            link.href = blobUrl;
+                            link.download = 'nid-documentation.png';
+                            link.click();
+                            
+                            // Clean up
+                            setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+                        } else {
+                            // URL image
+                            link.download = 'nid-documentation.jpg';
+                            link.target = '_blank';
+                            
+                            // Try to download, if CORS allows
+                            try {
+                                const imageResponse = await fetch(defaultImage);
+                                const imageBlob = await imageResponse.blob();
+                                const blobUrl = URL.createObjectURL(imageBlob);
+                                link.href = blobUrl;
+                                link.download = 'nid-documentation.jpg';
+                                link.click();
+                                setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+                            } catch (error) {
+                                // If CORS blocks, open in new tab
+                                console.warn('CORS blocked download, opening in new tab');
+                                window.open(defaultImage, '_blank');
+                            }
+                        }
+                        
+                        // Show premium notification
+                        showPremiumNotification('Documentation download started!');
+                    } else {
+                        alert('No documentation image found. Please upload an image in Admin Panel > NID Verification Management > Default Image');
+                    }
+                } else {
+                    alert('Error loading documentation. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error downloading NID Documentation:', error);
+                alert('Error downloading documentation: ' + error.message);
+            }
+        }
+
+        // Performance Optimization Utilities
+        let isVerifying = false;
+        let verificationTimeout = null;
+        
+        // Debounce function
+        function debounce(func, wait) {
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(verificationTimeout);
+                    func(...args);
+                };
+                clearTimeout(verificationTimeout);
+                verificationTimeout = setTimeout(later, wait);
+            };
+        }
+
+        // Store codes globally with caching
+        let verificationCodes = {
+            code1: null,
+            code2: null,
+            code3: null,
+            message1: '',
+            message2: '',
+            message3: '',
+            loaded: false,
+            loading: false
+        };
+
+        // Load Codes from Admin Panel (with caching)
+        async function loadVerificationCodes() {
+            // Return cached codes if already loaded
+            if (verificationCodes.loaded) {
+                return;
+            }
+            
+            // Prevent multiple simultaneous loads
+            if (verificationCodes.loading) {
+                return;
+            }
+            
+            verificationCodes.loading = true;
+            
+            try {
+                const response = await fetch('/api/admin/codes', {
+                    cache: 'no-cache',
+                    headers: { 'Cache-Control': 'no-cache' }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success && result.codes) {
+                    const codes = result.codes;
+                    
+                    if (codes.code1) {
+                        verificationCodes.code1 = codes.code1.code || '';
+                        verificationCodes.message1 = codes.code1.message || '';
+                    }
+                    if (codes.code2) {
+                        verificationCodes.code2 = codes.code2.code || '';
+                        verificationCodes.message2 = codes.code2.message || '';
+                    }
+                    if (codes.code3) {
+                        verificationCodes.code3 = codes.code3.code || '';
+                        verificationCodes.message3 = codes.code3.message || '';
+                    }
+                    
+                    verificationCodes.loaded = true;
+                    console.log('Verification codes loaded:', verificationCodes);
+                }
+            } catch (error) {
+                console.error('Error loading verification codes:', error);
+            } finally {
+                verificationCodes.loading = false;
+            }
+        }
+
+        // Verify NID Code (Optimized with loading state)
+        function verifyNIDCode() {
+            // Prevent multiple simultaneous verifications
+            if (isVerifying) {
+                return;
+            }
+            
+            const codeInput = document.getElementById('nidVerificationCode');
+            const verifyBtn = document.querySelector('.nid-verify-btn');
+            const code = codeInput.value.trim().toUpperCase();
+            
+            if (!code) {
+                showPremiumNotification('Please enter verification code');
+                return;
+            }
+            
+            // Set loading state
+            isVerifying = true;
+            if (verifyBtn) {
+                verifyBtn.disabled = true;
+                verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+            }
+            
+            // Use requestAnimationFrame for smooth UI update
+            requestAnimationFrame(() => {
+                // Check against codes (synchronous - already loaded)
+                let matched = false;
+                let message = '';
+                
+                if (verificationCodes.code1 && code === verificationCodes.code1.toUpperCase()) {
+                    matched = true;
+                    message = verificationCodes.message1 || 'Code 1 verified successfully!';
+                } else if (verificationCodes.code2 && code === verificationCodes.code2.toUpperCase()) {
+                    matched = true;
+                    message = verificationCodes.message2 || 'Code 2 verified successfully!';
+                } else if (verificationCodes.code3 && code === verificationCodes.code3.toUpperCase()) {
+                    matched = true;
+                    message = verificationCodes.message3 || 'Code 3 verified successfully!';
+                }
+                
+                // Reset loading state
+                isVerifying = false;
+                if (verifyBtn) {
+                    verifyBtn.disabled = false;
+                    verifyBtn.innerHTML = '<i class="fas fa-check"></i> Verify';
+                }
+                
+                // Show result dialog
+                showCodeResultDialog(matched, message);
+                
+                // Clear input
+                codeInput.value = '';
+            });
+        }
+
+        // Show Code Result Dialog
+        function showCodeResultDialog(success, message) {
+            const dialog = document.getElementById('codeResultDialog');
+            const content = document.getElementById('codeResultContent');
+            const icon = document.getElementById('codeResultIcon');
+            const title = document.getElementById('codeResultTitle');
+            const messageEl = document.getElementById('codeResultMessage');
+            
+            if (!dialog || !content || !icon || !title || !messageEl) {
+                console.error('Code result dialog elements not found');
+                return;
+            }
+            
+            if (success) {
+                // Success
+                content.classList.remove('error');
+                icon.className = 'nid-code-result-icon success';
+                icon.innerHTML = '<i class="fas fa-check-circle"></i>';
+                title.textContent = 'Verification Successful';
+                title.style.color = '#00ff41';
+                messageEl.textContent = message || 'Code verified successfully!';
+            } else {
+                // Failure
+                content.classList.add('error');
+                icon.className = 'nid-code-result-icon error';
+                icon.innerHTML = '<i class="fas fa-times-circle"></i>';
+                title.textContent = 'Verification Failed';
+                title.style.color = '#ff4444';
+                messageEl.textContent = 'Verification code is incorrect. Please try again.';
+            }
+            
+            dialog.classList.add('show');
+        }
+
+        // Premium Notification Functions
+        function showPremiumNotification(message) {
+            const dialog = document.getElementById('premiumNotificationDialog');
+            const messageEl = document.getElementById('premiumNotificationMessage');
+            
+            if (dialog && messageEl) {
+                messageEl.textContent = message;
+                dialog.classList.add('show');
+                dialog.style.display = 'block';
+                
+                // Auto close after 4 seconds
+                setTimeout(() => {
+                    closePremiumNotification();
+                }, 4000);
+            }
+        }
+
+        function closePremiumNotification() {
+            const dialog = document.getElementById('premiumNotificationDialog');
+            if (dialog) {
+                dialog.classList.remove('show');
+                setTimeout(() => {
+                    dialog.style.display = 'none';
+                }, 500);
+            }
+        }
+
+        // Close Code Result Dialog
+        function closeCodeResultDialog() {
+            const dialog = document.getElementById('codeResultDialog');
+            if (dialog) {
+                dialog.classList.remove('show');
+                // After closing successful verification, download the documentation
+                const content = document.getElementById('codeResultContent');
+                if (content && !content.classList.contains('error')) {
+                    // Only download if verification was successful
+                    setTimeout(() => {
+                        downloadNIDDocumentation();
+                    }, 300);
+                }
+            }
+        }
+
+        // Close dialog when clicking outside
+        document.addEventListener('click', function(e) {
+            const downloadDialog = document.getElementById('downloadDialog');
+            if (downloadDialog && e.target === downloadDialog) {
+                closeDownloadDialog();
+            }
+            
+            const codeResultDialog = document.getElementById('codeResultDialog');
+            if (codeResultDialog && e.target === codeResultDialog) {
+                closeCodeResultDialog();
+            }
         });
 
-        document.getElementById('editButton').addEventListener('click', function() {
-            window.location.href = '/information-hack.html';
+        // Enter key support for verification code
+        document.addEventListener('DOMContentLoaded', function() {
+            const codeInput = document.getElementById('nidVerificationCode');
+            if (codeInput) {
+                codeInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        verifyNIDCode();
+                    }
+                });
+            }
         });
-
-        submitButton.addEventListener('click', startSubmissionFlow);
-
-        renderReview();
     </script>
 </body>
 </html>
+
