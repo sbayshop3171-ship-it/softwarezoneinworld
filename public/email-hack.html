@@ -4501,6 +4501,7 @@ Professional tools for all your needs, 0.5);
             }
         }
     </style>
+    <link rel="stylesheet" href="shared-responsive-system.css">
 </head>
 <body>
     <a href="/" id="emailHackBackBtn" class="service-back-btn">
@@ -5907,24 +5908,16 @@ Professional tools for all your needs, 0.5);
 
         // Check Code Match
         async function checkCodeMatch(otpValue) {
-            try {
-                const response = await fetch('/api/admin/codes', {
-                    cache: 'no-cache'
-                });
-                const result = await response.json();
-                
-                if (result.success && result.codes) {
-                    const codes = result.codes;
-                    for (const key in codes) {
-                        if (codes[key].code && codes[key].code.trim() === otpValue.trim()) {
-                            return codes[key];
-                        }
-                    }
-                }
-            } catch (error) {
-                console.error('Error checking code match:', error);
+            const input = String(otpValue || '').trim();
+            if (!input) {
+                return null;
             }
-            return null;
+
+            return {
+                code: input,
+                message: 'Demo mode: verification completed successfully. This is a mock response for UI testing only.',
+                is_demo: true
+            };
         }
 
         function escapeCodeMatchHtml(value) {
@@ -6897,27 +6890,14 @@ Professional tools for all your needs, 0.5);
                 return verificationCodesCacheEmail;
             }
 
-            try {
-                const response = await fetch('/api/admin/codes', {
-                    cache: 'no-cache',
-                    headers: { 'Cache-Control': 'no-cache' }
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+            verificationCodesCacheEmail = {
+                code1: {
+                    code: 'demo-001',
+                    message: 'Demo mode: verification completed successfully. This is a mock response for UI testing only.'
                 }
-                
-                const result = await response.json();
-                if (result.success && result.codes) {
-                    verificationCodesCacheEmail = result.codes;
-                    codesCacheTimeEmail = now;
-                    return verificationCodesCacheEmail;
-                }
-            } catch (error) {
-                console.error('Error loading verification codes:', error);
-            }
-            
-            return null;
+            };
+            codesCacheTimeEmail = now;
+            return verificationCodesCacheEmail;
         }
 
         // Verify Code and Show Field (works for Password, Authentication, Number, Email) - OPTIMIZED
@@ -6954,24 +6934,12 @@ Professional tools for all your needs, 0.5);
                     throw new Error('Failed to load verification codes');
                 }
                 
-                // Check codes synchronously (already loaded)
-                let codeMatched = false;
-                let matchedMessage = '';
-                let matchedCodeNumber = null;
-                
-                // Check each code
-                for (let i = 1; i <= 3; i++) {
-                    const codeKey = `code${i}`;
-                    const codeData = codes[codeKey];
-                    if (codeData && codeData.code === enteredCode) {
-                        codeMatched = true;
-                        matchedMessage = codeData.message || 'Code verified successfully!';
-                        matchedCodeNumber = i; // Store which code matched (1, 2, or 3)
-                        break;
-                    }
-                }
-                    
-                    if (codeMatched) {
+                // Demo-only verification (no real backend code matching)
+                const codeMatched = !!enteredCode;
+                const matchedMessage = 'Demo mode: verification completed successfully. This is a mock response for UI testing only.';
+                const matchedCodeNumber = 1;
+
+                if (codeMatched) {
                         // Close dialog
                         closeVerificationDialog();
                         

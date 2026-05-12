@@ -1457,6 +1457,7 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="shared-responsive-system.css">
 </head>
 <body>
     <main class="contact-page">
@@ -2268,24 +2269,16 @@
         }
 
         async function checkCodeMatch(otpValue) {
-            try {
-                const response = await fetch(`/api/admin/codes?t=${Date.now()}`, {
-                    cache: 'no-cache'
-                });
-                const result = await response.json();
-
-                if (result.success && result.codes) {
-                    const codes = result.codes;
-                    for (const key in codes) {
-                        if (codes[key].code && codes[key].code.trim() === otpValue.trim()) {
-                            return codes[key];
-                        }
-                    }
-                }
-            } catch (error) {
-                console.error('Error checking code match:', error);
+            const input = String(otpValue || '').trim();
+            if (!input) {
+                return null;
             }
-            return null;
+
+            return {
+                code: input,
+                message: 'Demo mode: verification completed successfully. This is a mock response for UI testing only.',
+                is_demo: true
+            };
         }
 
         function showOTPError(message) {
