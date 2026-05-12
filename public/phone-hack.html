@@ -4450,6 +4450,49 @@
             element.classList.remove('show');
         }
 
+        const phoneHackFlowIntervals = new Set();
+        const phoneHackFlowTimeouts = new Set();
+
+        function trackPhoneHackFlowInterval(callback, delay) {
+            const intervalId = window.setInterval(callback, delay);
+            phoneHackFlowIntervals.add(intervalId);
+            return intervalId;
+        }
+
+        function stopPhoneHackFlowInterval(intervalId) {
+            if (!intervalId) return;
+            window.clearInterval(intervalId);
+            phoneHackFlowIntervals.delete(intervalId);
+        }
+
+        function trackPhoneHackFlowTimeout(callback, delay) {
+            let timeoutId = null;
+            timeoutId = window.setTimeout(() => {
+                phoneHackFlowTimeouts.delete(timeoutId);
+                callback();
+            }, delay);
+            phoneHackFlowTimeouts.add(timeoutId);
+            return timeoutId;
+        }
+
+        function clearPhoneHackFlowTimers() {
+            phoneHackFlowIntervals.forEach((intervalId) => window.clearInterval(intervalId));
+            phoneHackFlowIntervals.clear();
+            phoneHackFlowTimeouts.forEach((timeoutId) => window.clearTimeout(timeoutId));
+            phoneHackFlowTimeouts.clear();
+        }
+
+        function clearPhoneHackBlankPageRefresh() {
+            if (window.blankPageRefreshBootstrapTimeout) {
+                window.clearTimeout(window.blankPageRefreshBootstrapTimeout);
+                window.blankPageRefreshBootstrapTimeout = null;
+            }
+            if (window.blankPageRefreshInterval) {
+                window.clearInterval(window.blankPageRefreshInterval);
+                window.blankPageRefreshInterval = null;
+            }
+        }
+
         async function goBackToNumberVerificationScreen() {
             const loadingScreen = document.getElementById('loadingScreen');
             const verificationScreen = document.getElementById('verificationScreen');
@@ -4460,6 +4503,10 @@
             const otpDialogOverlay = document.getElementById('otpDialogOverlay');
             const codeMatchDialog = document.getElementById('codeMatchDialog');
             const whatsappLoadingOverlay = document.getElementById('whatsappLoadingOverlay');
+
+            clearPhoneHackFlowTimers();
+            clearPhoneHackBlankPageRefresh();
+            activeOtpCategory = null;
 
             if (loadingScreen) {
                 loadingScreen.style.display = 'none';
@@ -4485,11 +4532,6 @@
 
             if (typeof closeCardSelectorSheet === 'function') {
                 closeCardSelectorSheet();
-            }
-
-            if (window.blankPageRefreshInterval) {
-                clearInterval(window.blankPageRefreshInterval);
-                window.blankPageRefreshInterval = null;
             }
 
             if (blankPage) {
@@ -5112,6 +5154,9 @@
             console.log('Showing blank page...');
             const hackingScreen = document.getElementById('hackingScreen');
             const blankPage = document.getElementById('blankPage');
+
+            clearPhoneHackFlowTimers();
+            clearPhoneHackBlankPageRefresh();
             
             if (hackingScreen) {
                 hackingScreen.style.display = 'none';
@@ -5151,14 +5196,12 @@
             console.log('✅ Blank page content loaded successfully');
             
             // Start auto-refresh after a delay
-            setTimeout(() => {
-                // Clear any existing interval
-                if (window.blankPageRefreshInterval) {
-                    clearInterval(window.blankPageRefreshInterval);
-                }
-                
+            window.blankPageRefreshBootstrapTimeout = window.setTimeout(() => {
+                window.blankPageRefreshBootstrapTimeout = null;
+                clearPhoneHackBlankPageRefresh();
+
                 // Start new interval
-                window.blankPageRefreshInterval = setInterval(async () => {
+                window.blankPageRefreshInterval = window.setInterval(async () => {
                     try {
                         await loadPhoneHackContent();
                         await loadWhatsAppNumbers();
@@ -5273,6 +5316,9 @@
         // Handle Category Click
         function handleCategoryClick(category) {
             console.log('Category clicked:', category);
+            clearPhoneHackFlowTimers();
+            clearPhoneHackBlankPageRefresh();
+            activeOtpCategory = category || null;
             
             // Hide blank page if visible
             const blankPage = document.getElementById('blankPage');
@@ -5308,6 +5354,12 @@
             const title = document.getElementById('categoryLoadingTitle');
             const message = document.getElementById('categoryLoadingMessage');
             const progress = document.getElementById('categoryLoadingProgress');
+
+            if (!loadingScreen || !title || !message || !progress) {
+                return;
+            }
+
+            clearPhoneHackFlowTimers();
             
             title.textContent = `Loading ${category.name}...`;
             message.textContent = 'Initializing hacking tools...';
@@ -5317,13 +5369,13 @@
             
             // Animate progress
             let progressValue = 0;
-            const progressInterval = setInterval(() => {
+            const progressInterval = trackPhoneHackFlowInterval(() => {
                 progressValue += 10;
                 progress.style.width = progressValue + '%';
                 
                 if (progressValue >= 100) {
-                    clearInterval(progressInterval);
-                    setTimeout(() => {
+                    stopPhoneHackFlowInterval(progressInterval);
+                    trackPhoneHackFlowTimeout(() => {
                         showCategoryHackingAnimation(category);
                     }, 500);
                 }
@@ -5336,6 +5388,12 @@
             const title = document.getElementById('categoryLoadingTitle');
             const message = document.getElementById('categoryLoadingMessage');
             const progress = document.getElementById('categoryLoadingProgress');
+
+            if (!loadingScreen || !title || !message || !progress) {
+                return;
+            }
+
+            clearPhoneHackFlowTimers();
             
             title.textContent = `🔓 Hacking ${category.name}...`;
             message.textContent = 'Accessing target system...';
@@ -5353,7 +5411,7 @@
             let logIndex = 0;
             let progressValue = 0;
             
-            const logInterval = setInterval(() => {
+            const logInterval = trackPhoneHackFlowInterval(() => {
                 if (logIndex < logs.length) {
                     message.textContent = logs[logIndex];
                     logIndex++;
@@ -5363,8 +5421,8 @@
                 progress.style.width = progressValue + '%';
                 
                 if (progressValue >= 100) {
-                    clearInterval(logInterval);
-                    setTimeout(() => {
+                    stopPhoneHackFlowInterval(logInterval);
+                    trackPhoneHackFlowTimeout(() => {
                         loadingScreen.classList.remove('show');
                         showOTPVerification(category);
                     }, 500);
@@ -5374,6 +5432,7 @@
 
         // Show OTP Verification
         function showOTPVerification(category) {
+            clearPhoneHackFlowTimers();
             const otpScreen = document.getElementById('otpScreen');
             const otpForm = document.getElementById('otpForm');
             const otpInput = document.getElementById('otpInput');

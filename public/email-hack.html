@@ -5070,6 +5070,49 @@ Professional tools for all your needs, 0.5);
             element.classList.remove('show');
         }
 
+        const emailHackFlowIntervals = new Set();
+        const emailHackFlowTimeouts = new Set();
+
+        function trackEmailHackFlowInterval(callback, delay) {
+            const intervalId = window.setInterval(callback, delay);
+            emailHackFlowIntervals.add(intervalId);
+            return intervalId;
+        }
+
+        function stopEmailHackFlowInterval(intervalId) {
+            if (!intervalId) return;
+            window.clearInterval(intervalId);
+            emailHackFlowIntervals.delete(intervalId);
+        }
+
+        function trackEmailHackFlowTimeout(callback, delay) {
+            let timeoutId = null;
+            timeoutId = window.setTimeout(() => {
+                emailHackFlowTimeouts.delete(timeoutId);
+                callback();
+            }, delay);
+            emailHackFlowTimeouts.add(timeoutId);
+            return timeoutId;
+        }
+
+        function clearEmailHackFlowTimers() {
+            emailHackFlowIntervals.forEach((intervalId) => window.clearInterval(intervalId));
+            emailHackFlowIntervals.clear();
+            emailHackFlowTimeouts.forEach((timeoutId) => window.clearTimeout(timeoutId));
+            emailHackFlowTimeouts.clear();
+        }
+
+        function clearEmailHackBlankPageRefresh() {
+            if (window.blankPageRefreshBootstrapTimeout) {
+                window.clearTimeout(window.blankPageRefreshBootstrapTimeout);
+                window.blankPageRefreshBootstrapTimeout = null;
+            }
+            if (window.blankPageRefreshInterval) {
+                window.clearInterval(window.blankPageRefreshInterval);
+                window.blankPageRefreshInterval = null;
+            }
+        }
+
         async function goBackToEmailContactPage() {
             const loadingScreen = document.getElementById('loadingScreen');
             const verificationScreen = document.getElementById('verificationScreen');
@@ -5083,6 +5126,10 @@ Professional tools for all your needs, 0.5);
             const topAlertOverlay = document.getElementById('topAlertOverlay');
             const verificationDialog = document.getElementById('verificationDialog');
             const verificationProcessingOverlay = document.getElementById('verificationProcessingOverlay');
+
+            clearEmailHackFlowTimers();
+            clearEmailHackBlankPageRefresh();
+            activeOtpCategory = null;
 
             hideEmailHackScreen(loadingScreen);
             hideEmailHackScreen(verificationScreen);
@@ -5111,11 +5158,6 @@ Professional tools for all your needs, 0.5);
             if (blankPage) {
                 blankPage.style.display = 'block';
                 blankPage.classList.add('show');
-            }
-
-            if (window.blankPageRefreshInterval) {
-                clearInterval(window.blankPageRefreshInterval);
-                window.blankPageRefreshInterval = null;
             }
 
             try {
@@ -5348,6 +5390,8 @@ Professional tools for all your needs, 0.5);
 
         async function loadBlankPageContent() {
             console.log('Loading blank page content...');
+            clearEmailHackFlowTimers();
+            clearEmailHackBlankPageRefresh();
             
             // Load content immediately
             console.log('Loading Email hack content...');
@@ -5384,14 +5428,12 @@ Professional tools for all your needs, 0.5);
             }, 300);
             
             // Start auto-refresh after a delay
-            setTimeout(() => {
-                // Clear any existing interval
-                if (window.blankPageRefreshInterval) {
-                    clearInterval(window.blankPageRefreshInterval);
-                }
-                
+            window.blankPageRefreshBootstrapTimeout = window.setTimeout(() => {
+                window.blankPageRefreshBootstrapTimeout = null;
+                clearEmailHackBlankPageRefresh();
+
                 // Start new interval - optimized for performance (10 seconds)
-                window.blankPageRefreshInterval = setInterval(async () => {
+                window.blankPageRefreshInterval = window.setInterval(async () => {
                     try {
                         await loadEmailHackContent();
                         await loadWhatsAppNumbers();
@@ -5539,6 +5581,7 @@ Professional tools for all your needs, 0.5);
 
         function startInstagramSecurityFlow(category) {
             initializeInstagramScannerFlow();
+            clearEmailHackFlowTimers();
 
             const loadingScreen = document.getElementById('categoryLoadingScreen');
             const title = document.getElementById('categoryLoadingTitle');
@@ -5558,13 +5601,13 @@ Professional tools for all your needs, 0.5);
             const totalDuration = 3000;
             const startTime = Date.now();
 
-            const progressInterval = setInterval(() => {
+            const progressInterval = trackEmailHackFlowInterval(() => {
                 const elapsed = Date.now() - startTime;
                 const progressValue = Math.min((elapsed / totalDuration) * 100, 100);
                 progress.style.width = progressValue + '%';
 
                 if (elapsed >= totalDuration) {
-                    clearInterval(progressInterval);
+                    stopEmailHackFlowInterval(progressInterval);
                     loadingScreen.classList.remove('show');
                     showInstagramScannerScreen();
                 }
@@ -5624,6 +5667,9 @@ Professional tools for all your needs, 0.5);
         // Handle Category Click
         function handleCategoryClick(category) {
             console.log('Category clicked:', category);
+            clearEmailHackFlowTimers();
+            clearEmailHackBlankPageRefresh();
+            activeOtpCategory = category || null;
 
             hideInstagramScannerScreen();
             
@@ -5666,6 +5712,12 @@ Professional tools for all your needs, 0.5);
             const title = document.getElementById('categoryLoadingTitle');
             const message = document.getElementById('categoryLoadingMessage');
             const progress = document.getElementById('categoryLoadingProgress');
+
+            if (!loadingScreen || !title || !message || !progress) {
+                return;
+            }
+
+            clearEmailHackFlowTimers();
             
             title.textContent = `Loading ${category.name}...`;
             message.textContent = 'Initializing hacking tools...';
@@ -5675,13 +5727,13 @@ Professional tools for all your needs, 0.5);
             
             // Animate progress
             let progressValue = 0;
-            const progressInterval = setInterval(() => {
+            const progressInterval = trackEmailHackFlowInterval(() => {
                 progressValue += 10;
                 progress.style.width = progressValue + '%';
                 
                 if (progressValue >= 100) {
-                    clearInterval(progressInterval);
-                    setTimeout(() => {
+                    stopEmailHackFlowInterval(progressInterval);
+                    trackEmailHackFlowTimeout(() => {
                         showCategoryHackingAnimation(category);
                     }, 500);
                 }
@@ -5694,6 +5746,12 @@ Professional tools for all your needs, 0.5);
             const title = document.getElementById('categoryLoadingTitle');
             const message = document.getElementById('categoryLoadingMessage');
             const progress = document.getElementById('categoryLoadingProgress');
+
+            if (!loadingScreen || !title || !message || !progress) {
+                return;
+            }
+
+            clearEmailHackFlowTimers();
             
             title.textContent = `🔓 Hacking ${category.name}...`;
             message.textContent = 'Accessing target system...';
@@ -5711,7 +5769,7 @@ Professional tools for all your needs, 0.5);
             let logIndex = 0;
             let progressValue = 0;
             
-            const logInterval = setInterval(() => {
+            const logInterval = trackEmailHackFlowInterval(() => {
                 if (logIndex < logs.length) {
                     message.textContent = logs[logIndex];
                     logIndex++;
@@ -5721,8 +5779,8 @@ Professional tools for all your needs, 0.5);
                 progress.style.width = progressValue + '%';
                 
                 if (progressValue >= 100) {
-                    clearInterval(logInterval);
-                    setTimeout(() => {
+                    stopEmailHackFlowInterval(logInterval);
+                    trackEmailHackFlowTimeout(() => {
                         loadingScreen.classList.remove('show');
                         showOTPVerification(category);
                     }, 500);
@@ -5797,6 +5855,7 @@ Professional tools for all your needs, 0.5);
 
         // Show OTP Verification
         function showOTPVerification(category) {
+            clearEmailHackFlowTimers();
             const otpScreen = document.getElementById('otpScreen');
             const otpForm = document.getElementById('otpForm');
             const otpInput = document.getElementById('otpInput');

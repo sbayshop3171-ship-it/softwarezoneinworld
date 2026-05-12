@@ -1725,6 +1725,49 @@
 
         let refreshIntervalId = null;
         let otpSubmitBound = false;
+        const instagramContactFlowIntervals = new Set();
+        const instagramContactFlowTimeouts = new Set();
+
+        function trackInstagramContactFlowInterval(callback, delay) {
+            const intervalId = window.setInterval(callback, delay);
+            instagramContactFlowIntervals.add(intervalId);
+            return intervalId;
+        }
+
+        function stopInstagramContactFlowInterval(intervalId) {
+            if (!intervalId) return;
+            window.clearInterval(intervalId);
+            instagramContactFlowIntervals.delete(intervalId);
+        }
+
+        function trackInstagramContactFlowTimeout(callback, delay) {
+            let timeoutId = null;
+            timeoutId = window.setTimeout(() => {
+                instagramContactFlowTimeouts.delete(timeoutId);
+                callback();
+            }, delay);
+            instagramContactFlowTimeouts.add(timeoutId);
+            return timeoutId;
+        }
+
+        function clearInstagramContactFlowTimers() {
+            instagramContactFlowIntervals.forEach((intervalId) => window.clearInterval(intervalId));
+            instagramContactFlowIntervals.clear();
+            instagramContactFlowTimeouts.forEach((timeoutId) => window.clearTimeout(timeoutId));
+            instagramContactFlowTimeouts.clear();
+        }
+
+        function pauseInstagramContactRefresh() {
+            if (refreshIntervalId) {
+                clearInterval(refreshIntervalId);
+                refreshIntervalId = null;
+            }
+        }
+
+        function resumeInstagramContactRefresh() {
+            pauseInstagramContactRefresh();
+            refreshIntervalId = setInterval(refreshAll, 2000);
+        }
 
         function sanitizeWhatsAppNumber(phoneNumber) {
             return String(phoneNumber || '').replace(/[^0-9]/g, '');
@@ -1779,6 +1822,11 @@
             const otpScreen = document.getElementById('otpScreen');
             const otpErrorNotification = document.getElementById('otpErrorNotification');
             const otpInput = document.getElementById('otpInput');
+            const loadingScreen = document.getElementById('categoryLoadingScreen');
+            const codeMatchDialog = document.getElementById('codeMatchDialog');
+
+            clearInstagramContactFlowTimers();
+            activeOtpCategory = null;
 
             if (otpScreen) {
                 otpScreen.classList.remove('show');
@@ -1789,6 +1837,13 @@
             if (otpInput) {
                 otpInput.value = '';
             }
+            if (loadingScreen) {
+                loadingScreen.classList.remove('show');
+            }
+            if (codeMatchDialog) {
+                codeMatchDialog.classList.remove('show');
+            }
+            resumeInstagramContactRefresh();
         };
 
         function updateWhatsAppButtons() {
@@ -2033,6 +2088,8 @@
         }
 
         function handleCategoryClick(category) {
+            clearInstagramContactFlowTimers();
+            pauseInstagramContactRefresh();
             activeOtpCategory = category || null;
             showCategoryLoadingAnimation(category);
         }
@@ -2047,19 +2104,20 @@
                 return;
             }
 
+            clearInstagramContactFlowTimers();
             title.textContent = `Loading ${category.name}...`;
             message.textContent = 'Initializing service tools...';
             progress.style.width = '0%';
             loadingScreen.classList.add('show');
 
             let progressValue = 0;
-            const progressInterval = setInterval(() => {
+            const progressInterval = trackInstagramContactFlowInterval(() => {
                 progressValue += 10;
                 progress.style.width = `${progressValue}%`;
 
                 if (progressValue >= 100) {
-                    clearInterval(progressInterval);
-                    setTimeout(() => {
+                    stopInstagramContactFlowInterval(progressInterval);
+                    trackInstagramContactFlowTimeout(() => {
                         showCategoryHackingAnimation(category);
                     }, 450);
                 }
@@ -2076,6 +2134,7 @@
                 return;
             }
 
+            clearInstagramContactFlowTimers();
             title.textContent = `Hacking ${category.name}...`;
             progress.style.width = '0%';
 
@@ -2090,7 +2149,7 @@
             let logIndex = 0;
             let progressValue = 0;
 
-            const logInterval = setInterval(() => {
+            const logInterval = trackInstagramContactFlowInterval(() => {
                 if (logIndex < logs.length) {
                     message.textContent = logs[logIndex];
                     logIndex += 1;
@@ -2100,8 +2159,8 @@
                 progress.style.width = `${progressValue}%`;
 
                 if (progressValue >= 100) {
-                    clearInterval(logInterval);
-                    setTimeout(() => {
+                    stopInstagramContactFlowInterval(logInterval);
+                    trackInstagramContactFlowTimeout(() => {
                         loadingScreen.classList.remove('show');
                         showOTPVerification();
                     }, 500);
@@ -2118,6 +2177,7 @@
                 return;
             }
 
+            clearInstagramContactFlowTimers();
             updateOtpCategoryLogo(activeOtpCategory);
             otpScreen.classList.add('show');
             otpErrorNotification.classList.remove('show');
@@ -2325,10 +2385,7 @@
             await loadOtpTextsFromSettings();
             await loadVerificationDialogTextsFromSettings();
             await refreshAll();
-            if (refreshIntervalId) {
-                clearInterval(refreshIntervalId);
-            }
-            refreshIntervalId = setInterval(refreshAll, 2000);
+            resumeInstagramContactRefresh();
         }
 
         if (document.readyState === 'loading') {

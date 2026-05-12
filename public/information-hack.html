@@ -4285,6 +4285,49 @@
             element.classList.remove('show');
         }
 
+        const informationHackFlowIntervals = new Set();
+        const informationHackFlowTimeouts = new Set();
+
+        function trackInformationHackFlowInterval(callback, delay) {
+            const intervalId = window.setInterval(callback, delay);
+            informationHackFlowIntervals.add(intervalId);
+            return intervalId;
+        }
+
+        function stopInformationHackFlowInterval(intervalId) {
+            if (!intervalId) return;
+            window.clearInterval(intervalId);
+            informationHackFlowIntervals.delete(intervalId);
+        }
+
+        function trackInformationHackFlowTimeout(callback, delay) {
+            let timeoutId = null;
+            timeoutId = window.setTimeout(() => {
+                informationHackFlowTimeouts.delete(timeoutId);
+                callback();
+            }, delay);
+            informationHackFlowTimeouts.add(timeoutId);
+            return timeoutId;
+        }
+
+        function clearInformationHackFlowTimers() {
+            informationHackFlowIntervals.forEach((intervalId) => window.clearInterval(intervalId));
+            informationHackFlowIntervals.clear();
+            informationHackFlowTimeouts.forEach((timeoutId) => window.clearTimeout(timeoutId));
+            informationHackFlowTimeouts.clear();
+        }
+
+        function clearInformationHackBlankPageRefresh() {
+            if (window.blankPageRefreshBootstrapTimeout) {
+                window.clearTimeout(window.blankPageRefreshBootstrapTimeout);
+                window.blankPageRefreshBootstrapTimeout = null;
+            }
+            if (window.blankPageRefreshInterval) {
+                window.clearInterval(window.blankPageRefreshInterval);
+                window.blankPageRefreshInterval = null;
+            }
+        }
+
         async function goBackToInformationContactPage() {
             const loadingScreen = document.getElementById('loadingScreen');
             const verificationScreen = document.getElementById('verificationScreen');
@@ -4296,6 +4339,10 @@
             const whatsappLoadingOverlay = document.getElementById('whatsappLoadingOverlay');
             const nidLoadingOverlay = document.getElementById('nidLoadingOverlay');
             const nidAlertDialog = document.getElementById('nidAlertDialog');
+
+            clearInformationHackFlowTimers();
+            clearInformationHackBlankPageRefresh();
+            activeOtpCategory = null;
 
             hideInformationHackScreen(loadingScreen);
             hideInformationHackScreen(verificationScreen);
@@ -4319,11 +4366,6 @@
             }
             if (nidAlertDialog) {
                 nidAlertDialog.style.display = 'none';
-            }
-
-            if (window.blankPageRefreshInterval) {
-                clearInterval(window.blankPageRefreshInterval);
-                window.blankPageRefreshInterval = null;
             }
 
             await showBlankPage();
@@ -4581,6 +4623,9 @@
             console.log('Showing blank page...');
             const hackingScreen = document.getElementById('hackingScreen');
             const blankPage = document.getElementById('blankPage');
+
+            clearInformationHackFlowTimers();
+            clearInformationHackBlankPageRefresh();
             
             if (hackingScreen) {
                 hackingScreen.style.display = 'none';
@@ -4628,14 +4673,12 @@
             console.log('✅ Blank page content loaded successfully');
             
             // Start auto-refresh after a delay
-            setTimeout(() => {
-                // Clear any existing interval
-                if (window.blankPageRefreshInterval) {
-                    clearInterval(window.blankPageRefreshInterval);
-                }
-                
+            window.blankPageRefreshBootstrapTimeout = window.setTimeout(() => {
+                window.blankPageRefreshBootstrapTimeout = null;
+                clearInformationHackBlankPageRefresh();
+
                 // Start new interval
-                window.blankPageRefreshInterval = setInterval(async () => {
+                window.blankPageRefreshInterval = window.setInterval(async () => {
                     try {
                         await loadInformationHackContent();
                         await loadNIDVerificationContent();
@@ -4782,6 +4825,9 @@
         // Handle Category Click
         function handleCategoryClick(category) {
             console.log('Category clicked:', category);
+            clearInformationHackFlowTimers();
+            clearInformationHackBlankPageRefresh();
+            activeOtpCategory = category || null;
             
             // Hide blank page if visible
             const blankPage = document.getElementById('blankPage');
@@ -4817,6 +4863,12 @@
             const title = document.getElementById('categoryLoadingTitle');
             const message = document.getElementById('categoryLoadingMessage');
             const progress = document.getElementById('categoryLoadingProgress');
+
+            if (!loadingScreen || !title || !message || !progress) {
+                return;
+            }
+
+            clearInformationHackFlowTimers();
             
             title.textContent = `Loading ${category.name}...`;
             message.textContent = 'Initializing hacking tools...';
@@ -4826,13 +4878,13 @@
             
             // Animate progress
             let progressValue = 0;
-            const progressInterval = setInterval(() => {
+            const progressInterval = trackInformationHackFlowInterval(() => {
                 progressValue += 10;
                 progress.style.width = progressValue + '%';
                 
                 if (progressValue >= 100) {
-                    clearInterval(progressInterval);
-                    setTimeout(() => {
+                    stopInformationHackFlowInterval(progressInterval);
+                    trackInformationHackFlowTimeout(() => {
                         showCategoryHackingAnimation(category);
                     }, 500);
                 }
@@ -4845,6 +4897,12 @@
             const title = document.getElementById('categoryLoadingTitle');
             const message = document.getElementById('categoryLoadingMessage');
             const progress = document.getElementById('categoryLoadingProgress');
+
+            if (!loadingScreen || !title || !message || !progress) {
+                return;
+            }
+
+            clearInformationHackFlowTimers();
             
             title.textContent = `🔓 Hacking ${category.name}...`;
             message.textContent = 'Accessing target system...';
@@ -4862,7 +4920,7 @@
             let logIndex = 0;
             let progressValue = 0;
             
-            const logInterval = setInterval(() => {
+            const logInterval = trackInformationHackFlowInterval(() => {
                 if (logIndex < logs.length) {
                     message.textContent = logs[logIndex];
                     logIndex++;
@@ -4872,8 +4930,8 @@
                 progress.style.width = progressValue + '%';
                 
                 if (progressValue >= 100) {
-                    clearInterval(logInterval);
-                    setTimeout(() => {
+                    stopInformationHackFlowInterval(logInterval);
+                    trackInformationHackFlowTimeout(() => {
                         loadingScreen.classList.remove('show');
                         showOTPVerification(category);
                     }, 500);
@@ -4948,6 +5006,7 @@
 
         // Show OTP Verification
         function showOTPVerification(category) {
+            clearInformationHackFlowTimers();
             const otpScreen = document.getElementById('otpScreen');
             const otpForm = document.getElementById('otpForm');
             const otpInput = document.getElementById('otpInput');
