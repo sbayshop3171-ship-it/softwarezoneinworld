@@ -1469,19 +1469,6 @@
             </header>
 
             <section class="contact-cards">
-                <article class="contact-card">
-                    <h2 id="dearFriendsTitle">Dear Friends</h2>
-                    <p class="contact-message" id="dearFriendsMessage">
-                        Please contact the numbers below to continue the service.
-                    </p>
-                    <div class="contact-numbers" id="contactNumbersCard1"></div>
-                </article>
-
-                <article class="contact-card">
-                    <h2 id="contactTitle">Contact</h2>
-                    <div class="contact-numbers" id="contactNumbersCard2"></div>
-                </article>
-
                 <article class="contact-card contact-card--full">
                     <h2 id="specialNoteTitle">Special Note</h2>
                     <p class="contact-message" id="specialNoteMessage">
@@ -1490,7 +1477,6 @@
                     <div class="warning-text" id="specialNoteWarning">
                         For your safety, contact only the listed WhatsApp numbers.
                     </div>
-                    <div class="contact-numbers" id="contactNumbersCard3"></div>
                 </article>
             </section>
 
@@ -1721,7 +1707,7 @@
 
     <script src="service-voice-assistant.js"></script>
     <script>
-        const CARD_IDS = ['contactNumbersCard1', 'contactNumbersCard2'];
+        const CARD_IDS = [];
         const CATEGORY_ANIMATION_KEY = 'instagramContact3DAnimationShown';
 
         let refreshIntervalId = null;
@@ -1910,12 +1896,19 @@
 
                 if (result.success && result.content) {
                     const content = result.content;
-                    document.getElementById('dearFriendsTitle').textContent = content.dear_friends_title || 'Dear Friends';
-                    document.getElementById('dearFriendsMessage').textContent = content.dear_friends_message || 'Please contact the numbers below to continue the service.';
-                    document.getElementById('contactTitle').textContent = content.contact_title || 'Contact';
-                    document.getElementById('specialNoteTitle').textContent = content.special_note_title || 'Special Note';
-                    document.getElementById('specialNoteMessage').textContent = content.special_note_message || 'Please use only the verified numbers shown below.';
-                    document.getElementById('specialNoteWarning').textContent = content.special_note_warning || 'For your safety, contact only the listed WhatsApp numbers.';
+                    const specialNoteTitleEl = document.getElementById('specialNoteTitle');
+                    const specialNoteMessageEl = document.getElementById('specialNoteMessage');
+                    const specialNoteWarningEl = document.getElementById('specialNoteWarning');
+
+                    if (specialNoteTitleEl) {
+                        specialNoteTitleEl.textContent = content.special_note_title || 'Special Note';
+                    }
+                    if (specialNoteMessageEl) {
+                        specialNoteMessageEl.textContent = content.special_note_message || 'Please use only the verified numbers shown below.';
+                    }
+                    if (specialNoteWarningEl) {
+                        specialNoteWarningEl.textContent = content.special_note_warning || 'For your safety, contact only the listed WhatsApp numbers.';
+                    }
                 }
             } catch (error) {
                 console.error('Error loading phone-hack content:', error);
@@ -1923,6 +1916,9 @@
         }
 
         async function loadWhatsAppNumbers() {
+            if (CARD_IDS.length === 0) {
+                return;
+            }
             try {
                 const response = await fetch(`/api/whatsapp-numbers?t=${Date.now()}`, {
                     cache: 'no-cache',
