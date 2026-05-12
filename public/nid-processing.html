@@ -3,147 +3,363 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Info Review</title>
+    <title>Customer Review - Premium Demo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
-        :root {
-            --bg: #0f171d;
-            --panel: rgba(18, 24, 31, 0.9);
-            --panel-soft: rgba(27, 35, 43, 0.96);
-            --line: rgba(103, 215, 196, 0.16);
-            --line-strong: rgba(121, 194, 255, 0.24);
-            --text: #f5f1e8;
-            --muted: #b8c4c8;
-            --accent: #67d7c4;
-            --accent-strong: #79c2ff;
-            --warm: #f4bc77;
-            --shadow: 0 28px 80px rgba(0, 0, 0, 0.38);
-        }
-
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
-            min-height: 100vh;
             font-family: 'Poppins', sans-serif;
-            color: var(--text);
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
             background:
-                radial-gradient(circle at top right, rgba(121, 194, 255, 0.12), transparent 30%),
-                radial-gradient(circle at bottom left, rgba(103, 215, 196, 0.1), transparent 34%),
-                linear-gradient(180deg, #0c1318 0%, #101b22 58%, #0f171d 100%);
+                radial-gradient(circle at 20% 30%, rgba(0, 255, 65, 0.04) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(0, 212, 255, 0.04) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
         }
 
-        .page-shell {
-            width: min(100%, 820px);
-            margin: 0 auto;
-            padding: 20px 16px 40px;
-        }
-
-        .topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 18px;
-        }
-
-        .topbar-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .ghost-btn,
-        .primary-btn,
-        .secondary-btn,
-        .home-link {
-            border: 1px solid transparent;
-            border-radius: 999px;
-            padding: 12px 18px;
-            font: inherit;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
+        .service-back-btn {
+            position: fixed;
+            top: 18px;
+            left: 16px;
+            z-index: 12000;
             display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 18px;
+            border-radius: 16px;
+            border: 1px solid rgba(0, 212, 255, 0.35);
+            background: rgba(4, 13, 24, 0.85);
+            color: #fff;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow:
+                0 0 0 1px rgba(0, 255, 65, 0.12),
+                0 0 24px rgba(0, 212, 255, 0.12);
+            backdrop-filter: blur(10px);
+            transition: transform 0.25s ease, border-color 0.25s ease;
+        }
+
+        .service-back-btn:hover {
+            transform: translateY(-2px);
+            border-color: rgba(0, 255, 65, 0.55);
+        }
+
+        .home-btn {
+            position: fixed;
+            top: 18px;
+            right: 16px;
+            z-index: 12000;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 18px;
+            border-radius: 16px;
+            border: 1px solid rgba(0, 255, 65, 0.28);
+            background: rgba(4, 13, 24, 0.85);
+            color: #fff;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow:
+                0 0 0 1px rgba(0, 255, 65, 0.12),
+                0 0 24px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            transition: transform 0.25s ease, border-color 0.25s ease;
+        }
+
+        .home-btn:hover {
+            transform: translateY(-2px);
+            border-color: rgba(0, 212, 255, 0.45);
+        }
+
+        .boot-screen,
+        .submit-screen {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 10000;
+            display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+            padding: 20px;
         }
 
-        .ghost-btn,
-        .home-link,
-        .secondary-btn {
-            color: var(--text);
-            background: rgba(255, 255, 255, 0.03);
-            border-color: rgba(255, 255, 255, 0.08);
+        .submit-screen {
+            display: none;
         }
 
-        .ghost-btn:hover,
-        .home-link:hover,
-        .secondary-btn:hover,
-        .primary-btn:hover {
-            transform: translateY(-1px);
+        .processing-content {
+            width: min(92vw, 820px);
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid rgba(0, 255, 65, 0.18);
+            border-radius: 22px;
+            padding: 36px;
+            box-shadow:
+                0 0 0 1px rgba(0, 255, 65, 0.06),
+                0 0 14px rgba(0, 255, 65, 0.08),
+                inset 0 0 12px rgba(0, 255, 65, 0.03);
+            position: relative;
+            overflow: hidden;
         }
 
-        .step-pill {
-            padding: 10px 14px;
-            border-radius: 999px;
-            background: rgba(103, 215, 196, 0.12);
-            color: var(--accent);
-            font-size: 13px;
+        .processing-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(0, 255, 65, 0.02) 30%,
+                rgba(0, 212, 255, 0.02) 50%,
+                rgba(0, 255, 65, 0.02) 70%,
+                transparent 100%
+            );
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .processing-header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .processing-icon {
+            font-size: 58px;
+            color: #00ff41;
+            margin-bottom: 18px;
+            text-shadow: 0 0 18px rgba(0, 255, 65, 0.25);
+        }
+
+        .processing-title {
+            color: #00ff41;
+            font-size: 28px;
             font-weight: 700;
-            letter-spacing: 0.04em;
+            margin: 0;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 2px;
         }
 
-        .card {
-            background: var(--panel);
-            border: 1px solid var(--line);
-            border-radius: 28px;
-            box-shadow: var(--shadow);
-            padding: 28px;
-            backdrop-filter: blur(10px);
+        .processing-terminal {
+            background: rgba(0, 0, 0, 0.82);
+            border: 2px solid rgba(0, 255, 65, 0.45);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 26px;
+            min-height: 200px;
+            font-family: 'Courier New', monospace;
+            color: #00ff41;
+            position: relative;
+            z-index: 1;
+            box-shadow:
+                0 0 20px rgba(0, 255, 65, 0.16),
+                inset 0 0 20px rgba(0, 255, 65, 0.08);
         }
 
-        .card + .card {
-            margin-top: 18px;
+        .terminal-messages {
+            line-height: 1.8;
+            font-size: 14px;
+            max-height: 220px;
+            overflow-y: auto;
         }
 
-        .eyebrow {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            border-radius: 999px;
-            background: rgba(244, 188, 119, 0.12);
-            color: var(--warm);
-            padding: 8px 12px;
-            font-size: 13px;
+        .terminal-line {
+            margin-bottom: 8px;
+            text-shadow: 0 0 3px rgba(0, 255, 65, 0.2);
+            opacity: 0;
+            animation: messageFadeIn 0.45s ease forwards;
+        }
+
+        @keyframes messageFadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .terminal-cursor {
+            display: inline-block;
+            color: #00ff41;
+            font-weight: bold;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+
+        .processing-progress {
+            position: relative;
+            z-index: 1;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(0, 255, 65, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+            border: 1px solid rgba(0, 255, 65, 0.28);
+        }
+
+        .progress-fill {
+            width: 0;
+            height: 100%;
+            background: linear-gradient(90deg, #00ff41, #00d4ff);
+            transition: width 0.12s ease;
+            box-shadow:
+                0 0 10px rgba(0, 255, 65, 0.6),
+                0 0 20px rgba(0, 255, 65, 0.3);
+        }
+
+        .progress-text {
+            text-align: center;
+            color: #00ff41;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 18px;
             font-weight: 700;
-            letter-spacing: 0.04em;
-            margin-bottom: 16px;
+            text-shadow: 0 0 12px rgba(0, 255, 65, 0.34);
         }
 
-        h1 {
-            font-family: 'Manrope', sans-serif;
-            font-size: clamp(28px, 6vw, 40px);
-            line-height: 1.1;
-            margin-bottom: 12px;
+        .review-screen {
+            display: none;
+            min-height: 100vh;
+            padding: 84px 18px 120px;
+            position: relative;
+            z-index: 1;
         }
 
-        .lead {
-            color: var(--muted);
-            font-size: 15px;
+        .review-screen.show {
+            display: block;
+            animation: fadeInScreen 0.5s ease;
+        }
+
+        @keyframes fadeInScreen {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .review-container {
+            width: min(92vw, 820px);
+            margin: 0 auto;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 20, 10, 0.95) 100%);
+            border-radius: 24px;
+            padding: 38px 30px 32px;
+            border: 2px solid rgba(0, 255, 65, 0.36);
+            box-shadow:
+                0 0 0 2px rgba(0, 255, 65, 0.18),
+                0 0 44px rgba(0, 255, 65, 0.18),
+                0 0 100px rgba(0, 212, 255, 0.08),
+                inset 0 0 36px rgba(0, 255, 65, 0.06);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .review-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(0, 255, 65, 0.06) 30%,
+                rgba(0, 212, 255, 0.06) 50%,
+                rgba(0, 255, 65, 0.06) 70%,
+                transparent 100%
+            );
+            animation: shimmer 3s infinite;
+        }
+
+        .review-header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .review-icon {
+            font-size: 60px;
+            color: #00ff41;
+            margin-bottom: 18px;
+            text-shadow:
+                0 0 20px rgba(0, 255, 65, 0.7),
+                0 0 40px rgba(0, 255, 65, 0.35);
+        }
+
+        .review-header h1 {
+            color: #00ff41;
+            font-size: 30px;
+            font-weight: 700;
+            margin: 0 0 10px;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 2px;
+            text-shadow:
+                0 0 20px rgba(0, 255, 65, 0.7),
+                0 0 40px rgba(0, 255, 65, 0.25);
+        }
+
+        .review-header p {
+            color: #9fe6ff;
+            font-size: 14px;
             line-height: 1.75;
-            margin-bottom: 24px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .notice-card {
+            position: relative;
+            z-index: 1;
+            margin-bottom: 22px;
+            padding: 16px 18px;
+            border-radius: 16px;
+            background: rgba(0, 0, 0, 0.36);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            color: #c9faff;
+            font-size: 13px;
+            line-height: 1.7;
         }
 
         .summary-grid {
+            position: relative;
+            z-index: 1;
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 14px;
@@ -153,55 +369,59 @@
             display: grid;
             gap: 8px;
             padding: 16px;
-            border-radius: 20px;
-            background: var(--panel-soft);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 18px;
+            border: 1px solid rgba(0, 255, 65, 0.24);
+            background: rgba(0, 0, 0, 0.4);
+            box-shadow: inset 0 0 18px rgba(0, 255, 65, 0.04);
         }
 
         .summary-label {
-            color: var(--muted);
+            color: #00ff41;
             font-size: 12px;
             font-weight: 700;
-            letter-spacing: 0.06em;
+            letter-spacing: 0.08em;
             text-transform: uppercase;
+            font-family: 'Orbitron', sans-serif;
         }
 
         .summary-value {
-            color: var(--text);
+            color: #fff;
             font-size: 15px;
             line-height: 1.65;
             word-break: break-word;
         }
 
         .attachment-panel {
-            margin-top: 18px;
+            position: relative;
+            z-index: 1;
             display: none;
+            grid-template-columns: 100px 1fr;
             gap: 16px;
             align-items: center;
+            margin-top: 20px;
             padding: 16px;
-            border-radius: 22px;
-            border: 1px solid rgba(103, 215, 196, 0.14);
-            background: rgba(255, 255, 255, 0.02);
+            border-radius: 18px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            background: rgba(0, 10, 20, 0.4);
         }
 
         .attachment-panel.show {
             display: grid;
-            grid-template-columns: 96px 1fr;
         }
 
         .attachment-panel img,
         .attachment-fallback {
-            width: 96px;
-            height: 96px;
+            width: 100px;
+            height: 100px;
             border-radius: 18px;
+            border: 1px solid rgba(0, 255, 65, 0.24);
+            background: rgba(0, 0, 0, 0.55);
             object-fit: cover;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
             align-items: center;
             justify-content: center;
+            color: #00d4ff;
             font-size: 28px;
-            color: var(--accent-strong);
         }
 
         .attachment-meta {
@@ -210,29 +430,32 @@
         }
 
         .attachment-meta strong {
+            color: #fff;
             font-size: 15px;
             line-height: 1.5;
         }
 
         .attachment-meta span {
-            color: var(--muted);
+            color: #9fd9e8;
             font-size: 13px;
-            line-height: 1.6;
+            line-height: 1.65;
         }
 
         .action-row {
-            margin-top: 24px;
+            position: relative;
+            z-index: 1;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 14px;
+            gap: 16px;
+            margin-top: 26px;
         }
 
         .action-copy {
-            color: var(--muted);
+            color: #9fd9e8;
             font-size: 13px;
-            line-height: 1.7;
-            max-width: 340px;
+            line-height: 1.75;
+            max-width: 350px;
         }
 
         .action-buttons {
@@ -241,115 +464,147 @@
             flex-wrap: wrap;
         }
 
+        .secondary-btn,
         .primary-btn {
-            background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-            color: #091015;
-            font-weight: 800;
-            min-width: 190px;
+            border-radius: 12px;
+            padding: 14px 20px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
         }
 
-        .progress-card {
-            display: none;
-        }
-
-        .progress-card.show {
-            display: block;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 12px;
-            border-radius: 999px;
+        .secondary-btn {
+            color: #d4f8ff;
             background: rgba(255, 255, 255, 0.07);
-            overflow: hidden;
-            margin: 22px 0 10px;
+            border-color: rgba(0, 212, 255, 0.2);
         }
 
-        .progress-fill {
-            width: 0;
-            height: 100%;
-            border-radius: inherit;
-            background: linear-gradient(90deg, var(--accent), var(--accent-strong));
-            transition: width 0.35s ease;
+        .primary-btn {
+            color: #000;
+            background: linear-gradient(135deg, #00ff41 0%, #00d4ff 100%);
+            border-color: rgba(0, 255, 65, 0.45);
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.25);
         }
 
-        .progress-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-            color: var(--muted);
-            font-size: 13px;
+        .secondary-btn:hover,
+        .primary-btn:hover {
+            transform: translateY(-2px);
         }
 
-        .timeline {
-            margin-top: 20px;
-            display: grid;
-            gap: 12px;
+        .empty-state {
+            display: none;
+            min-height: 100vh;
+            padding: 120px 18px 80px;
+            position: relative;
+            z-index: 1;
         }
 
-        .timeline-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px 16px;
-            border-radius: 18px;
-            background: var(--panel-soft);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            color: var(--muted);
-        }
-
-        .timeline-item i {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .timeline-item.active {
-            color: var(--text);
-            border-color: rgba(103, 215, 196, 0.26);
-        }
-
-        .timeline-item.active i {
-            background: rgba(103, 215, 196, 0.14);
-            color: var(--accent);
-        }
-
-        .timeline-item.done i {
-            background: rgba(121, 194, 255, 0.16);
-            color: var(--accent-strong);
+        .empty-state.show {
+            display: block;
         }
 
         .empty-card {
-            display: none;
+            width: min(92vw, 700px);
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.88);
+            border-radius: 24px;
+            padding: 34px 26px;
+            border: 2px solid rgba(0, 212, 255, 0.18);
             text-align: center;
+            box-shadow: 0 0 36px rgba(0, 0, 0, 0.44);
         }
 
-        .empty-card.show {
-            display: block;
+        .empty-card h2 {
+            color: #00ff41;
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 12px;
         }
 
         .empty-card p {
-            color: var(--muted);
+            color: #9fd9e8;
             line-height: 1.8;
-            margin: 12px auto 22px;
-            max-width: 520px;
+            margin-bottom: 22px;
         }
 
-        @media (max-width: 720px) {
-            .card {
-                padding: 22px 18px;
-                border-radius: 24px;
+        .step-dock {
+            position: fixed;
+            left: 50%;
+            bottom: 20px;
+            transform: translateX(-50%);
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 14px;
+            border-radius: 18px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            background: rgba(4, 13, 24, 0.88);
+            box-shadow:
+                0 0 0 1px rgba(0, 255, 65, 0.08),
+                0 0 24px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+        }
+
+        .step-node {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            border: 1px solid rgba(0, 255, 65, 0.34);
+            background: rgba(0, 0, 0, 0.5);
+            color: #c8f8ff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .step-node.active {
+            background: linear-gradient(135deg, #00ff41, #00d4ff);
+            color: #000;
+            border-color: rgba(0, 255, 65, 0.7);
+            box-shadow: 0 0 24px rgba(0, 255, 65, 0.35);
+        }
+
+        .step-caption {
+            padding: 0 8px 0 4px;
+            color: #8bd4f1;
+            font-size: 12px;
+            letter-spacing: 0.08em;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 768px) {
+            .service-back-btn,
+            .home-btn {
+                top: 12px;
+                padding: 10px 14px;
             }
 
-            .topbar,
-            .action-row {
-                flex-direction: column;
-                align-items: stretch;
+            .home-btn {
+                right: 12px;
+            }
+
+            .service-back-btn {
+                left: 12px;
+            }
+
+            .processing-content,
+            .review-container,
+            .empty-card {
+                width: calc(100vw - 28px);
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            .review-screen,
+            .empty-state {
+                padding-top: 78px;
             }
 
             .summary-grid {
@@ -360,49 +615,100 @@
                 grid-template-columns: 1fr;
             }
 
-            .action-buttons,
-            .topbar-actions {
+            .action-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .action-buttons {
                 width: 100%;
             }
 
-            .primary-btn,
             .secondary-btn,
-            .ghost-btn,
-            .home-link {
+            .primary-btn {
                 width: 100%;
             }
 
-            .action-copy {
-                max-width: none;
+            .step-dock {
+                width: calc(100vw - 28px);
+                justify-content: center;
+            }
+
+            .step-caption {
+                display: none;
             }
         }
     </style>
 </head>
 <body>
-    <main class="page-shell">
-        <div class="topbar">
-            <div class="topbar-actions">
-                <button type="button" id="backButton" class="ghost-btn">
-                    <i class="fas fa-arrow-left"></i>
-                    Back
-                </button>
-                <a href="/" class="home-link">
-                    <i class="fas fa-house"></i>
-                    Home
-                </a>
-            </div>
-            <div class="step-pill">Step 2 of 3</div>
-        </div>
+    <button type="button" class="service-back-btn" id="backButton">
+        <i class="fas fa-arrow-left"></i>
+        <span>Back</span>
+    </button>
+    <a href="/" class="home-btn">
+        <i class="fas fa-house"></i>
+        <span>Home</span>
+    </a>
 
-        <section id="reviewCard" class="card">
-            <div class="eyebrow">
-                <i class="fas fa-clipboard-check"></i>
-                Customer Info Review
+    <div id="bootScreen" class="boot-screen">
+        <div class="processing-content">
+            <div class="processing-header">
+                <div class="processing-icon">
+                    <i class="fas fa-id-card"></i>
+                </div>
+                <h1 class="processing-title">Preparing Review Step...</h1>
             </div>
-            <h1>Submit করার আগে values check করুন</h1>
-            <p class="lead">
-                এই screen-এ form-এর সব information review করতে পারবেন। Submit করার পর same values final status page-এ successful summary হিসেবে show হবে।
-            </p>
+            <div class="processing-terminal">
+                <div id="bootMessages" class="terminal-messages"></div>
+                <div class="terminal-cursor">_</div>
+            </div>
+            <div class="processing-progress">
+                <div class="progress-bar">
+                    <div id="bootProgressFill" class="progress-fill"></div>
+                </div>
+                <div class="progress-text">
+                    <span id="bootProgressPercent">0%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="submitScreen" class="submit-screen">
+        <div class="processing-content">
+            <div class="processing-header">
+                <div class="processing-icon">
+                    <i class="fas fa-paper-plane"></i>
+                </div>
+                <h1 class="processing-title">Finalizing Submission...</h1>
+            </div>
+            <div class="processing-terminal">
+                <div id="submitMessages" class="terminal-messages"></div>
+                <div class="terminal-cursor">_</div>
+            </div>
+            <div class="processing-progress">
+                <div class="progress-bar">
+                    <div id="submitProgressFill" class="progress-fill"></div>
+                </div>
+                <div class="progress-text">
+                    <span id="submitProgressPercent">0%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main id="reviewScreen" class="review-screen">
+        <section class="review-container">
+            <div class="review-header">
+                <div class="review-icon">
+                    <i class="fas fa-clipboard-check"></i>
+                </div>
+                <h1>Customer Review Step</h1>
+                <p>Check every submitted value below. This keeps the older premium neon shell, while the flow remains a harmless support and document submission demo.</p>
+            </div>
+
+            <div class="notice-card">
+                Use <strong>Edit Details</strong> if you want to go back to the form. When you press <strong>Submit Request</strong>, the same values will be carried to the final preview page.
+            </div>
 
             <div id="reviewSummary" class="summary-grid"></div>
 
@@ -412,137 +718,97 @@
                     <i class="fas fa-file-lines"></i>
                 </div>
                 <div class="attachment-meta">
-                    <strong id="attachmentName">Attachment</strong>
-                    <span id="attachmentInfo">Stored for final status page</span>
+                    <strong id="attachmentName">Attachment Added</strong>
+                    <span id="attachmentInfo">Stored for final preview</span>
                 </div>
             </div>
 
             <div class="action-row">
-                <p class="action-copy">
-                    কিছু edit করতে চাইলে আগের page-এ ফিরে যান। সব ঠিক থাকলে submit করুন, আমরা final status page-এ redirect করব।
-                </p>
+                <p class="action-copy">The final step will create a premium preview screen with request ID, submitted time, attachment details, and the same entered values.</p>
                 <div class="action-buttons">
                     <button type="button" id="editButton" class="secondary-btn">Edit Details</button>
-                    <button type="button" id="submitButton" class="primary-btn">
-                        Submit Request
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
+                    <button type="button" id="submitButton" class="primary-btn">Submit Request</button>
                 </div>
-            </div>
-        </section>
-
-        <section id="progressCard" class="card progress-card">
-            <div class="eyebrow">
-                <i class="fas fa-spinner"></i>
-                Submission In Progress
-            </div>
-            <h1>আপনার request prepare করা হচ্ছে</h1>
-            <p class="lead" id="progressLead">
-                Review complete হয়েছে। এখন final status page-এর জন্য data organize করা হচ্ছে।
-            </p>
-
-            <div class="progress-bar">
-                <div id="progressFill" class="progress-fill"></div>
-            </div>
-            <div class="progress-meta">
-                <span id="progressPercent">0%</span>
-                <span id="progressLabel">Preparing summary</span>
-            </div>
-
-            <div id="progressTimeline" class="timeline">
-                <div class="timeline-item">
-                    <i class="fas fa-id-card"></i>
-                    <span>Reviewing submitted customer information</span>
-                </div>
-                <div class="timeline-item">
-                    <i class="fas fa-folder-open"></i>
-                    <span>Preparing attachment and document details</span>
-                </div>
-                <div class="timeline-item">
-                    <i class="fas fa-check-circle"></i>
-                    <span>Finalizing submission status page</span>
-                </div>
-            </div>
-        </section>
-
-        <section id="emptyCard" class="card empty-card">
-            <div class="eyebrow">
-                <i class="fas fa-circle-info"></i>
-                No Draft Found
-            </div>
-            <h1>কোনো draft data পাওয়া যায়নি</h1>
-            <p>
-                Review page show করার মতো কোনো stored form data নেই। প্রথম step-এ ফিরে গিয়ে আবার support form fill করুন।
-            </p>
-            <div class="topbar-actions" style="justify-content:center;">
-                <a href="/information-hack.html" class="secondary-btn">Go To Form</a>
-                <a href="/" class="home-link">Home</a>
             </div>
         </section>
     </main>
 
+    <section id="emptyState" class="empty-state">
+        <div class="empty-card">
+            <h2>No Draft Found</h2>
+            <p>No stored form data was found for this step. Return to the intake page and complete the support form again.</p>
+            <div class="action-buttons" style="justify-content:center;">
+                <a href="/information-hack.html" class="secondary-btn" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">Go To Intake</a>
+                <a href="/" class="primary-btn" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">Home</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="step-dock" aria-hidden="true">
+        <div class="step-node">1</div>
+        <div class="step-node active">2</div>
+        <div class="step-node">3</div>
+        <div class="step-caption">Review Layer</div>
+    </div>
+
     <script src="script.js"></script>
     <script>
         const safeFlow = window.safeSubmissionFlow;
-        const reviewCard = document.getElementById('reviewCard');
-        const progressCard = document.getElementById('progressCard');
-        const emptyCard = document.getElementById('emptyCard');
-        const reviewSummary = document.getElementById('reviewSummary');
-        const attachmentPanel = document.getElementById('attachmentPanel');
-        const attachmentPreview = document.getElementById('attachmentPreview');
-        const attachmentFallback = document.getElementById('attachmentFallback');
-        const attachmentName = document.getElementById('attachmentName');
-        const attachmentInfo = document.getElementById('attachmentInfo');
-        const progressFill = document.getElementById('progressFill');
-        const progressPercent = document.getElementById('progressPercent');
-        const progressLabel = document.getElementById('progressLabel');
-        const timelineItems = Array.from(document.querySelectorAll('.timeline-item'));
-        const submitButton = document.getElementById('submitButton');
-
         const reviewData = safeFlow.getData();
         const query = new URLSearchParams(window.location.search);
         const forcedStatus = query.get('status') === 'failed' ? 'failed' : 'success';
 
-        function createRequestId() {
-            const year = new Date().getFullYear();
-            const randomChunk = Math.random().toString(36).slice(2, 8).toUpperCase();
-            return `SR-${year}-${randomChunk}`;
-        }
+        const bootSequence = [
+            'Mounting customer review screen...',
+            'Loading submitted support details...',
+            'Preparing attachment preview...',
+            'Syncing final preview route...',
+            'Review step ready.'
+        ];
 
-        function showEmptyState() {
-            reviewCard.style.display = 'none';
-            progressCard.classList.remove('show');
-            emptyCard.classList.add('show');
-        }
+        const submitSequence = [
+            'Locking customer summary...',
+            'Building submission metadata...',
+            'Creating request reference...',
+            'Preparing premium final preview...',
+            'Submission complete.'
+        ];
 
         function renderAttachment(attachment = {}) {
+            const panel = document.getElementById('attachmentPanel');
+            const preview = document.getElementById('attachmentPreview');
+            const fallback = document.getElementById('attachmentFallback');
+            const nameEl = document.getElementById('attachmentName');
+            const infoEl = document.getElementById('attachmentInfo');
             const hasAttachment = attachment && (attachment.name || attachment.preview);
-            attachmentPanel.classList.toggle('show', !!hasAttachment);
+
+            panel.classList.toggle('show', !!hasAttachment);
             if (!hasAttachment) return;
 
-            attachmentName.textContent = attachment.name || 'Attachment Added';
-            attachmentInfo.textContent = [attachment.type, attachment.size]
+            nameEl.textContent = attachment.name || 'Attachment Added';
+            infoEl.textContent = [attachment.type, attachment.size]
                 .filter(Boolean)
-                .join(' • ') || 'Stored for final status page';
+                .join(' • ') || 'Stored for final preview';
 
             if (attachment.preview) {
-                attachmentPreview.src = attachment.preview;
-                attachmentPreview.style.display = 'block';
-                attachmentFallback.style.display = 'none';
+                preview.src = attachment.preview;
+                preview.style.display = 'block';
+                fallback.style.display = 'none';
             } else {
-                attachmentPreview.removeAttribute('src');
-                attachmentPreview.style.display = 'none';
-                attachmentFallback.style.display = 'flex';
+                preview.removeAttribute('src');
+                preview.style.display = 'none';
+                fallback.style.display = 'flex';
             }
         }
 
-        function renderReview() {
+        function renderReviewData() {
             if (!reviewData || !reviewData.customerName || !reviewData.contactNumber) {
-                showEmptyState();
-                return;
+                document.getElementById('reviewScreen').style.display = 'none';
+                document.getElementById('emptyState').classList.add('show');
+                return false;
             }
 
-            safeFlow.renderSummary(reviewSummary, [
+            safeFlow.renderSummary(document.getElementById('reviewSummary'), [
                 { key: 'customerName', label: 'Full Name' },
                 { key: 'contactNumber', label: 'Phone / WhatsApp' },
                 { key: 'emailAddress', label: 'Email Address' },
@@ -553,59 +819,78 @@
             ], reviewData);
 
             renderAttachment(reviewData.attachment || {});
+            return true;
         }
 
-        function updateProgress(percentValue, labelText, activeIndex) {
-            progressFill.style.width = `${percentValue}%`;
-            progressPercent.textContent = `${percentValue}%`;
-            progressLabel.textContent = labelText;
+        function playSequence(messages, terminalId, progressFillId, progressTextId, onComplete) {
+            const terminal = document.getElementById(terminalId);
+            const progressFill = document.getElementById(progressFillId);
+            const progressText = document.getElementById(progressTextId);
+            terminal.innerHTML = '';
 
-            timelineItems.forEach((item, index) => {
-                item.classList.remove('active');
-                if (index < activeIndex) {
-                    item.classList.add('done');
-                } else {
-                    item.classList.remove('done');
+            let currentMessage = 0;
+
+            function pushMessage() {
+                if (currentMessage < messages.length) {
+                    const line = document.createElement('div');
+                    line.className = 'terminal-line';
+                    line.textContent = `> ${messages[currentMessage]}`;
+                    terminal.appendChild(line);
+                    terminal.scrollTop = terminal.scrollHeight;
+
+                    const progress = Math.round(((currentMessage + 1) / messages.length) * 100);
+                    progressFill.style.width = `${progress}%`;
+                    progressText.textContent = `${progress}%`;
+
+                    currentMessage += 1;
+                    setTimeout(pushMessage, 620);
+                    return;
                 }
-                if (index === activeIndex) {
-                    item.classList.add('active');
-                }
-            });
-        }
 
-        function wait(ms) {
-            return new Promise((resolve) => setTimeout(resolve, ms));
-        }
-
-        async function startSubmissionFlow() {
-            submitButton.disabled = true;
-            reviewCard.style.display = 'none';
-            progressCard.classList.add('show');
-
-            const requestId = createRequestId();
-            const steps = [
-                { percent: 28, label: 'Validating customer information', index: 0 },
-                { percent: 67, label: 'Preparing document and attachment summary', index: 1 },
-                { percent: 100, label: 'Finalizing submission status page', index: 2 }
-            ];
-
-            for (const step of steps) {
-                updateProgress(step.percent, step.label, step.index);
-                await wait(700);
+                setTimeout(onComplete, 500);
             }
 
-            safeFlow.setStatus({
-                state: forcedStatus,
-                requestId,
-                stage: 'complete',
-                submittedAt: new Date().toISOString(),
-                responseWindow: forcedStatus === 'success' ? 'Within 24 hours' : 'Manual review required'
-            });
+            pushMessage();
+        }
 
-            await wait(250);
-            window.location.href = forcedStatus === 'failed'
-                ? '/nid-data.html?status=failed'
-                : '/nid-data.html';
+        function showReviewScreen() {
+            document.getElementById('bootScreen').style.display = 'none';
+            if (renderReviewData()) {
+                document.getElementById('reviewScreen').classList.add('show');
+            }
+        }
+
+        function createRequestId() {
+            const year = new Date().getFullYear();
+            const randomChunk = Math.random().toString(36).slice(2, 8).toUpperCase();
+            return `SR-${year}-${randomChunk}`;
+        }
+
+        function startSubmitFlow() {
+            const submitButton = document.getElementById('submitButton');
+            submitButton.disabled = true;
+            document.getElementById('reviewScreen').style.display = 'none';
+            document.getElementById('submitScreen').style.display = 'flex';
+
+            playSequence(
+                submitSequence,
+                'submitMessages',
+                'submitProgressFill',
+                'submitProgressPercent',
+                function() {
+                    safeFlow.setStatus({
+                        state: forcedStatus,
+                        requestId: createRequestId(),
+                        stage: 'complete',
+                        submittedAt: new Date().toISOString(),
+                        responseWindow: forcedStatus === 'success' ? 'Within 24 hours' : 'Manual review required'
+                    });
+
+                    window.location.href = forcedStatus === 'failed'
+                        ? '/nid-data.html?status=failed'
+                        : '/nid-data.html';
+                }
+            );
         }
 
         document.getElementById('backButton').addEventListener('click', function() {
@@ -616,9 +901,17 @@
             window.location.href = '/information-hack.html';
         });
 
-        submitButton.addEventListener('click', startSubmissionFlow);
+        document.getElementById('submitButton').addEventListener('click', startSubmitFlow);
 
-        renderReview();
+        window.addEventListener('load', function() {
+            playSequence(
+                bootSequence,
+                'bootMessages',
+                'bootProgressFill',
+                'bootProgressPercent',
+                showReviewScreen
+            );
+        });
     </script>
 </body>
 </html>
