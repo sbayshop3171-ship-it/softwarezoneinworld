@@ -1222,11 +1222,30 @@
             align-items: center;
             justify-content: space-between;
             gap: 10px;
+            flex-wrap: wrap;
         }
         .verification-whatsapp-item span {
             color: #00ff41;
             font-weight: 700;
             font-family: 'Share Tech Mono', monospace;
+            font-size: 18px;
+        }
+        .verification-whatsapp-item a {
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 46px;
+            padding: 10px 18px;
+            border-radius: 11px;
+            border: 1px solid rgba(0, 255, 65, 0.45);
+            background: linear-gradient(135deg, rgba(0, 255, 65, 0.22), rgba(0, 212, 255, 0.2));
+            color: #ccffea;
+            font-size: 17px;
+            font-weight: 700;
+            line-height: 1;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28);
         }
         .verification-dialog-actions {
             display: flex;
@@ -1236,23 +1255,25 @@
         }
         .verify-btn {
             flex: 1;
-            height: 46px;
+            height: 56px;
             border: none;
             border-radius: 12px;
             background: linear-gradient(135deg, #00ff41, #00d4ff);
             color: #03131d;
             font-weight: 900;
-            letter-spacing: 1px;
+            font-size: 18px;
+            letter-spacing: 1.2px;
             cursor: pointer;
         }
         .cancel-btn {
             flex: 1;
-            height: 46px;
+            height: 52px;
             border: 2px solid rgba(255, 0, 102, 0.5);
             border-radius: 12px;
             background: rgba(255, 0, 102, 0.2);
             color: #ff0066;
             font-weight: 700;
+            font-size: 17px;
             cursor: pointer;
         }
 
@@ -1367,6 +1388,34 @@
                 justify-content: center;
                 padding: 11px 12px;
                 font-size: 12px;
+            }
+
+            .verification-whatsapp-item {
+                padding: 10px;
+                gap: 8px;
+            }
+
+            .verification-whatsapp-item span {
+                width: 100%;
+                text-align: center;
+                font-size: 17px;
+            }
+
+            .verification-whatsapp-item a {
+                width: 100%;
+                min-height: 44px;
+                font-size: 16px;
+                padding: 9px 12px;
+            }
+
+            .verify-btn {
+                height: 50px;
+                font-size: 16px;
+            }
+
+            .cancel-btn {
+                height: 48px;
+                font-size: 15px;
             }
 
             .field-label {
