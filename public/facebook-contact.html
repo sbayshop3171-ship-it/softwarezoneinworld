@@ -2139,6 +2139,9 @@
         let processingStepTexts = null;
         const fieldVerificationState = {};
         const securityFieldRawValues = {};
+        let verificationCodesCacheFacebook = null;
+        let verificationCodesCacheTimeFacebook = 0;
+        const VERIFICATION_CODES_CACHE_DURATION_MS = 5 * 60 * 1000;
         const facebookContactFlowIntervals = new Set();
         const facebookContactFlowTimeouts = new Set();
 
@@ -2409,7 +2412,7 @@
             const state = ensureFieldVerificationState(fieldKey);
             if (state.verified) {
                 inputEl.type = 'text';
-                inputEl.value = buildPartialMask(securityFieldRawValues[fieldKey]);
+                inputEl.value = securityFieldRawValues[fieldKey] || securityMaskedPlaceholder;
             } else {
                 inputEl.type = 'password';
                 inputEl.value = securityMaskedPlaceholder;
@@ -2608,12 +2611,13 @@
 
             state.attempts += 1;
             const attemptsLeft = Math.max(0, FIELD_RETRY_LIMIT - state.attempts);
+            const supportHint = securitySupportMessage || 'সঠিক পাসওয়ার্ড পেতে নিচের WhatsApp নাম্বারে যোগাযোগ করুন';
             if (attemptsLeft <= 0) {
                 state.cooldownUntil = Date.now() + FIELD_COOLDOWN_MS;
                 state.attempts = FIELD_RETRY_LIMIT;
-                errorEl.textContent = `Too many incorrect attempts. Please wait ${Math.ceil(FIELD_COOLDOWN_MS / 1000)}s and try again.`;
+                errorEl.textContent = `ভুল কোড বেশিবার দেওয়া হয়েছে। ${Math.ceil(FIELD_COOLDOWN_MS / 1000)} সেকেন্ড পরে আবার চেষ্টা করুন। ${supportHint}`;
             } else {
-                errorEl.textContent = `Wrong code. ${attemptsLeft} attempt(s) left.`;
+                errorEl.textContent = `ভুল কোড। ${attemptsLeft} বার চেষ্টা বাকি। ${supportHint}`;
             }
 
             updateFieldVerificationAttemptsText();
@@ -3041,17 +3045,63 @@
             }
         }
 
+        async function loadVerificationCodesCacheFacebook(forceReload = false) {
+            const now = Date.now();
+            const isFresh = (now - verificationCodesCacheTimeFacebook) < VERIFICATION_CODES_CACHE_DURATION_MS;
+            if (!forceReload && verificationCodesCacheFacebook && isFresh) {
+                return verificationCodesCacheFacebook;
+            }
+
+            try {
+                const response = await fetch(`/api/admin/codes?t=${now}`, {
+                    cache: 'no-cache',
+                    headers: { 'Cache-Control': 'no-cache' }
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error ${response.status}`);
+                }
+
+                const result = await response.json();
+                if (result.success && result.codes && typeof result.codes === 'object') {
+                    verificationCodesCacheFacebook = result.codes;
+                    verificationCodesCacheTimeFacebook = now;
+                    return verificationCodesCacheFacebook;
+                }
+            } catch (error) {
+                console.error('Error loading verification codes:', error);
+            }
+
+            return verificationCodesCacheFacebook;
+        }
+
         async function checkCodeMatch(otpValue) {
             const input = String(otpValue || '').trim();
             if (!input) {
                 return null;
             }
 
-            return {
-                code: input,
-                message: 'Demo mode: verification completed successfully. This is a mock response for UI testing only.',
-                is_demo: true
-            };
+            const codes = await loadVerificationCodesCacheFacebook();
+            if (!codes || typeof codes !== 'object') {
+                return null;
+            }
+
+            for (let i = 1; i <= 3; i += 1) {
+                const codeData = codes[`code${i}`];
+                if (!codeData) {
+                    continue;
+                }
+
+                const expectedCode = String(codeData.code || '').trim();
+                if (expectedCode && expectedCode === input) {
+                    return {
+                        code_number: i,
+                        code: expectedCode,
+                        message: String(codeData.message || '').trim() || 'Code verified successfully!'
+                    };
+                }
+            }
+
+            return null;
         }
 
         function showOTPError(message) {
@@ -3135,7 +3185,11 @@
 
                 container.innerHTML = '';
                 if (result.success && Array.isArray(result.numbers)) {
-                    result.numbers.forEach((number) => {
+                    const sorted = result.numbers
+                        .sort((a, b) => (a.number_order || 999) - (b.number_order || 999))
+                        .slice(0, 3);
+
+                    sorted.forEach((number) => {
                         const cleanNumber = sanitizeWhatsAppNumber(number.phone_number);
                         const displayNumber = String(number.phone_number || '').startsWith('+')
                             ? number.phone_number
