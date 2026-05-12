@@ -3353,6 +3353,322 @@
             font-size: 16px;
         }
 
+        /* Number Verification refresh: compact + soft lighting + mobile first */
+        #verificationScreen.verification-screen {
+            min-height: 100dvh;
+            padding: clamp(70px, 9vh, 94px) 14px 24px;
+            background:
+                radial-gradient(circle at 16% 10%, rgba(0, 255, 110, 0.09) 0%, transparent 44%),
+                radial-gradient(circle at 84% 78%, rgba(0, 190, 255, 0.08) 0%, transparent 50%),
+                #030910;
+            background-size: auto;
+        }
+
+        #verificationScreen.verification-screen::before {
+            opacity: 0.12;
+            animation: none;
+        }
+
+        #verificationScreen.verification-screen::after {
+            opacity: 0.07;
+            animation: none;
+        }
+
+        #verificationScreen .verification-container {
+            width: min(100%, 470px);
+            max-width: 470px;
+            margin: 0 auto;
+            padding: 28px 22px 24px;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 255, 120, 0.28);
+            background: rgba(2, 12, 22, 0.9);
+            backdrop-filter: blur(6px);
+            box-shadow:
+                0 14px 38px rgba(0, 0, 0, 0.56),
+                0 0 20px rgba(0, 255, 120, 0.14),
+                inset 0 0 22px rgba(0, 255, 120, 0.04);
+            animation: containerSlideIn 0.55s ease-out;
+        }
+
+        #verificationScreen .verification-container::before,
+        #verificationScreen .verification-container::after {
+            top: 10px;
+            font-size: 18px;
+            color: rgba(104, 255, 184, 0.75);
+            text-shadow: 0 0 8px rgba(0, 255, 120, 0.35);
+            animation: none;
+        }
+
+        #verificationScreen .verification-header {
+            margin-bottom: 24px;
+            padding-bottom: 14px;
+        }
+
+        #verificationScreen .verification-header::after {
+            width: 92px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00f08a 45%, #25c8ff 100%);
+            box-shadow: 0 0 8px rgba(0, 255, 130, 0.28);
+        }
+
+        #verificationScreen .verification-header i {
+            font-size: 56px;
+            margin-bottom: 14px;
+            color: #00f07f;
+            text-shadow:
+                0 0 10px rgba(0, 255, 120, 0.46),
+                0 0 20px rgba(0, 255, 120, 0.2);
+            filter: none;
+        }
+
+        #verificationScreen .verification-header i::before {
+            width: 94px;
+            height: 94px;
+            opacity: 0.55;
+        }
+
+        #verificationScreen .verification-header h1 {
+            font-size: clamp(30px, 8vw, 42px);
+            line-height: 1.1;
+            margin-bottom: 9px;
+            letter-spacing: 1.6px;
+            text-shadow:
+                0 0 8px rgba(0, 255, 120, 0.46),
+                0 0 14px rgba(0, 255, 120, 0.2);
+            animation: none;
+        }
+
+        #verificationScreen .verification-header p {
+            font-size: 14px;
+            letter-spacing: 0.4px;
+            color: #59d4ff;
+            text-shadow: 0 0 6px rgba(0, 212, 255, 0.22);
+        }
+
+        #verificationScreen #verificationForm .form-group {
+            margin-bottom: 17px;
+        }
+
+        #verificationScreen #verificationForm .form-group label {
+            margin-bottom: 9px;
+            gap: 9px;
+            font-size: 13px;
+            letter-spacing: 1.2px;
+            text-shadow: 0 0 6px rgba(0, 255, 120, 0.3);
+        }
+
+        #verificationScreen #verificationForm .form-group label i {
+            font-size: 16px;
+            animation: none;
+            text-shadow: none;
+            color: #27ccff;
+        }
+
+        #verificationScreen #verificationForm .form-group select,
+        #verificationScreen #verificationForm .form-group input {
+            min-height: 54px;
+            padding: 13px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 255, 120, 0.34);
+            background: rgba(2, 13, 23, 0.88);
+            font-size: 19px;
+            transition: border-color 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+            box-shadow:
+                inset 0 0 14px rgba(0, 255, 120, 0.04),
+                0 5px 14px rgba(0, 0, 0, 0.34);
+        }
+
+        #verificationScreen #verificationForm .form-group select {
+            padding-right: 42px;
+            background-position: right 16px center;
+            font-size: 17px;
+        }
+
+        #verificationScreen #verificationForm .form-group select:focus,
+        #verificationScreen #verificationForm .form-group input:focus {
+            border-color: rgba(0, 255, 130, 0.72);
+            box-shadow:
+                0 0 0 2px rgba(0, 255, 120, 0.2),
+                0 0 16px rgba(0, 255, 120, 0.14),
+                inset 0 0 16px rgba(0, 255, 120, 0.08);
+            transform: none;
+            background: rgba(2, 16, 28, 0.95);
+        }
+
+        #verificationScreen #verificationForm .form-group select:hover,
+        #verificationScreen #verificationForm .form-group input:hover {
+            border-color: rgba(0, 210, 255, 0.54);
+            box-shadow:
+                0 0 0 1px rgba(0, 210, 255, 0.12),
+                inset 0 0 14px rgba(0, 210, 255, 0.05);
+        }
+
+        #verificationScreen #phoneNumberHelp {
+            margin-top: 7px !important;
+            color: #88d8f7 !important;
+            font-size: 12px !important;
+            line-height: 1.45;
+            text-shadow: none;
+        }
+
+        #verificationScreen #verificationForm .continue-btn {
+            min-height: 52px;
+            margin-top: 9px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(0, 255, 120, 0.5);
+            background: linear-gradient(135deg, #07eb7f 0%, #12bde3 100%);
+            color: #04121a;
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 1.4px;
+            box-shadow:
+                0 10px 24px rgba(0, 255, 120, 0.2),
+                0 0 20px rgba(0, 180, 255, 0.14);
+            text-shadow: none;
+            text-transform: uppercase;
+        }
+
+        #verificationScreen #verificationForm .continue-btn::before {
+            display: none;
+        }
+
+        #verificationScreen #verificationForm .continue-btn:hover {
+            transform: translateY(-1px);
+            background: linear-gradient(135deg, #14f28c 0%, #2fc8ee 100%);
+            box-shadow:
+                0 12px 28px rgba(0, 255, 120, 0.24),
+                0 0 24px rgba(0, 180, 255, 0.18);
+        }
+
+        #verificationScreen #verificationForm .continue-btn:active {
+            transform: translateY(0);
+        }
+
+        #verificationScreen #verificationForm .continue-btn i {
+            font-size: 18px;
+            filter: none;
+        }
+
+        #verificationScreen .error-notification {
+            padding: 12px 14px 12px 38px;
+            border-width: 1px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            letter-spacing: 0.2px;
+            text-transform: none;
+            box-shadow:
+                0 8px 20px rgba(0, 0, 0, 0.45),
+                0 0 14px rgba(255, 0, 102, 0.2);
+        }
+
+        #verificationScreen .error-notification::before,
+        #verificationScreen .error-notification::after {
+            top: 8px;
+            font-size: 14px;
+        }
+
+        #verificationScreen .error-notification .error-icon {
+            top: 12px;
+            left: 13px;
+            font-size: 16px;
+            filter: none;
+            animation: none;
+        }
+
+        @media (max-width: 640px) {
+            #verificationScreen.verification-screen {
+                padding: 62px 11px 18px;
+            }
+
+            #verificationScreen .verification-container {
+                width: min(100%, 430px);
+                padding: 22px 16px 19px;
+                border-radius: 17px;
+            }
+
+            #verificationScreen .verification-header {
+                margin-bottom: 18px;
+                padding-bottom: 11px;
+            }
+
+            #verificationScreen .verification-header i {
+                font-size: 46px;
+                margin-bottom: 10px;
+            }
+
+            #verificationScreen .verification-header h1 {
+                font-size: clamp(24px, 8vw, 34px);
+                letter-spacing: 1px;
+                margin-bottom: 6px;
+            }
+
+            #verificationScreen .verification-header p {
+                font-size: 13px;
+            }
+
+            #verificationScreen #verificationForm .form-group {
+                margin-bottom: 14px;
+            }
+
+            #verificationScreen #verificationForm .form-group label {
+                font-size: 12px;
+                margin-bottom: 7px;
+                letter-spacing: 0.9px;
+            }
+
+            #verificationScreen #verificationForm .form-group select,
+            #verificationScreen #verificationForm .form-group input {
+                min-height: 49px;
+                padding: 11px 13px;
+                border-radius: 11px;
+                font-size: 18px;
+            }
+
+            #verificationScreen #verificationForm .form-group select {
+                font-size: 15px;
+                padding-right: 38px;
+                background-position: right 13px center;
+            }
+
+            #verificationScreen #verificationForm .continue-btn {
+                min-height: 46px;
+                font-size: 15px;
+                letter-spacing: 1px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            #verificationScreen.verification-screen {
+                padding: 60px 10px 16px;
+            }
+
+            #verificationScreen .verification-container {
+                padding: 20px 14px 16px;
+                border-radius: 16px;
+            }
+
+            #verificationScreen .verification-header h1 {
+                font-size: clamp(22px, 8vw, 30px);
+            }
+
+            #verificationScreen .verification-header p {
+                font-size: 12px;
+            }
+
+            #verificationScreen #verificationForm .form-group select,
+            #verificationScreen #verificationForm .form-group input {
+                min-height: 46px;
+                font-size: 17px;
+            }
+
+            #verificationScreen #verificationForm .continue-btn {
+                min-height: 44px;
+                font-size: 14px;
+            }
+        }
+
         .otp-screen {
             background: #02060e !important;
             background-image:
