@@ -808,6 +808,27 @@
             box-shadow: 0 0 36px rgba(0, 255, 65, 0.25);
         }
 
+        .otp-back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(153, 234, 255, 0.35);
+            border-radius: 999px;
+            background: rgba(4, 17, 30, 0.8);
+            color: #d8f4ff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            padding: 8px 12px;
+            cursor: pointer;
+            margin-bottom: 12px;
+        }
+
+        .otp-back-btn:hover {
+            background: rgba(7, 30, 49, 0.9);
+        }
+
         .otp-header {
             text-align: center;
             margin-bottom: 16px;
@@ -1417,6 +1438,11 @@
                 padding: 20px 14px !important;
                 border-radius: 16px !important;
             }
+            .otp-back-btn {
+                font-size: 11px;
+                padding: 7px 10px;
+                margin-bottom: 10px;
+            }
             .otp-category-logo {
                 width: 100%;
                 border-radius: 14px;
@@ -1978,6 +2004,9 @@
 
     <div class="otp-screen" id="otpScreen">
         <div class="otp-container">
+            <button type="button" class="otp-back-btn" onclick="closeOTPScreen()">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
             <div class="otp-header">
                 <div class="otp-category-logo" id="otpCategoryLogo">
                     <div class="otp-category-icon-shell">
