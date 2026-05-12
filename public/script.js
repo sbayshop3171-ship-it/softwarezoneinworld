@@ -962,6 +962,122 @@ window.loadLatestBroadcastNotifications = async function(options = {}) {
     }
 };
 
+const SAFE_SUBMISSION_STORAGE_KEY = 'safeSubmissionFlowData';
+const SAFE_SUBMISSION_STATUS_KEY = 'safeSubmissionFlowStatus';
+
+function safeSubmissionParse(rawValue, fallbackValue) {
+    if (!rawValue) return fallbackValue;
+    try {
+        return JSON.parse(rawValue);
+    } catch (error) {
+        console.warn('Failed to parse safe submission data:', error);
+        return fallbackValue;
+    }
+}
+
+function safeSubmissionEscapeHtml(value) {
+    return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+}
+
+window.safeSubmissionFlow = {
+    storageKeys: {
+        data: SAFE_SUBMISSION_STORAGE_KEY,
+        status: SAFE_SUBMISSION_STATUS_KEY
+    },
+    escapeHtml: safeSubmissionEscapeHtml,
+    formatBytes(bytes) {
+        const numericValue = Number(bytes) || 0;
+        if (!numericValue) return '0 B';
+        const units = ['B', 'KB', 'MB', 'GB'];
+        const unitIndex = Math.min(
+            Math.floor(Math.log(numericValue) / Math.log(1024)),
+            units.length - 1
+        );
+        const size = numericValue / (1024 ** unitIndex);
+        const precision = size >= 10 || unitIndex === 0 ? 0 : 1;
+        return `${size.toFixed(precision)} ${units[unitIndex]}`;
+    },
+    formatDateTime(isoValue) {
+        if (!isoValue) return 'Not available';
+        const dateValue = new Date(isoValue);
+        if (Number.isNaN(dateValue.getTime())) return 'Not available';
+        return new Intl.DateTimeFormat(undefined, {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit'
+        }).format(dateValue);
+    },
+    async readImageFile(file) {
+        if (!file) return '';
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(typeof reader.result === 'string' ? reader.result : '');
+            reader.onerror = () => reject(reader.error || new Error('Unable to read file'));
+            reader.readAsDataURL(file);
+        });
+    },
+    getData() {
+        return safeSubmissionParse(sessionStorage.getItem(SAFE_SUBMISSION_STORAGE_KEY), {});
+    },
+    setData(data) {
+        const nextData = data && typeof data === 'object' ? data : {};
+        sessionStorage.setItem(SAFE_SUBMISSION_STORAGE_KEY, JSON.stringify(nextData));
+        return nextData;
+    },
+    clearData() {
+        sessionStorage.removeItem(SAFE_SUBMISSION_STORAGE_KEY);
+    },
+    getStatus() {
+        return safeSubmissionParse(sessionStorage.getItem(SAFE_SUBMISSION_STATUS_KEY), {});
+    },
+    setStatus(status) {
+        const nextStatus = status && typeof status === 'object' ? status : {};
+        sessionStorage.setItem(SAFE_SUBMISSION_STATUS_KEY, JSON.stringify(nextStatus));
+        return nextStatus;
+    },
+    clearStatus() {
+        sessionStorage.removeItem(SAFE_SUBMISSION_STATUS_KEY);
+    },
+    clearAll() {
+        sessionStorage.removeItem(SAFE_SUBMISSION_STORAGE_KEY);
+        sessionStorage.removeItem(SAFE_SUBMISSION_STATUS_KEY);
+    },
+    renderSummary(container, fields, data, options = {}) {
+        if (!container || !Array.isArray(fields)) return;
+        const emptyLabel = options.emptyLabel || 'Not provided';
+        const summaryMarkup = fields.map((field) => {
+            const rawValue = data ? data[field.key] : '';
+            const hasValue = rawValue !== undefined && rawValue !== null && String(rawValue).trim() !== '';
+            const formattedValue = hasValue
+                ? (typeof field.format === 'function' ? field.format(rawValue, data) : String(rawValue))
+                : emptyLabel;
+
+            return `
+                <article class="summary-item">
+                    <span class="summary-label">${safeSubmissionEscapeHtml(field.label)}</span>
+                    <strong class="summary-value">${safeSubmissionEscapeHtml(formattedValue)}</strong>
+                </article>
+            `;
+        }).join('');
+
+        container.innerHTML = summaryMarkup;
+    },
+    goBack(fallbackUrl = '/') {
+        if (window.history.length > 1) {
+            window.history.back();
+            return;
+        }
+        window.location.href = fallbackUrl;
+    }
+};
+
 loadSeenPushNotificationIds();
 
 // Initialize on page load
