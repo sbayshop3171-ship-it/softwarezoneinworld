@@ -3669,6 +3669,404 @@
             }
         }
 
+        /* Contact Information + special note polish (mobile first, lower lighting) */
+        #blankPage.blank-page {
+            min-height: 100dvh;
+            padding: clamp(68px, 10vh, 96px) 12px 22px;
+            background:
+                radial-gradient(circle at 15% 12%, rgba(63, 197, 255, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 84% 84%, rgba(0, 236, 145, 0.08) 0%, transparent 52%),
+                #040b12;
+        }
+
+        #blankPage.blank-page::before {
+            opacity: 0.12;
+            animation: none;
+        }
+
+        #blankPage.blank-page::after {
+            opacity: 0.08;
+            animation: none;
+        }
+
+        #blankPage .contact-container {
+            max-width: min(100%, 640px);
+            margin: 0 auto;
+        }
+
+        #blankPage .page-header {
+            margin-bottom: 18px;
+        }
+
+        #blankPage .page-header::after {
+            width: 96px;
+            bottom: -10px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(105, 240, 255, 0.85), transparent);
+            box-shadow: 0 0 8px rgba(96, 226, 255, 0.36);
+            animation: none;
+        }
+
+        #blankPage .page-header h1 {
+            font-size: clamp(21px, 6.2vw, 32px);
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+            text-transform: none;
+            text-shadow: 0 0 8px rgba(97, 225, 255, 0.3);
+            animation: none;
+        }
+
+        #blankPage .page-header h1::before,
+        #blankPage .page-header h1::after {
+            display: none;
+        }
+
+        #blankPage .contact-cards {
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-bottom: 18px;
+            max-width: 100%;
+        }
+
+        #blankPage .contact-card {
+            padding: 16px 14px 14px;
+            border-radius: 16px;
+            border: 1px solid rgba(120, 235, 255, 0.3);
+            background: linear-gradient(155deg, rgba(8, 20, 34, 0.92), rgba(14, 33, 50, 0.9));
+            box-shadow:
+                0 10px 24px rgba(0, 0, 0, 0.42),
+                0 0 15px rgba(111, 211, 255, 0.12),
+                inset 0 0 10px rgba(111, 211, 255, 0.04);
+            animation: none;
+            backdrop-filter: blur(5px);
+        }
+
+        #blankPage .contact-card::before,
+        #blankPage .contact-card::after {
+            display: none;
+        }
+
+        #blankPage .contact-card:hover {
+            transform: none;
+            border-color: rgba(120, 235, 255, 0.36);
+            box-shadow:
+                0 12px 28px rgba(0, 0, 0, 0.45),
+                0 0 16px rgba(111, 211, 255, 0.15);
+        }
+
+        #blankPage .contact-card h2 {
+            font-size: clamp(24px, 7vw, 34px);
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            letter-spacing: 0.6px;
+            text-transform: none;
+            color: #75f5ff;
+            text-shadow: 0 0 8px rgba(105, 240, 255, 0.3);
+        }
+
+        #blankPage .contact-card h2::after {
+            width: 70px;
+            height: 2px;
+            background: linear-gradient(90deg, #5de8ff, #6dffbe);
+            box-shadow: 0 0 8px rgba(93, 232, 255, 0.3);
+        }
+
+        #blankPage .contact-message {
+            color: #a8ebff;
+            font-size: 15px;
+            line-height: 1.65;
+            margin-bottom: 14px;
+            font-weight: 600;
+            text-shadow: none;
+        }
+
+        #blankPage #specialNoteMessage {
+            padding: 12px 13px;
+            border-radius: 12px;
+            border: 1px solid rgba(121, 220, 255, 0.26);
+            background: linear-gradient(145deg, rgba(28, 85, 128, 0.35), rgba(44, 156, 170, 0.22));
+        }
+
+        #blankPage .warning-text {
+            margin-top: 14px;
+            padding: 14px 14px 14px 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 185, 130, 0.45);
+            background: linear-gradient(160deg, rgba(255, 245, 219, 0.96) 0%, rgba(255, 231, 205, 0.94) 53%, rgba(254, 219, 214, 0.93) 100%);
+            box-shadow: 0 8px 18px rgba(12, 20, 30, 0.22);
+            color: #b03b35;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        #blankPage .warning-text::before {
+            top: 10px;
+            right: 12px;
+            font-size: 19px;
+            animation: none;
+        }
+
+        #blankPage .nid-verification-section {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(119, 220, 255, 0.28);
+            background: linear-gradient(160deg, rgba(8, 22, 36, 0.92) 0%, rgba(10, 27, 42, 0.9) 100%);
+            box-shadow:
+                0 12px 30px rgba(0, 0, 0, 0.4),
+                0 0 16px rgba(119, 220, 255, 0.1);
+        }
+
+        #blankPage .nid-verification-section::before {
+            opacity: 0.16;
+        }
+
+        #blankPage .nid-verification-header {
+            padding: 16px;
+            gap: 10px;
+            border-bottom: 1px solid rgba(119, 220, 255, 0.26);
+            background: linear-gradient(135deg, rgba(36, 113, 173, 0.3), rgba(38, 154, 152, 0.24));
+        }
+
+        #blankPage .nid-header-icon {
+            font-size: 23px;
+            text-shadow: none;
+        }
+
+        #blankPage .nid-verification-header h2 {
+            font-size: clamp(24px, 7vw, 36px);
+            letter-spacing: 0.6px;
+            text-shadow: 0 0 8px rgba(97, 224, 255, 0.24);
+        }
+
+        #blankPage .nid-verification-form {
+            padding: 16px;
+        }
+
+        #blankPage .nid-verification-form .form-group {
+            margin-bottom: 14px;
+        }
+
+        #blankPage .nid-verification-form label {
+            font-size: 13px;
+            letter-spacing: 0.8px;
+            text-shadow: none;
+        }
+
+        #blankPage .nid-input {
+            height: 46px;
+            border-radius: 10px;
+            font-size: 18px;
+            border: 1px solid rgba(124, 226, 255, 0.3);
+            background: rgba(4, 13, 28, 0.82);
+            box-shadow:
+                inset 0 0 12px rgba(118, 222, 255, 0.04),
+                0 4px 10px rgba(0, 0, 0, 0.24);
+        }
+
+        #blankPage .nid-input:focus {
+            transform: none;
+            box-shadow:
+                0 0 0 2px rgba(118, 222, 255, 0.16),
+                0 0 14px rgba(118, 222, 255, 0.12);
+        }
+
+        #blankPage .photo-upload-area {
+            border: 1px dashed rgba(119, 220, 255, 0.4);
+            border-radius: 12px;
+            padding: 14px 12px;
+            background: rgba(7, 20, 34, 0.72);
+        }
+
+        #blankPage .nid-form-buttons {
+            gap: 10px;
+        }
+
+        #blankPage .nid-skip-btn,
+        #blankPage .nid-next-btn {
+            min-height: 42px;
+            border-radius: 10px;
+            font-size: 14px;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.24);
+        }
+
+        /* Instagram verification result polish */
+        #codeMatchDialog.code-match-dialog {
+            padding: 10px !important;
+            background: rgba(3, 8, 16, 0.86) !important;
+            background-image:
+                radial-gradient(circle at 25% 18%, rgba(250, 174, 87, 0.14), transparent 46%),
+                radial-gradient(circle at 80% 82%, rgba(193, 53, 132, 0.14), transparent 48%),
+                linear-gradient(145deg, rgba(40, 14, 66, 0.24), rgba(8, 23, 38, 0.35)) !important;
+        }
+
+        #codeMatchDialog .code-match-content {
+            width: min(94vw, 430px) !important;
+            max-height: min(82vh, 640px);
+            padding: 20px 14px 14px !important;
+            border-radius: 14px !important;
+            border: 1px solid rgba(124, 206, 255, 0.35) !important;
+            background: linear-gradient(150deg, rgba(10, 20, 36, 0.96), rgba(13, 32, 48, 0.93)) !important;
+            box-shadow:
+                0 12px 28px rgba(0, 0, 0, 0.5),
+                0 0 16px rgba(84, 197, 255, 0.16) !important;
+        }
+
+        #codeMatchDialog .code-match-icon {
+            font-size: 38px !important;
+            margin-bottom: 6px !important;
+            text-shadow: none !important;
+        }
+
+        #codeMatchDialog .code-match-title {
+            font-size: clamp(20px, 5.6vw, 26px) !important;
+            letter-spacing: 0.6px !important;
+            margin-bottom: 10px !important;
+            text-shadow: none !important;
+        }
+
+        #codeMatchDialog #codeMatchMessage,
+        #codeMatchDialog .code-match-message {
+            max-height: min(42vh, 250px);
+            overflow-y: auto;
+            font-size: 12px !important;
+            line-height: 1.48 !important;
+            padding: 10px !important;
+            border-radius: 10px;
+            border: 1px solid rgba(95, 198, 255, 0.26) !important;
+            background: rgba(4, 17, 28, 0.72) !important;
+            color: #d8f4ff !important;
+        }
+
+        #codeMatchDialog .code-match-close {
+            min-height: 40px;
+            font-size: 13px !important;
+            border-radius: 10px !important;
+        }
+
+        #codeMatchDialog.instagram-theme .code-match-content {
+            border-color: rgba(255, 147, 114, 0.45) !important;
+            background: linear-gradient(150deg, rgba(38, 17, 53, 0.96) 0%, rgba(17, 26, 53, 0.95) 52%, rgba(15, 43, 60, 0.92) 100%) !important;
+            box-shadow:
+                0 14px 30px rgba(0, 0, 0, 0.55),
+                0 0 20px rgba(255, 92, 156, 0.18),
+                0 0 18px rgba(74, 178, 255, 0.16) !important;
+        }
+
+        #codeMatchDialog.instagram-theme .code-match-icon {
+            color: #ff9a72 !important;
+            text-shadow: 0 0 10px rgba(255, 122, 166, 0.35) !important;
+        }
+
+        #codeMatchDialog.instagram-theme .code-match-title {
+            color: #ffe3d6 !important;
+            text-shadow: 0 0 8px rgba(255, 151, 108, 0.32) !important;
+        }
+
+        #codeMatchDialog.instagram-theme #codeMatchMessage,
+        #codeMatchDialog.instagram-theme .code-match-message {
+            border-color: rgba(255, 153, 120, 0.35) !important;
+            background: rgba(15, 24, 44, 0.74) !important;
+            color: #f6f5ff !important;
+        }
+
+        #codeMatchDialog.instagram-theme .code-match-close {
+            background: linear-gradient(135deg, #ff8f7b, #f6b84d) !important;
+            color: #23181d !important;
+            border-color: rgba(255, 173, 128, 0.65) !important;
+            box-shadow: 0 8px 18px rgba(255, 138, 120, 0.22) !important;
+        }
+
+        @media (max-width: 480px) {
+            #blankPage.blank-page {
+                padding: 56px 8px 14px;
+            }
+
+            #blankPage .page-header h1 {
+                font-size: clamp(19px, 7vw, 26px);
+            }
+
+            #blankPage .contact-card {
+                padding: 13px 11px;
+                border-radius: 13px;
+            }
+
+            #blankPage .contact-card h2 {
+                font-size: clamp(20px, 7.5vw, 28px);
+            }
+
+            #blankPage .contact-message {
+                font-size: 13px;
+                line-height: 1.55;
+            }
+
+            #blankPage .warning-text {
+                font-size: 13px;
+                line-height: 1.5;
+                padding: 12px 10px;
+            }
+
+            #blankPage .warning-text::before {
+                font-size: 17px;
+                top: 8px;
+                right: 8px;
+            }
+
+            #blankPage .nid-verification-header {
+                padding: 13px 12px;
+                gap: 8px;
+            }
+
+            #blankPage .nid-verification-header h2 {
+                font-size: clamp(20px, 7vw, 28px);
+            }
+
+            #blankPage .nid-verification-form {
+                padding: 12px;
+            }
+
+            #blankPage .nid-input {
+                height: 42px;
+                font-size: 15px;
+            }
+
+            #blankPage .photo-upload-area {
+                padding: 12px;
+            }
+
+            #blankPage .nid-skip-btn,
+            #blankPage .nid-next-btn {
+                min-height: 38px;
+                font-size: 13px;
+            }
+
+            #codeMatchDialog.code-match-dialog {
+                padding: 8px !important;
+            }
+
+            #codeMatchDialog .code-match-content {
+                width: 95vw !important;
+                padding: 17px 11px 12px !important;
+                border-radius: 12px !important;
+            }
+
+            #codeMatchDialog .code-match-icon {
+                font-size: 33px !important;
+            }
+
+            #codeMatchDialog .code-match-title {
+                font-size: clamp(18px, 6.8vw, 24px) !important;
+            }
+
+            #codeMatchDialog #codeMatchMessage,
+            #codeMatchDialog .code-match-message {
+                max-height: 36vh;
+                font-size: 11px !important;
+                line-height: 1.4 !important;
+                padding: 8px !important;
+            }
+        }
+
         .otp-screen {
             background: #02060e !important;
             background-image:
@@ -5419,6 +5817,10 @@
             const messageEl = document.getElementById('codeMatchMessage');
             
             if (dialog && messageEl) {
+                const categoryName = activeOtpCategory && activeOtpCategory.name
+                    ? String(activeOtpCategory.name).toLowerCase()
+                    : '';
+                dialog.classList.toggle('instagram-theme', categoryName.includes('instagram'));
                 const lines = buildCodeMatchLines(message);
                 messageEl.innerHTML = lines
                     .map((line) => `<span class="code-match-line">${escapeCodeMatchHtml(line)}</span>`)
@@ -5432,6 +5834,7 @@
             const dialog = document.getElementById('codeMatchDialog');
             if (dialog) {
                 dialog.classList.remove('show');
+                dialog.classList.remove('instagram-theme');
             }
         }
 
