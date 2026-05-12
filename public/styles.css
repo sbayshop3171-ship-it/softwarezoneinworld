@@ -8817,8 +8817,8 @@ iframe {
     }
 
     .hero {
-        margin: calc(max(8px, env(safe-area-inset-top)) + 70px) 10px 12px;
-        padding-top: 1.6rem;
+        margin: calc(max(8px, env(safe-area-inset-top)) + 58px) 10px 12px;
+        padding-top: 0.8rem;
         padding-bottom: 1.3rem;
         border-radius: 22px;
         overflow: hidden;

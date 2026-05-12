@@ -2174,6 +2174,11 @@ body.performance-mode .admin-folder.expanded .folder-content {
             <div class="folder-content">
                 <div class="admin-section" style="margin-bottom: 20px;">
                     <h3 style="color: #00ff41; margin-bottom: 20px;">Edit Services Section and Card Titles</h3>
+
+                    <div class="form-group">
+                        <label for="siteBrandNameInput">Navbar Brand Name</label>
+                        <input type="text" id="siteBrandNameInput" placeholder="CyberHackPro">
+                    </div>
                     
                     <div class="form-group">
                         <label for="servicesSectionBadgeInput">Section Badge</label>
@@ -2802,6 +2807,7 @@ body.performance-mode .admin-folder.expanded .folder-content {
         };
 
         const serviceTitleDefaults = {
+            site_brand_name: 'CyberHackPro',
             services_section_badge: 'Our Services',
             services_section_title: 'Premium Hacking Services',
             services_section_subtitle: 'Choose from our professional services',
@@ -2910,6 +2916,7 @@ body.performance-mode .admin-folder.expanded .folder-content {
                     throw new Error(result.message || 'Failed to load service titles');
                 }
                 const s = result.settings || {};
+                setInputValue('siteBrandNameInput', s.site_brand_name || serviceTitleDefaults.site_brand_name);
                 setInputValue('servicesSectionBadgeInput', s.services_section_badge || serviceTitleDefaults.services_section_badge);
                 setInputValue('servicesSectionTitleInput', s.services_section_title || serviceTitleDefaults.services_section_title);
                 setInputValue('servicesSectionSubtitleInput', s.services_section_subtitle || serviceTitleDefaults.services_section_subtitle);
@@ -2938,6 +2945,7 @@ body.performance-mode .admin-folder.expanded .folder-content {
 
         async function saveServiceTitlesSettings() {
             const payload = {
+                site_brand_name: getInputValue('siteBrandNameInput', serviceTitleDefaults.site_brand_name),
                 services_section_badge: getInputValue('servicesSectionBadgeInput', serviceTitleDefaults.services_section_badge),
                 services_section_title: getInputValue('servicesSectionTitleInput', serviceTitleDefaults.services_section_title),
                 services_section_subtitle: getInputValue('servicesSectionSubtitleInput', serviceTitleDefaults.services_section_subtitle),

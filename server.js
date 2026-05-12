@@ -850,6 +850,7 @@ db.serialize(() => {
   });
 
   // Insert default settings
+  db.run(`INSERT OR IGNORE INTO site_settings (setting_key, setting_value) VALUES ('site_brand_name', 'CyberHackPro')`);
   db.run(`INSERT OR IGNORE INTO site_settings (setting_key, setting_value) VALUES ('hero_title', 'Welcome to CyberHack Pro')`);
   db.run(`INSERT OR IGNORE INTO site_settings (setting_key, setting_value) VALUES ('hero_subtitle', 'Premium Hacking Services')`);
   db.run(`INSERT OR IGNORE INTO site_settings (setting_key, setting_value) VALUES ('hero_description', 'Professional hacking and security solutions')`);

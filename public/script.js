@@ -510,6 +510,10 @@ window.loadSiteSettings = async function() {
         
         if (result.success && result.settings) {
             const settings = result.settings;
+
+            if (settings.site_brand_name && document.getElementById('site-brand-name')) {
+                document.getElementById('site-brand-name').textContent = settings.site_brand_name;
+            }
             
             // Update elements by ID
             const lineOneEl = document.getElementById('hero-title-line-one');
