@@ -9575,3 +9575,134 @@ iframe {
         font-size: 0.61rem !important;
     }
 }
+
+/* Landing Page White Premium Mode */
+body.landing-white-premium {
+    --bg-dark: #f7f9fc;
+    --bg-darker: #edf2f8;
+    --primary-color: #2563eb;
+    --secondary-color: #0ea5e9;
+    --accent: #0f172a;
+    --text-light: #0f172a;
+    --text-gray: #475569;
+    --glow: rgba(37, 99, 235, 0.16);
+    background: linear-gradient(180deg, #f9fbff 0%, #f1f6ff 100%) !important;
+    color: #0f172a !important;
+}
+
+body.landing-white-premium::before {
+    opacity: 0.42 !important;
+}
+
+body.landing-white-premium h1,
+body.landing-white-premium h2,
+body.landing-white-premium h3,
+body.landing-white-premium h4,
+body.landing-white-premium h5,
+body.landing-white-premium h6,
+body.landing-white-premium p,
+body.landing-white-premium span,
+body.landing-white-premium li,
+body.landing-white-premium a,
+body.landing-white-premium i,
+body.landing-white-premium .section-title,
+body.landing-white-premium .section-subtitle,
+body.landing-white-premium .stat-number,
+body.landing-white-premium .stat-label,
+body.landing-white-premium .stat-number-review,
+body.landing-white-premium .stat-label-review,
+body.landing-white-premium .service-features li,
+body.landing-white-premium .rating-text {
+    color: #0f172a !important;
+    text-shadow: none !important;
+}
+
+body.landing-white-premium .gradient-text {
+    background: linear-gradient(135deg, #1d4ed8, #0ea5e9) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    color: transparent !important;
+    text-shadow: none !important;
+}
+
+body.landing-white-premium .hero-description,
+body.landing-white-premium .reviewer-title,
+body.landing-white-premium .service-card p,
+body.landing-white-premium .tool-card p,
+body.landing-white-premium .feature-card p,
+body.landing-white-premium .review-text,
+body.landing-white-premium .service-features li,
+body.landing-white-premium .whatsapp-label,
+body.landing-white-premium .review-course,
+body.landing-white-premium .proof-title,
+body.landing-white-premium .about-redirect-text {
+    color: #475569 !important;
+}
+
+body.landing-white-premium .navbar,
+body.landing-white-premium .hero,
+body.landing-white-premium .whatsapp-contact-section,
+body.landing-white-premium .services-section,
+body.landing-white-premium .features-section,
+body.landing-white-premium .tools-section,
+body.landing-white-premium .reviews-section,
+body.landing-white-premium .proof-section {
+    background: #ffffff !important;
+    border-color: #dbe4f0 !important;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.07) !important;
+}
+
+body.landing-white-premium .hero-bg-animation {
+    opacity: 0.22 !important;
+}
+
+body.landing-white-premium .service-card,
+body.landing-white-premium .tool-card,
+body.landing-white-premium .feature-card,
+body.landing-white-premium .review-card,
+body.landing-white-premium .whatsapp-cards-grid .whatsapp-card,
+body.landing-white-premium .hero-main-card,
+body.landing-white-premium .hero-whatsapp-widget,
+body.landing-white-premium .proof-card,
+body.landing-white-premium .support-fab .support-item,
+body.landing-white-premium .proof-dialog-content,
+body.landing-white-premium .about-redirect-card {
+    background: #ffffff !important;
+    border-color: #d9e4f2 !important;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08) !important;
+}
+
+body.landing-white-premium .services-section .services-grid > .service-card {
+    --card-bg: #ffffff !important;
+    --card-border: #d9e4f2 !important;
+    --card-text: #0f172a !important;
+    --card-subtext: #475569 !important;
+    --card-chip-bg: #eff6ff !important;
+    background: #ffffff !important;
+    border: 1.4px solid #d9e4f2 !important;
+}
+
+body.landing-white-premium .service-icon,
+body.landing-white-premium .feature-icon,
+body.landing-white-premium .tool-icon,
+body.landing-white-premium .reviewer-avatar,
+body.landing-white-premium .voice-btn,
+body.landing-white-premium .support-fab-btn {
+    color: #2563eb !important;
+    border-color: #bfdbfe !important;
+}
+
+body.landing-white-premium .service-btn,
+body.landing-white-premium .whatsapp-btn,
+body.landing-white-premium .btn-primary,
+body.landing-white-premium .btn-secondary {
+    background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%) !important;
+    color: #ffffff !important;
+    border: 1px solid #1d4ed8 !important;
+    box-shadow: 0 10px 20px rgba(37, 99, 235, 0.22) !important;
+}
+
+body.landing-white-premium .proof-dialog-overlay,
+body.landing-white-premium .about-redirect-overlay {
+    background: rgba(15, 23, 42, 0.45) !important;
+}
