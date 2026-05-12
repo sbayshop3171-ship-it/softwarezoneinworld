@@ -403,7 +403,7 @@
             position: relative;
         }
 
-        .verification-header i::before {
+        .verification-header i::after {
             content: '';
             position: absolute;
             top: 50%;
@@ -415,6 +415,7 @@
             border-radius: 50%;
             /* Removed infinite animation for performance */
             z-index: -1;
+            pointer-events: none;
         }
 
         @keyframes hackIconFloat {
@@ -3115,7 +3116,7 @@
             box-shadow: 0 10px 24px rgba(37, 99, 235, 0.3) !important;
         }
 
-        .verification-header i::before {
+        .verification-header i::after {
             animation: none !important;
         }
 
