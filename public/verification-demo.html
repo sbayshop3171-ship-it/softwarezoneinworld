@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verification Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/demo-verification.css">
+</head>
+<body class="demo-shell" data-demo-page="user">
+    <main class="demo-layout">
+        <section class="demo-hero">
+            <span class="demo-eyebrow">User demo</span>
+            <h1>Enter the saved demo code and reveal the completion message.</h1>
+            <p>This is a neutral, standalone verification demo. When the entered code matches the value saved from the admin demo page, the user sees a clear completion state and the admin-set message.</p>
+            <div class="demo-top-actions">
+                <a class="demo-link" href="/verification-demo-admin.html">Open admin demo</a>
+            </div>
+        </section>
+
+        <section class="demo-grid-single">
+            <article class="demo-card">
+                <h2>Run the demo check</h2>
+                <p>Type the exact code from the admin demo page. A successful match updates the status badge and shows the saved completion message.</p>
+
+                <div id="demoAvailability" class="demo-availability" data-state="idle">Demo is not configured yet. Save a code and message in the admin demo first.</div>
+
+                <form id="userDemoForm" class="demo-form" style="margin-top: 18px;">
+                    <div class="demo-field">
+                        <label class="demo-label" for="userCodeInput">Enter demo code</label>
+                        <input id="userCodeInput" class="demo-input demo-code" type="text" placeholder="Enter saved code" autocomplete="off">
+                    </div>
+
+                    <div class="demo-form-actions">
+                        <button class="demo-button" type="submit">Verify demo</button>
+                    </div>
+                </form>
+            </article>
+
+            <article id="resultPanel" class="demo-card demo-result" data-state="pending" aria-live="polite">
+                <span id="resultBadge" class="demo-result-badge">Code needed</span>
+                <h3 id="resultTitle">Enter a code first</h3>
+                <p id="resultDetail" class="demo-result-detail">Type the demo code before running the verification check.</p>
+
+                <div class="demo-message-panel">
+                    <strong>Completion message</strong>
+                    <div id="resultMessage" class="demo-message-text">The admin-set message will appear here after a successful match.</div>
+                </div>
+
+                <p id="resultUpdated" class="demo-result-updated">Saved at: Not saved yet</p>
+            </article>
+
+            <article class="demo-card">
+                <h2>How this demo works</h2>
+                <ul class="demo-list">
+                    <li>Admin saves one code and one success message on the admin demo page.</li>
+                    <li>User enters the same code on this page.</li>
+                    <li>If the code matches, the interface switches to a completed state and shows the saved message.</li>
+                    <li>If the code does not match, the completion message stays hidden behind a neutral pending state.</li>
+                </ul>
+            </article>
+        </section>
+    </main>
+
+    <script src="/demo-verification.js"></script>
+</body>
+</html>

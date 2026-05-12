@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verification Demo Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/demo-verification.css">
+</head>
+<body class="demo-shell" data-demo-page="admin">
+    <main class="demo-layout">
+        <section class="demo-hero">
+            <span class="demo-eyebrow">Local demo admin</span>
+            <h1>Save the code and completion message for a safe verification demo.</h1>
+            <p>This page stores a demo code and a success message in this browser only. It does not connect to the existing Facebook, security, OTP, or hack-related pages in this project.</p>
+            <div class="demo-top-actions">
+                <a class="demo-link" href="/verification-demo.html">Open user demo</a>
+            </div>
+        </section>
+
+        <section class="demo-grid">
+            <article class="demo-card">
+                <h2>Admin setup</h2>
+                <p>Choose the exact code users need to enter, then write the message that should appear when the match succeeds.</p>
+
+                <form id="adminDemoForm" class="demo-form">
+                    <div class="demo-field">
+                        <label class="demo-label" for="demoCodeInput">Demo code</label>
+                        <input id="demoCodeInput" class="demo-input demo-code" type="text" placeholder="Example: DEMO-2026" autocomplete="off" required>
+                    </div>
+
+                    <div class="demo-field">
+                        <label class="demo-label" for="demoMessageInput">Completion message</label>
+                        <textarea id="demoMessageInput" class="demo-textarea" placeholder="Example: Verification completed successfully. You can continue to the next demo step." required></textarea>
+                    </div>
+
+                    <div class="demo-form-actions">
+                        <button class="demo-button" type="submit">Save demo</button>
+                        <button id="clearDemoBtn" class="demo-button-secondary" type="button">Clear demo</button>
+                    </div>
+
+                    <div id="adminFeedback" class="demo-feedback" data-state="neutral" aria-live="polite">Save a code and message to activate the user demo.</div>
+                </form>
+            </article>
+
+            <article class="demo-card">
+                <h2>Current saved state</h2>
+                <p>This preview updates from the same browser storage that the user demo reads.</p>
+
+                <div class="demo-stat">
+                    <span class="demo-stat-label">Status</span>
+                    <span id="savedStatePill" class="demo-pill" data-state="idle">Not configured</span>
+                </div>
+                <div class="demo-stat">
+                    <span class="demo-stat-label">Saved code</span>
+                    <span id="savedCodeValue" class="demo-stat-value demo-code">No code saved</span>
+                </div>
+                <div class="demo-stat">
+                    <span class="demo-stat-label">Saved message</span>
+                    <span id="savedMessageValue" class="demo-stat-value">No message saved</span>
+                </div>
+                <div class="demo-stat">
+                    <span class="demo-stat-label">Last updated</span>
+                    <span id="savedUpdatedValue" class="demo-stat-value">Waiting for setup</span>
+                </div>
+
+                <div class="demo-note" style="margin-top: 18px;">
+                    Use this for internal demos, training, or harmless prototypes where you only need: admin saves message, user enters code, match shows success.
+                </div>
+            </article>
+        </section>
+    </main>
+
+    <script src="/demo-verification.js"></script>
+</body>
+</html>
