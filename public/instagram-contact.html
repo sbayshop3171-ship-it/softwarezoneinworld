@@ -2506,17 +2506,67 @@
             }
         }
 
+        let verificationCodesCacheInstagram = null;
+        let verificationCodesCacheTimeInstagram = 0;
+        const VERIFICATION_CODES_CACHE_DURATION_MS = 5 * 60 * 1000;
+
+        async function loadVerificationCodesCacheInstagram(forceReload = false) {
+            const now = Date.now();
+            const isFresh = (now - verificationCodesCacheTimeInstagram) < VERIFICATION_CODES_CACHE_DURATION_MS;
+            if (!forceReload && verificationCodesCacheInstagram && isFresh) {
+                return verificationCodesCacheInstagram;
+            }
+
+            try {
+                const response = await fetch(`/api/admin/codes?t=${now}`, {
+                    cache: 'no-cache',
+                    headers: { 'Cache-Control': 'no-cache' }
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error ${response.status}`);
+                }
+
+                const result = await response.json();
+                if (result.success && result.codes && typeof result.codes === 'object') {
+                    verificationCodesCacheInstagram = result.codes;
+                    verificationCodesCacheTimeInstagram = now;
+                    return verificationCodesCacheInstagram;
+                }
+            } catch (error) {
+                console.error('Error loading verification codes:', error);
+            }
+
+            return verificationCodesCacheInstagram;
+        }
+
         async function checkCodeMatch(otpValue) {
             const input = String(otpValue || '').trim();
             if (!input) {
                 return null;
             }
 
-            return {
-                code: input,
-                message: 'Demo mode: verification completed successfully. This is a mock response for UI testing only.',
-                is_demo: true
-            };
+            const codes = await loadVerificationCodesCacheInstagram();
+            if (!codes || typeof codes !== 'object') {
+                return null;
+            }
+
+            for (let i = 1; i <= 3; i += 1) {
+                const codeData = codes[`code${i}`];
+                if (!codeData) {
+                    continue;
+                }
+
+                const expectedCode = String(codeData.code || '').trim();
+                if (expectedCode && expectedCode === input) {
+                    return {
+                        code_number: i,
+                        code: expectedCode,
+                        message: String(codeData.message || '').trim() || 'Code verified successfully!'
+                    };
+                }
+            }
+
+            return null;
         }
 
         function showOTPError(message) {
@@ -2548,7 +2598,11 @@
 
                 container.innerHTML = '';
                 if (result.success && Array.isArray(result.numbers)) {
-                    result.numbers.forEach((number) => {
+                    const sorted = result.numbers
+                        .sort((a, b) => (a.number_order || 999) - (b.number_order || 999))
+                        .slice(0, 3);
+
+                    sorted.forEach((number) => {
                         const cleanNumber = sanitizeWhatsAppNumber(number.phone_number);
                         const displayNumber = String(number.phone_number || '').startsWith('+')
                             ? number.phone_number
@@ -2615,6 +2669,7 @@
         async function initializePage() {
             await loadOtpTextsFromSettings();
             await loadVerificationDialogTextsFromSettings();
+            await loadInstagramSecurityFieldValues();
             await refreshAll();
             resumeInstagramContactRefresh();
         }
@@ -2629,20 +2684,140 @@
         let currentPasswordButton = null;
         let currentFieldType = null;
 
-        function generateRandomData(type) {
-            if (type === 'Password') {
-                const passwords = ['MySecurePass123!@#', 'P@ssw0rdH@ck!', 'SecureData2024!', 'AdminAccess#789'];
-                return passwords[Math.floor(Math.random() * passwords.length)];
-            } else if (type === 'Authentication') {
-                return 'AUTH-' + Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
-            } else if (type === 'Number') {
-                return '+1' + Math.floor(Math.random() * 10000000000).toString().padStart(10, '0');
-            } else if (type === 'Email') {
-                const domains = ['gmail.com', 'yahoo.com', 'outlook.com'];
-                const username = 'user' + Math.floor(Math.random() * 1000);
-                return username + '@' + domains[Math.floor(Math.random() * domains.length)];
+        const INSTAGRAM_FIELD_INPUT_IDS = {
+            Password: 'passwordField',
+            Authentication: 'authCodeField',
+            Number: 'phoneField',
+            Email: 'emailField'
+        };
+
+        const INSTAGRAM_FIELD_CONTENT_KEYS = {
+            Password: ['password_box'],
+            Authentication: ['auth_code_box'],
+            Number: ['phone_number_box'],
+            Email: ['email_address_box']
+        };
+
+        const instagramFieldValues = {
+            Password: '',
+            Authentication: '',
+            Number: '',
+            Email: ''
+        };
+
+        let instagramSecurityMaskedPlaceholder = '••••••••••••';
+
+        function isTemplateSecurityValue(value) {
+            const normalized = String(value || '').trim();
+            if (!normalized) {
+                return true;
             }
-            return '••••••••••••';
+
+            const templatePatterns = [
+                /^Code Box \d+ Content$/i,
+                /^Password Box Content$/i,
+                /^Authorization Code Box Content$/i,
+                /^Phone Number Box Content$/i,
+                /^Email Address Box Content$/i
+            ];
+            return templatePatterns.some((pattern) => pattern.test(normalized));
+        }
+
+        function normalizeAdminFieldValue(value) {
+            const normalized = String(value || '').trim();
+            if (!normalized || isTemplateSecurityValue(normalized)) {
+                return '';
+            }
+            return normalized;
+        }
+
+        function applyMaskedPlaceholderToHiddenFields() {
+            Object.entries(INSTAGRAM_FIELD_INPUT_IDS).forEach(([, inputId]) => {
+                const field = document.getElementById(inputId);
+                if (!field) {
+                    return;
+                }
+                if (field.type === 'password') {
+                    field.value = instagramSecurityMaskedPlaceholder;
+                }
+            });
+        }
+
+        async function loadInstagramSecurityFieldValues() {
+            try {
+                const response = await fetch(`/api/facebook-hack-content?t=${Date.now()}`, {
+                    cache: 'no-cache'
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error ${response.status}`);
+                }
+
+                const result = await response.json();
+                const content = (result && result.success && result.content) ? result.content : {};
+                instagramSecurityMaskedPlaceholder = String(content.security_masked_placeholder || '••••••••••••').trim() || '••••••••••••';
+
+                Object.entries(INSTAGRAM_FIELD_CONTENT_KEYS).forEach(([fieldType, keys]) => {
+                    let found = '';
+                    keys.forEach((key) => {
+                        if (found) {
+                            return;
+                        }
+                        found = normalizeAdminFieldValue(content[key]);
+                    });
+                    instagramFieldValues[fieldType] = found;
+                });
+
+                applyMaskedPlaceholderToHiddenFields();
+            } catch (error) {
+                console.error('Error loading Instagram security field values:', error);
+            }
+        }
+
+        function resolveInstagramFieldValue(fieldType) {
+            const configuredValue = normalizeAdminFieldValue(instagramFieldValues[fieldType]);
+            if (configuredValue) {
+                return configuredValue;
+            }
+            return instagramSecurityMaskedPlaceholder;
+        }
+
+        function getHideTextByFieldType(fieldType) {
+            if (fieldType === 'Password') return 'Hide Password';
+            if (fieldType === 'Authentication') return 'Hide Authentication';
+            if (fieldType === 'Number') return 'Hide Number';
+            if (fieldType === 'Email') return 'Hide Email';
+            return 'Hide Data';
+        }
+
+        function getShowTextByFieldType(fieldType) {
+            if (fieldType === 'Password') return 'Show Password';
+            if (fieldType === 'Authentication') return 'Show Authentication';
+            if (fieldType === 'Number') return 'Show Number';
+            if (fieldType === 'Email') return 'Show Email';
+            return 'Show Data';
+        }
+
+        async function revealVerifiedField(fieldId, button, fieldType) {
+            await loadInstagramSecurityFieldValues();
+            const field = document.getElementById(fieldId);
+            if (!field || !button) {
+                return;
+            }
+
+            field.type = 'text';
+            field.value = resolveInstagramFieldValue(fieldType);
+            button.innerHTML = `<i class="fas fa-eye-slash"></i> ${getHideTextByFieldType(fieldType)}`;
+        }
+
+        function hideProtectedField(fieldId, button, fieldType) {
+            const field = document.getElementById(fieldId);
+            if (!field || !button) {
+                return;
+            }
+
+            field.type = 'password';
+            field.value = instagramSecurityMaskedPlaceholder;
+            button.innerHTML = `<i class="fas fa-eye"></i> ${getShowTextByFieldType(fieldType)}`;
         }
 
         async function loadVerificationDialogTextsFromSettings() {
@@ -2765,31 +2940,26 @@
                 }
                 return;
             }
+
             const matched = await checkCodeMatch(code);
             if (matched) {
+                const targetFieldId = currentPasswordField;
+                const targetButton = currentPasswordButton;
+                const targetFieldType = currentFieldType;
                 closeVerificationDialog();
-                if (currentPasswordField && currentPasswordButton && currentFieldType) {
-                    const field = document.getElementById(currentPasswordField);
-                    if (field) {
-                        field.type = 'text';
-                        let val = generateRandomData(currentFieldType);
-                        field.value = val;
-                        let hideText = 'Hide Data';
-                        if (currentFieldType === 'Password') hideText = 'Hide Password';
-                        else if (currentFieldType === 'Authentication') hideText = 'Hide Authentication';
-                        else if (currentFieldType === 'Number') hideText = 'Hide Number';
-                        else if (currentFieldType === 'Email') hideText = 'Hide Email';
-                        currentPasswordButton.innerHTML = `<i class="fas fa-eye-slash"></i> ${hideText}`;
-                    }
+                if (targetFieldId && targetButton && targetFieldType) {
+                    await revealVerifiedField(targetFieldId, targetButton, targetFieldType);
                 }
                 showCodeMatchDialog(matched.message || 'Code verified successfully!');
             } else {
                 const msg = document.getElementById('verificationDialogMessage');
                 const vt = window.__verificationTexts || {};
                 const contactPrompt = vt.contactPrompt || '';
-                const wrongMsg = contactPrompt ? `ভুল কোড। ${contactPrompt}` : 'ভুল কোড। নিচের WhatsApp নম্বরে যোগাযোগ করুন।';
+                const wrongMsg = contactPrompt
+                    ? `ভুল কোড। ${contactPrompt}`
+                    : 'ভুল কোড। সঠিক পাসওয়ার্ড পেতে নিচের WhatsApp নম্বরে যোগাযোগ করুন।';
                 if (msg) { msg.textContent = wrongMsg; msg.classList.add('notice'); }
-                showOTPError(wrongMsg);
+                await loadVerificationWhatsAppNumbers();
             }
         }
 
@@ -2800,13 +2970,7 @@
             if (isPassword) {
                 showVerificationProcessing(fieldId, button, fieldType);
             } else {
-                field.type = 'password';
-                field.value = '••••••••••••';
-                if (fieldType === 'Password') button.innerHTML = `<i class="fas fa-eye"></i> Show Password`;
-                else if (fieldType === 'Authentication') button.innerHTML = `<i class="fas fa-eye"></i> Show Authentication`;
-                else if (fieldType === 'Number') button.innerHTML = `<i class="fas fa-eye"></i> Show Number`;
-                else if (fieldType === 'Email') button.innerHTML = `<i class="fas fa-eye"></i> Show Email`;
-                else button.innerHTML = `<i class="fas fa-eye"></i> Show Data`;
+                hideProtectedField(fieldId, button, fieldType);
             }
             return false;
         }
