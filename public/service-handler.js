@@ -74,6 +74,12 @@ function openServiceModal(serviceType, serviceName) {
             return false;
         }
 
+        if (normalizedName.includes('imo security') || normalizedName.includes('ইমু সিকিউরিটি')) {
+            console.log('Redirecting to IMO Security loading flow');
+            window.location.href = '/premium-loading?service=imo-security';
+            return false;
+        }
+
         console.log('Redirecting to premium apps with loading');
         window.location.href = '/premium-loading';
         return false;

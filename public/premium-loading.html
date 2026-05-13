@@ -823,12 +823,18 @@
         const serviceParam = String(urlParams.get('service') || '').toLowerCase();
         const isInstagramSecurity = serviceParam === 'instagram-security' || serviceParam === 'instagram';
         const isTikTokSecurity = serviceParam === 'tiktok-security' || serviceParam === 'tiktok-safety' || serviceParam === 'tiktok';
-        const isSecurityMode = isInstagramSecurity || isTikTokSecurity;
-        const securityBrandLabel = isTikTokSecurity ? 'TikTok' : 'Instagram';
-        const securityDomain = isTikTokSecurity ? 'tiktok.com' : 'instagram.com';
-        const securityContactService = isTikTokSecurity ? 'tiktok-security' : 'instagram-security';
+        const isImoSecurity = serviceParam === 'imo-security' || serviceParam === 'imo';
+        const isSecurityMode = isInstagramSecurity || isTikTokSecurity || isImoSecurity;
+        const securityBrandLabel = isTikTokSecurity ? 'TikTok' : (isImoSecurity ? 'IMO' : 'Instagram');
+        const securityDomains = isTikTokSecurity
+            ? ['tiktok.com']
+            : (isImoSecurity ? ['imo.im', 'imo.com'] : ['instagram.com']);
+        const securityDomain = securityDomains[0];
+        const securityContactService = isTikTokSecurity ? 'tiktok-security' : (isImoSecurity ? 'imo-security' : 'instagram-security');
         const securityVoiceServiceKey = isTikTokSecurity ? 'tiktok-service' : 'instagram-service';
-        const securityServiceTitle = isTikTokSecurity ? 'TikTok Security' : 'Instagram Security';
+        const securityServiceTitle = isTikTokSecurity ? 'TikTok Security' : (isImoSecurity ? 'IMO Security' : 'Instagram Security');
+        const securityModeClass = isTikTokSecurity ? 'tiktok-mode' : (isImoSecurity ? 'imo-mode' : 'instagram-mode');
+        const securityModeIconClass = isTikTokSecurity ? 'fab fa-tiktok' : (isImoSecurity ? 'fas fa-comments' : 'fab fa-instagram');
 
         const loadingContainer = document.getElementById('loadingContainer');
         const loadingTitle = document.getElementById('loadingTitle');
@@ -849,13 +855,11 @@
 
         if (isSecurityMode) {
             document.body.classList.add('instagram-mode');
-            if (isTikTokSecurity) {
-                document.body.classList.add('tiktok-mode');
-            }
+            document.body.classList.add(securityModeClass);
             loadingTitle.textContent = 'Initializing Secure Node';
             loadingMessage.textContent = `${securityBrandLabel} scanner engines booting...`;
             step1.textContent = 'Injecting shield layers...';
-            loadingIcon.innerHTML = '<i class="fas fa-shield-halved"></i>';
+            loadingIcon.innerHTML = `<i class="${securityModeIconClass}"></i>`;
             step2.style.display = 'none';
             step3.style.display = 'none';
 
@@ -1014,7 +1018,8 @@
                 return;
             }
 
-            if (!link.toLowerCase().includes(securityDomain)) {
+            const hasValidDomain = securityDomains.some((domain) => link.toLowerCase().includes(domain));
+            if (!hasValidDomain) {
                 scannerStatus.classList.add('error');
                 scannerStatus.textContent = `Please enter a valid ${securityBrandLabel} link.`;
                 return;

