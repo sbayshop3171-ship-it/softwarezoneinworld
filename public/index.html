@@ -112,33 +112,94 @@
             }
         }
 
-        /* Emergency pastel color override (cache-safe) */
+        /* Emergency premium light override (cache-safe) */
         .services-section .services-grid > .service-card,
         .services-section .services-grid .service-card {
-            --card-bg: linear-gradient(160deg, #f8fafc 0%, #eef2f7 100%);
-            --card-border: #8b5cf6;
-            --card-text: #1f2937;
-            --card-subtext: #4b5563;
-            --card-chip-bg: rgba(255, 255, 255, 0.78);
+            --card-bg: linear-gradient(160deg, rgba(255, 255, 255, 0.98) 0%, rgba(244, 248, 255, 0.98) 100%);
+            --card-border: #5b79f5;
+            --card-border-soft: rgba(91, 121, 245, 0.36);
+            --card-text: #0f172a;
+            --card-subtext: #334155;
+            --card-chip-bg: linear-gradient(145deg, rgba(255, 255, 255, 0.97) 0%, rgba(237, 245, 255, 0.9) 100%);
+            --card-glow: rgba(91, 121, 245, 0.14);
             background: var(--card-bg) !important;
-            border: 1.6px solid var(--card-border) !important;
-            box-shadow: none !important;
-            backdrop-filter: none !important;
+            border: 1.5px solid var(--card-border-soft) !important;
+            box-shadow:
+                0 12px 24px rgba(15, 23, 42, 0.08),
+                0 8px 18px var(--card-glow),
+                inset 0 1px 0 rgba(255, 255, 255, 0.75) !important;
+            backdrop-filter: blur(7px) saturate(1.05) !important;
+            position: relative !important;
+            overflow: hidden !important;
+            transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease !important;
         }
 
         .services-section .services-grid > .service-card::before,
+        .services-section .services-grid .service-card::before {
+            content: '' !important;
+            position: absolute !important;
+            inset: 0 !important;
+            border-radius: inherit !important;
+            background:
+                radial-gradient(circle at 12% -8%, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0) 46%),
+                radial-gradient(circle at 90% 130%, var(--card-glow) 0%, rgba(255, 255, 255, 0) 60%) !important;
+            opacity: 0.88 !important;
+            pointer-events: none !important;
+            transition: opacity 0.24s ease, transform 0.24s ease !important;
+        }
+
         .services-section .services-grid > .service-card::after,
-        .services-section .services-grid .service-card::before,
         .services-section .services-grid .service-card::after {
-            display: none !important;
+            content: '' !important;
+            position: absolute !important;
+            inset: 1px !important;
+            border-radius: inherit !important;
+            border: 1px solid rgba(255, 255, 255, 0.62) !important;
+            opacity: 0.76 !important;
+            pointer-events: none !important;
+            transition: opacity 0.24s ease !important;
+        }
+
+        .services-section .services-grid > .service-card:hover,
+        .services-section .services-grid .service-card:hover {
+            transform: translateY(-4px) !important;
+            border-color: var(--card-border) !important;
+            box-shadow:
+                0 18px 30px rgba(15, 23, 42, 0.12),
+                0 12px 26px var(--card-glow),
+                inset 0 1px 0 rgba(255, 255, 255, 0.85) !important;
+        }
+
+        .services-section .services-grid > .service-card:hover::before,
+        .services-section .services-grid .service-card:hover::before {
+            opacity: 1 !important;
+            transform: scale(1.03) !important;
+        }
+
+        .services-section .services-grid > .service-card:hover::after,
+        .services-section .services-grid .service-card:hover::after {
+            opacity: 1 !important;
         }
 
         .services-section .services-grid > .service-card .service-icon,
         .services-section .services-grid .service-card .service-icon {
             background: var(--card-chip-bg) !important;
             color: var(--card-border) !important;
-            box-shadow: none !important;
-            border: 1px solid rgba(255, 255, 255, 0.75) !important;
+            box-shadow:
+                0 7px 16px rgba(15, 23, 42, 0.1),
+                0 6px 14px var(--card-glow),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+            border: 1px solid rgba(255, 255, 255, 0.82) !important;
+            transition: transform 0.24s ease, box-shadow 0.24s ease !important;
+        }
+
+        .services-section .services-grid > .service-card:hover .service-icon,
+        .services-section .services-grid .service-card:hover .service-icon {
+            transform: translateY(-1px) scale(1.05) !important;
+            box-shadow:
+                0 10px 18px rgba(15, 23, 42, 0.12),
+                0 10px 20px var(--card-glow),
+                inset 0 1px 0 rgba(255, 255, 255, 0.94) !important;
         }
 
         .services-section .services-grid > .service-card .icon-bg,
@@ -166,65 +227,86 @@
 
         .services-section .services-grid > .service-card .service-btn,
         .services-section .services-grid .service-card .service-btn {
-            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%) !important;
+            background: linear-gradient(135deg, var(--card-border) 0%, #2563eb 100%) !important;
             color: #ffffff !important;
-            border: 1px solid #1d4ed8 !important;
-            box-shadow: none !important;
+            border: 1px solid rgba(255, 255, 255, 0.66) !important;
+            box-shadow:
+                0 8px 18px rgba(37, 99, 235, 0.24),
+                0 5px 12px var(--card-glow) !important;
         }
 
         .services-section .services-grid > .service-card .service-btn:hover,
         .services-section .services-grid .service-card .service-btn:hover {
-            background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%) !important;
+            background: linear-gradient(135deg, #1d4ed8 0%, var(--card-border) 100%) !important;
             color: #ffffff !important;
-            filter: none !important;
+            filter: brightness(1.04) !important;
+            box-shadow:
+                0 10px 22px rgba(37, 99, 235, 0.3),
+                0 8px 16px var(--card-glow) !important;
         }
 
         .services-section .services-grid > .service-card:nth-child(8n + 1),
         .services-section .services-grid .service-card:nth-child(8n + 1) {
-            --card-bg: linear-gradient(160deg, #f8f1ff 0%, #f3ebff 100%);
-            --card-border: #b06ce8;
+            --card-bg: linear-gradient(160deg, #f9f4ff 0%, #edf3ff 100%);
+            --card-border: #8f64f1;
+            --card-border-soft: rgba(143, 100, 241, 0.33);
+            --card-glow: rgba(143, 100, 241, 0.15);
         }
 
         .services-section .services-grid > .service-card:nth-child(8n + 2),
         .services-section .services-grid .service-card:nth-child(8n + 2) {
-            --card-bg: linear-gradient(160deg, #ecfff7 0%, #e2fbf1 100%);
-            --card-border: #3abf9b;
+            --card-bg: linear-gradient(160deg, #effff7 0%, #e8faf5 100%);
+            --card-border: #2ea987;
+            --card-border-soft: rgba(46, 169, 135, 0.34);
+            --card-glow: rgba(46, 169, 135, 0.14);
         }
 
         .services-section .services-grid > .service-card:nth-child(8n + 3),
         .services-section .services-grid .service-card:nth-child(8n + 3) {
-            --card-bg: linear-gradient(160deg, #f3f5ff 0%, #eaeeff 100%);
-            --card-border: #6f78d8;
+            --card-bg: linear-gradient(160deg, #f5f6ff 0%, #ebeeff 100%);
+            --card-border: #6672de;
+            --card-border-soft: rgba(102, 114, 222, 0.35);
+            --card-glow: rgba(102, 114, 222, 0.15);
         }
 
         .services-section .services-grid > .service-card:nth-child(8n + 4),
         .services-section .services-grid .service-card:nth-child(8n + 4) {
-            --card-bg: linear-gradient(160deg, #edf8ff 0%, #e3f2ff 100%);
-            --card-border: #5f9fd8;
+            --card-bg: linear-gradient(160deg, #f0f9ff 0%, #e5f1ff 100%);
+            --card-border: #4c95d6;
+            --card-border-soft: rgba(76, 149, 214, 0.34);
+            --card-glow: rgba(76, 149, 214, 0.14);
         }
 
         .services-section .services-grid > .service-card:nth-child(8n + 5),
         .services-section .services-grid .service-card:nth-child(8n + 5) {
-            --card-bg: linear-gradient(160deg, #f9f1ff 0%, #f2e8ff 100%);
-            --card-border: #c374df;
+            --card-bg: linear-gradient(160deg, #fcf2ff 0%, #f4ebff 100%);
+            --card-border: #be68dd;
+            --card-border-soft: rgba(190, 104, 221, 0.35);
+            --card-glow: rgba(190, 104, 221, 0.15);
         }
 
         .services-section .services-grid > .service-card:nth-child(8n + 6),
         .services-section .services-grid .service-card:nth-child(8n + 6) {
-            --card-bg: linear-gradient(160deg, #fffbe8 0%, #fff5d1 100%);
-            --card-border: #d2b23c;
+            --card-bg: linear-gradient(160deg, #fffced 0%, #fff5d8 100%);
+            --card-border: #c9a631;
+            --card-border-soft: rgba(201, 166, 49, 0.35);
+            --card-glow: rgba(201, 166, 49, 0.15);
         }
 
         .services-section .services-grid > .service-card:nth-child(8n + 7),
         .services-section .services-grid .service-card:nth-child(8n + 7) {
-            --card-bg: linear-gradient(160deg, #fff1f4 0%, #ffe6ec 100%);
-            --card-border: #d77a95;
+            --card-bg: linear-gradient(160deg, #fff3f6 0%, #ffe8ef 100%);
+            --card-border: #d46d8d;
+            --card-border-soft: rgba(212, 109, 141, 0.36);
+            --card-glow: rgba(212, 109, 141, 0.15);
         }
 
         .services-section .services-grid > .service-card:nth-child(8n + 8),
         .services-section .services-grid .service-card:nth-child(8n + 8) {
-            --card-bg: linear-gradient(160deg, #f0f5ff 0%, #e7efff 100%);
-            --card-border: #7b85db;
+            --card-bg: linear-gradient(160deg, #f2f6ff 0%, #e9f0ff 100%);
+            --card-border: #6f7edf;
+            --card-border-soft: rgba(111, 126, 223, 0.35);
+            --card-glow: rgba(111, 126, 223, 0.14);
         }
 
         @media (max-width: 768px) {
