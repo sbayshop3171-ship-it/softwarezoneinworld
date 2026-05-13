@@ -62,9 +62,9 @@ function openServiceModal(serviceType, serviceName) {
     if (serviceType === 'premium-apps') {
         const normalizedName = String(serviceName || '').toLowerCase();
 
-        if (normalizedName.includes('tiktok safety') || normalizedName.includes('tiktok security')) {
-            console.log('Redirecting to TikTok Safety loading flow');
-            window.location.href = '/premium-loading?service=tiktok-safety';
+        if (normalizedName.includes('tiktok')) {
+            console.log('Redirecting to TikTok Security loading flow');
+            window.location.href = '/premium-loading?service=tiktok-security';
             return false;
         }
 

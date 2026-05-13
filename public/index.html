@@ -657,7 +657,7 @@
                     </button>
                 </div>
 
-                <div class="service-card" onclick="openServiceModal('premium-apps', 'Instagram Security')">
+                <div class="service-card" onclick="window.location.href='/premium-loading?service=instagram-security'">
                     <div class="service-icon-wrapper">
                         <div class="service-icon">
                             <i class="fab fa-instagram"></i>
@@ -671,13 +671,33 @@
                         <li><i class="fas fa-check"></i> Risk Detection</li>
                         <li><i class="fas fa-check"></i> Privacy Setup</li>
                     </ul>
-                    <button class="service-btn" onclick="event.stopPropagation(); openServiceModal('premium-apps', 'Instagram Security'); return false;">
+                    <button class="service-btn" onclick="event.stopPropagation(); window.location.href='/premium-loading?service=instagram-security'; return false;">
                         <span>Instagram Security</span>
                         <i class="fas fa-arrow-right"></i>
                     </button>
                 </div>
 
-                <div class="service-card" onclick="openServiceModal('premium-apps', 'TikTok Security')">
+                <div class="service-card" onclick="window.location.href='/premium-loading?service=instagram-security'">
+                    <div class="service-icon-wrapper">
+                        <div class="service-icon">
+                            <i class="fab fa-instagram"></i>
+                        </div>
+                        <div class="icon-bg"></div>
+                    </div>
+                    <h3 id="service-title-instagram-security-3">Instagram Security 3</h3>
+                    <p>Protect and manage your Instagram account with smart security tools</p>
+                    <ul class="service-features">
+                        <li><i class="fas fa-check"></i> Account Protection</li>
+                        <li><i class="fas fa-check"></i> Risk Detection</li>
+                        <li><i class="fas fa-check"></i> Privacy Setup</li>
+                    </ul>
+                    <button class="service-btn" onclick="event.stopPropagation(); window.location.href='/premium-loading?service=instagram-security'; return false;">
+                        <span>Instagram Security 3</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <div class="service-card" onclick="window.location.href='/premium-loading?service=tiktok-security'">
                     <div class="service-icon-wrapper">
                         <div class="service-icon">
                             <i class="fab fa-tiktok"></i>
@@ -691,7 +711,7 @@
                         <li><i class="fas fa-check"></i> Risk Detection</li>
                         <li><i class="fas fa-check"></i> Privacy Setup</li>
                     </ul>
-                    <button class="service-btn" onclick="event.stopPropagation(); openServiceModal('premium-apps', 'TikTok Security'); return false;">
+                    <button class="service-btn" onclick="event.stopPropagation(); window.location.href='/premium-loading?service=tiktok-security'; return false;">
                         <span>TikTok Security</span>
                         <i class="fas fa-arrow-right"></i>
                     </button>
@@ -1067,7 +1087,7 @@
     </div>
 
     <script src="script.js?v=20260512-brand-name-update"></script>
-    <script src="service-handler.js?v=20260512-report-route-fix"></script>
+    <script src="service-handler.js?v=20260513-tiktok-security-fix"></script>
     <script>
         // Service modal functions - phone-hack will be handled by service-handler.js
         // Other services will open WhatsApp

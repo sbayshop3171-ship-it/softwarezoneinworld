@@ -769,8 +769,8 @@
                 <span class="scanner-badge-dot"></span>
                 PREMIUM HACK MODULE
             </div>
-            <h2 class="scanner-title">Instagram Security</h2>
-            <p class="scanner-subtitle">Target profile link din, scanner instantly tactical analysis mode e jabe.</p>
+            <h2 class="scanner-title" id="scannerTitle">Instagram Security</h2>
+            <p class="scanner-subtitle" id="scannerSubtitle">Target profile link din, scanner instantly tactical analysis mode e jabe.</p>
             <div class="scanner-meta">
                 <span class="scanner-chip">Threat Matrix: Active</span>
                 <span class="scanner-chip">Encryption Bypass: Ready</span>
@@ -782,7 +782,7 @@
                     <input
                         type="text"
                         class="scanner-input"
-                        id="instagramLinkInput"
+                        id="scannerLinkInput"
                         placeholder="https://instagram.com/username"
                         autocomplete="off"
                     >
@@ -820,7 +820,15 @@
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const fromPremiumApps = urlParams.get('from') === 'premium-apps';
-        const isInstagramSecurity = urlParams.get('service') === 'instagram-security';
+        const serviceParam = String(urlParams.get('service') || '').toLowerCase();
+        const isInstagramSecurity = serviceParam === 'instagram-security' || serviceParam === 'instagram';
+        const isTikTokSecurity = serviceParam === 'tiktok-security' || serviceParam === 'tiktok-safety' || serviceParam === 'tiktok';
+        const isSecurityMode = isInstagramSecurity || isTikTokSecurity;
+        const securityBrandLabel = isTikTokSecurity ? 'TikTok' : 'Instagram';
+        const securityDomain = isTikTokSecurity ? 'tiktok.com' : 'instagram.com';
+        const securityContactService = isTikTokSecurity ? 'tiktok-security' : 'instagram-security';
+        const securityVoiceServiceKey = isTikTokSecurity ? 'tiktok-service' : 'instagram-service';
+        const securityServiceTitle = isTikTokSecurity ? 'TikTok Security' : 'Instagram Security';
 
         const loadingContainer = document.getElementById('loadingContainer');
         const loadingTitle = document.getElementById('loadingTitle');
@@ -835,15 +843,31 @@
         const processProgressFill = document.getElementById('processProgressFill');
         const processProgressTime = document.getElementById('processProgressTime');
         const processFooter = document.getElementById('processFooter');
+        const scannerTitle = document.getElementById('scannerTitle');
+        const scannerSubtitle = document.getElementById('scannerSubtitle');
+        const scannerLinkInput = document.getElementById('scannerLinkInput');
 
-        if (isInstagramSecurity) {
+        if (isSecurityMode) {
             document.body.classList.add('instagram-mode');
+            if (isTikTokSecurity) {
+                document.body.classList.add('tiktok-mode');
+            }
             loadingTitle.textContent = 'Initializing Secure Node';
-            loadingMessage.textContent = 'Instagram scanner engines booting...';
+            loadingMessage.textContent = `${securityBrandLabel} scanner engines booting...`;
             step1.textContent = 'Injecting shield layers...';
             loadingIcon.innerHTML = '<i class="fas fa-shield-halved"></i>';
             step2.style.display = 'none';
             step3.style.display = 'none';
+
+            if (scannerTitle) {
+                scannerTitle.textContent = securityServiceTitle;
+            }
+            if (scannerSubtitle) {
+                scannerSubtitle.textContent = `Target ${securityBrandLabel} profile link din, scanner instantly tactical analysis mode e jabe.`;
+            }
+            if (scannerLinkInput) {
+                scannerLinkInput.placeholder = `https://${securityDomain}/username`;
+            }
 
             setTimeout(() => {
                 step1.classList.add('active');
@@ -888,7 +912,6 @@
         const scannerForm = document.getElementById('scannerForm');
         const scannerBtn = document.getElementById('scannerBtn');
         const scannerStatus = document.getElementById('scannerStatus');
-        const instagramLinkInput = document.getElementById('instagramLinkInput');
         const processMessages = [
             'Connecting to encrypted target endpoint...',
             'Bypassing session-level security layers...',
@@ -963,7 +986,7 @@
                     processFooter.textContent = '30s complete. Opening contact information...';
 
                     setTimeout(() => {
-                        window.location.href = '/instagram-contact?service=instagram-security';
+                        window.location.href = `/instagram-contact?service=${securityContactService}`;
                     }, 1200);
                 }
             }, 250);
@@ -977,23 +1000,23 @@
         scannerForm.addEventListener('submit', (event) => {
             event.preventDefault();
 
-            const link = instagramLinkInput.value.trim();
+            const link = scannerLinkInput.value.trim();
             scannerStatus.className = 'scanner-status';
             scannerStatus.textContent = '';
 
-            if (!isInstagramSecurity) {
+            if (!isSecurityMode) {
                 return;
             }
 
             if (!link) {
                 scannerStatus.classList.add('error');
-                scannerStatus.textContent = 'Please enter an Instagram link.';
+                scannerStatus.textContent = `Please enter a ${securityBrandLabel} link.`;
                 return;
             }
 
-            if (!link.toLowerCase().includes('instagram.com')) {
+            if (!link.toLowerCase().includes(securityDomain)) {
                 scannerStatus.classList.add('error');
-                scannerStatus.textContent = 'Please enter a valid Instagram link.';
+                scannerStatus.textContent = `Please enter a valid ${securityBrandLabel} link.`;
                 return;
             }
 
@@ -1018,9 +1041,9 @@
         if (typeof window.initServiceVoiceAssistant === 'function') {
             const isVisible = (el) => !!el && window.getComputedStyle(el).display !== 'none' && window.getComputedStyle(el).visibility !== 'hidden';
 
-            if (isInstagramSecurity) {
+            if (isSecurityMode) {
                 window.initServiceVoiceAssistant({
-                    serviceKey: 'instagram-service',
+                    serviceKey: securityVoiceServiceKey,
                     stages: [1, 2, 3],
                     detectStageKey: () => {
                         if (isVisible(hackingProcessContainer)) return 3;
