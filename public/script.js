@@ -70,7 +70,7 @@ window.loadWhatsAppNumbers = async function() {
                     </div>
                     <div class="whatsapp-label">WHATSAPP:</div>
                     <div class="whatsapp-number">${displayNumber}</div>
-                    <a href="https://wa.me/${cleanNumber}" target="_blank" class="whatsapp-btn" onclick="if(typeof window.openWhatsApp === 'function') { window.openWhatsApp('${cleanNumber}'); } else { window.open('https://wa.me/${cleanNumber}', '_blank'); } return false;">WhatsApp Now</a>
+                    <a href="https://wa.me/${cleanNumber}" target="_blank" class="whatsapp-btn" onclick="if(typeof window.openWhatsApp === 'function') { window.openWhatsApp('${cleanNumber}'); } else { window.open('https://wa.me/${cleanNumber}', '_blank'); } return false;"><i class="fab fa-whatsapp"></i><span>WhatsApp</span></a>
                 `;
                 
                 if (container) {
@@ -91,7 +91,7 @@ window.loadWhatsAppNumbers = async function() {
                                 <div class="hw-label">WHATSAPP ${index+1}</div>
                                 <div class="hw-number">${displayNumber}</div>
                             </div>
-                            <a class="hw-arrow" href="https://wa.me/${cleanNumber}" target="_blank" onclick="if(typeof window.openWhatsApp === 'function'){ window.openWhatsApp('${cleanNumber}'); } return false;">→</a>
+                            <a class="hw-arrow" href="https://wa.me/${cleanNumber}" target="_blank" onclick="if(typeof window.openWhatsApp === 'function'){ window.openWhatsApp('${cleanNumber}'); } return false;"><i class="fab fa-whatsapp"></i><span>Chat</span></a>
                         `;
                         inner.appendChild(row);
                     }
