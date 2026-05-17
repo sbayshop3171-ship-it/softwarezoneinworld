@@ -391,15 +391,10 @@
             aspect-ratio: 16 / 10;
             border-radius: 10px;
             object-fit: cover;
+            display: block;
             border: 1px solid #d2dff2;
             margin-bottom: 8px;
             background: #ecf3ff;
-            display: grid;
-            place-items: center;
-            color: #335389;
-            font-size: 22px;
-            font-weight: 800;
-            letter-spacing: 0.5px;
         }
 
         .subject-name {
@@ -418,6 +413,7 @@
             text-align: center;
             padding: 18px;
             font-size: 14px;
+            grid-column: 1 / -1;
         }
 
         @keyframes spin {
@@ -458,7 +454,21 @@
             }
 
             .subject-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 10px;
+            }
+
+            .subject-card {
+                padding: 8px;
+            }
+
+            .subject-thumb {
+                aspect-ratio: 1 / 1;
+                margin-bottom: 7px;
+            }
+
+            .subject-name {
+                font-size: 14px;
             }
         }
     </style>
@@ -611,27 +621,88 @@
             return (parts[0][0] + parts[1][0]).toUpperCase();
         }
 
+        function normalizeImageUrl(url) {
+            const raw = String(url || "").trim();
+            if (!raw) return "";
+            if (window.location.protocol === "https:" && /^http:\/\//i.test(raw)) {
+                return raw.replace(/^http:\/\//i, "https://");
+            }
+            return raw;
+        }
+
+        function resolveSubjectPalette(name) {
+            const key = String(name || "").toLowerCase().trim();
+
+            if (key.includes("whatsapp")) return { a: "#25D366", b: "#128C7E" };
+            if (key.includes("imo")) return { a: "#3A7BFF", b: "#1D4ED8" };
+            if (key.includes("telegram")) return { a: "#2AABEE", b: "#1F7CC2" };
+            if (key.includes("messenger")) return { a: "#00B2FF", b: "#0057FF" };
+            if (key.includes("facebook")) return { a: "#1877F2", b: "#0E4DAA" };
+            if (key.includes("instagram")) return { a: "#F58529", b: "#DD2A7B" };
+            if (key.includes("email")) return { a: "#EA4335", b: "#B3261E" };
+            if (key.includes("phone")) return { a: "#0EA5E9", b: "#1D4ED8" };
+            if (key.includes("contact")) return { a: "#22C55E", b: "#16A34A" };
+            return { a: "#4F46E5", b: "#0EA5E9" };
+        }
+
+        function buildSubjectFallbackImage(name) {
+            const label = getSubjectInitial(name);
+            const colors = resolveSubjectPalette(name);
+            const svg = `
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 250" role="img" aria-label="${escapeHtml(name)}">
+                    <defs>
+                        <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="${colors.a}"/>
+                            <stop offset="100%" stop-color="${colors.b}"/>
+                        </linearGradient>
+                    </defs>
+                    <rect width="400" height="250" fill="url(#g)"/>
+                    <circle cx="320" cy="45" r="60" fill="rgba(255,255,255,0.18)"/>
+                    <circle cx="70" cy="225" r="85" fill="rgba(255,255,255,0.16)"/>
+                    <text x="200" y="142" text-anchor="middle" fill="white" font-size="68" font-family="Poppins, Arial, sans-serif" font-weight="800" letter-spacing="2">${escapeHtml(label)}</text>
+                </svg>
+            `;
+            return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+        }
+
         function renderSubjectList() {
             if (!Array.isArray(subjectOptions) || subjectOptions.length === 0) {
                 subjectGrid.innerHTML = '<div class="empty-state">No subjects available right now.</div>';
                 return;
             }
 
-            subjectGrid.innerHTML = subjectOptions.map((item) => {
-                const name = escapeHtml(item.name || "Untitled");
-                const imageUrl = String(item.image_url || "").trim();
-                const hasImage = Boolean(imageUrl);
-                const thumb = hasImage
-                    ? `<img class="subject-thumb" src="${escapeHtml(imageUrl)}" alt="${name}">`
-                    : `<div class="subject-thumb">${escapeHtml(getSubjectInitial(name))}</div>`;
+            subjectGrid.innerHTML = "";
 
-                return `
-                    <button type="button" class="subject-card">
-                        ${thumb}
-                        <div class="subject-name">${name}</div>
-                    </button>
-                `;
-            }).join("");
+            subjectOptions.forEach((item) => {
+                const name = String(item?.name || "Untitled").trim() || "Untitled";
+                const imageUrl = normalizeImageUrl(item?.image_url);
+                const fallbackImage = buildSubjectFallbackImage(name);
+
+                const card = document.createElement("button");
+                card.type = "button";
+                card.className = "subject-card";
+
+                const thumb = document.createElement("img");
+                thumb.className = "subject-thumb";
+                thumb.alt = name;
+                thumb.loading = "lazy";
+                thumb.decoding = "async";
+                thumb.referrerPolicy = "no-referrer";
+                thumb.src = imageUrl || fallbackImage;
+                if (imageUrl) {
+                    thumb.addEventListener("error", () => {
+                        thumb.src = fallbackImage;
+                    }, { once: true });
+                }
+
+                const title = document.createElement("div");
+                title.className = "subject-name";
+                title.textContent = name;
+
+                card.appendChild(thumb);
+                card.appendChild(title);
+                subjectGrid.appendChild(card);
+            });
         }
 
         async function loadSubjectOptions() {
