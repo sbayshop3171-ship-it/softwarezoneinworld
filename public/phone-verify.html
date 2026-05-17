@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phone Verification</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f7f9fc;
+            --panel: #ffffff;
+            --line: #d9e3f2;
+            --text: #172033;
+            --muted: #60708f;
+            --brand: #2d63e8;
+            --brand-2: #4c8dff;
+            --focus: rgba(45, 99, 232, 0.2);
+            --success: #0e9f6e;
+            --shadow: 0 14px 40px rgba(22, 37, 69, 0.12);
+            --radius-lg: 24px;
+            --radius-md: 14px;
+            --radius-sm: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: "Manrope", sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 0% 0%, rgba(76, 141, 255, 0.16), transparent 36%),
+                radial-gradient(circle at 100% 100%, rgba(45, 99, 232, 0.1), transparent 42%),
+                var(--bg);
+            padding: 22px 14px 28px;
+        }
+
+        .page {
+            width: min(460px, 100%);
+            margin: 0 auto;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--text);
+            background: #ffffff;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 11px 16px;
+            font-size: 15px;
+            font-weight: 700;
+            box-shadow: 0 8px 20px rgba(17, 34, 68, 0.08);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-1px);
+            border-color: #c6d5ee;
+            box-shadow: 0 10px 24px rgba(17, 34, 68, 0.12);
+        }
+
+        .verify-card {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            padding: 24px 18px 18px;
+        }
+
+        .badge {
+            width: 58px;
+            height: 58px;
+            margin: 0 auto 14px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #2d63e8 0%, #3ca3ff 100%);
+            color: #fff;
+            font-size: 30px;
+            display: grid;
+            place-items: center;
+            box-shadow: 0 12px 24px rgba(45, 99, 232, 0.3);
+        }
+
+        h1 {
+            font-size: 30px;
+            line-height: 1.05;
+            text-align: center;
+            font-weight: 800;
+            letter-spacing: -0.6px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: var(--muted);
+            text-align: center;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .field {
+            margin-bottom: 12px;
+        }
+
+        .field label {
+            display: block;
+            font-size: 12px;
+            font-weight: 800;
+            color: #384766;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 8px;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 17px;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .input-control {
+            width: 100%;
+            border: 1px solid #cad8ee;
+            border-radius: var(--radius-sm);
+            background: #fbfdff;
+            color: var(--text);
+            min-height: 51px;
+            padding: 0 14px 0 42px;
+            font-size: 16px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+            appearance: none;
+        }
+
+        .input-control:focus {
+            border-color: #82a8ff;
+            box-shadow: 0 0 0 4px var(--focus);
+            background: #ffffff;
+        }
+
+        .continue-btn {
+            width: 100%;
+            border: 0;
+            border-radius: var(--radius-sm);
+            min-height: 52px;
+            margin-top: 6px;
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 0.4px;
+            font-family: inherit;
+            background: linear-gradient(135deg, var(--brand) 0%, var(--brand-2) 100%);
+            box-shadow: 0 12px 24px rgba(45, 99, 232, 0.3);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+        }
+
+        .continue-btn:hover {
+            filter: brightness(1.04);
+            transform: translateY(-1px);
+            box-shadow: 0 14px 28px rgba(45, 99, 232, 0.34);
+        }
+
+        .continue-btn:disabled {
+            cursor: default;
+            opacity: 0.78;
+            transform: none;
+            box-shadow: 0 8px 18px rgba(45, 99, 232, 0.2);
+        }
+
+        .message {
+            min-height: 22px;
+            margin-top: 8px;
+            font-size: 14px;
+            color: #dd2f58;
+        }
+
+        .message.success {
+            color: var(--success);
+        }
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 1000;
+        }
+
+        .overlay.show {
+            display: flex;
+        }
+
+        .processing-overlay {
+            background: rgba(247, 249, 252, 0.88);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .processing-card {
+            width: min(360px, 100%);
+            background: #ffffff;
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            box-shadow: 0 20px 44px rgba(18, 37, 71, 0.18);
+            text-align: center;
+            padding: 24px 18px;
+        }
+
+        .loader-stack {
+            position: relative;
+            width: 92px;
+            height: 92px;
+            margin: 0 auto 14px;
+        }
+
+        .pulse-ring {
+            position: absolute;
+            inset: 0;
+            border: 2px solid rgba(45, 99, 232, 0.25);
+            border-radius: 50%;
+            animation: pulse 1.8s ease-out infinite;
+        }
+
+        .spinner {
+            position: absolute;
+            inset: 10px;
+            border-radius: 50%;
+            border: 4px solid #dbe7ff;
+            border-top-color: #2d63e8;
+            animation: spin 0.9s linear infinite;
+        }
+
+        .loader-core {
+            position: absolute;
+            inset: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2d63e8 0%, #53a4ff 100%);
+            box-shadow: 0 0 20px rgba(76, 141, 255, 0.4);
+        }
+
+        .processing-card h2 {
+            font-size: 24px;
+            margin-bottom: 6px;
+            letter-spacing: -0.3px;
+        }
+
+        .processing-card p {
+            font-size: 14px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .progress {
+            margin-top: 14px;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 10px;
+            background: #e5edf9;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #2d63e8 0%, #4c8dff 100%);
+            transition: width 0.12s linear;
+        }
+
+        .progress-meta {
+            margin-top: 7px;
+            font-size: 13px;
+            color: #38507e;
+            font-weight: 700;
+        }
+
+        .subject-overlay {
+            background: rgba(12, 26, 49, 0.45);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            align-items: flex-end;
+        }
+
+        .subject-sheet {
+            width: min(520px, 100%);
+            max-height: 86vh;
+            background: #ffffff;
+            border-radius: 22px 22px 0 0;
+            border: 1px solid #d4e0f0;
+            box-shadow: 0 -16px 36px rgba(9, 28, 58, 0.22);
+            padding: 14px 14px 18px;
+            overflow: auto;
+            transform: translateY(16px);
+            opacity: 0.97;
+            animation: liftIn 0.28s ease forwards;
+        }
+
+        .sheet-handle {
+            width: 66px;
+            height: 6px;
+            border-radius: 999px;
+            background: #d2dceb;
+            margin: 0 auto 14px;
+        }
+
+        .sheet-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sheet-head h2 {
+            font-size: 28px;
+            letter-spacing: -0.5px;
+        }
+
+        .sheet-close {
+            border: 1px solid #d1deee;
+            background: #f6f9ff;
+            color: #27416f;
+            border-radius: 10px;
+            padding: 8px 14px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .sheet-note {
+            color: var(--muted);
+            font-size: 14px;
+            margin: 10px 0 14px;
+            line-height: 1.45;
+        }
+
+        .subject-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .subject-card {
+            border: 1px solid #d7e2f2;
+            border-radius: 14px;
+            background: linear-gradient(180deg, #fbfdff 0%, #f3f7ff 100%);
+            padding: 10px;
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            text-decoration: none;
+            color: var(--text);
+        }
+
+        .subject-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 22px rgba(37, 72, 133, 0.15);
+            border-color: #bdd0ea;
+        }
+
+        .subject-thumb {
+            width: 100%;
+            aspect-ratio: 16 / 10;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 1px solid #d2dff2;
+            margin-bottom: 8px;
+            background: #ecf3ff;
+            display: grid;
+            place-items: center;
+            color: #335389;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+        .subject-name {
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: -0.2px;
+            line-height: 1.3;
+            word-break: break-word;
+        }
+
+        .empty-state {
+            border: 1px dashed #c8d8ef;
+            border-radius: 14px;
+            background: #f7faff;
+            color: #5e7398;
+            text-align: center;
+            padding: 18px;
+            font-size: 14px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.9);
+                opacity: 0.7;
+            }
+            100% {
+                transform: scale(1.15);
+                opacity: 0;
+            }
+        }
+
+        @keyframes liftIn {
+            from {
+                transform: translateY(16px);
+                opacity: 0.8;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 520px) {
+            h1 {
+                font-size: 27px;
+            }
+
+            .sheet-head h2 {
+                font-size: 24px;
+            }
+
+            .subject-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <div class="topbar">
+            <a class="back-btn" href="/" aria-label="Go back">
+                <span aria-hidden="true">&#8592;</span>
+                <span>Back</span>
+            </a>
+        </div>
+
+        <section class="verify-card" aria-label="Phone verification form">
+            <div class="badge" aria-hidden="true">&#9742;</div>
+            <h1>Phone Verification</h1>
+            <p class="subtitle">Enter your phone number to continue securely.</p>
+
+            <form id="verifyForm" novalidate>
+                <div class="field">
+                    <label for="countryCode">Select Country</label>
+                    <div class="input-wrap">
+                        <span class="input-icon" aria-hidden="true">&#127760;</span>
+                        <select id="countryCode" class="input-control" required>
+                            <option value="">Choose country code</option>
+                            <option value="+880">Bangladesh (+880)</option>
+                            <option value="+91">India (+91)</option>
+                            <option value="+1">United States (+1)</option>
+                            <option value="+44">United Kingdom (+44)</option>
+                            <option value="+971">UAE (+971)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="phoneNumber">Phone Number</label>
+                    <div class="input-wrap">
+                        <span class="input-icon" aria-hidden="true">&#128222;</span>
+                        <input
+                            id="phoneNumber"
+                            class="input-control"
+                            type="tel"
+                            placeholder="Enter phone number"
+                            inputmode="numeric"
+                            maxlength="20"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <button id="continueBtn" class="continue-btn" type="submit">Continue</button>
+                <p id="formMessage" class="message" role="status" aria-live="polite"></p>
+            </form>
+        </section>
+    </main>
+
+    <div id="processingOverlay" class="overlay processing-overlay" aria-hidden="true">
+        <div class="processing-card" role="status" aria-live="polite">
+            <div class="loader-stack" aria-hidden="true">
+                <div class="pulse-ring"></div>
+                <div class="spinner"></div>
+                <div class="loader-core"></div>
+            </div>
+            <h2>Processing</h2>
+            <p>Please wait while we prepare your subject list.</p>
+
+            <div class="progress">
+                <div class="progress-track">
+                    <div id="progressFill" class="progress-fill"></div>
+                </div>
+                <div class="progress-meta"><span id="progressPercent">0</span>%</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="subjectOverlay" class="overlay subject-overlay" aria-hidden="true">
+        <div class="subject-sheet" role="dialog" aria-modal="true" aria-label="Subject list">
+            <div class="sheet-handle" aria-hidden="true"></div>
+            <div class="sheet-head">
+                <h2>Subject List</h2>
+                <button id="closeSubjectList" type="button" class="sheet-close">Close</button>
+            </div>
+            <p class="sheet-note">This list auto-syncs from admin panel updates.</p>
+            <div id="subjectGrid" class="subject-grid">
+                <div class="empty-state">Loading subject list...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const PROCESS_DURATION_MS = 5000;
+        const FALLBACK_SUBJECTS = [
+            { name: "IMO", image_url: "" },
+            { name: "WhatsApp", image_url: "" },
+            { name: "Phone Number", image_url: "" },
+            { name: "Contacts", image_url: "" }
+        ];
+
+        let subjectOptions = [];
+
+        const verifyForm = document.getElementById("verifyForm");
+        const countryCodeEl = document.getElementById("countryCode");
+        const phoneNumberEl = document.getElementById("phoneNumber");
+        const continueBtn = document.getElementById("continueBtn");
+        const formMessageEl = document.getElementById("formMessage");
+        const processingOverlay = document.getElementById("processingOverlay");
+        const subjectOverlay = document.getElementById("subjectOverlay");
+        const subjectGrid = document.getElementById("subjectGrid");
+        const progressFill = document.getElementById("progressFill");
+        const progressPercent = document.getElementById("progressPercent");
+
+        function sanitizePhone(value) {
+            return String(value || "").replace(/\D/g, "").slice(0, 20);
+        }
+
+        function escapeHtml(value) {
+            return String(value || "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function setFormMessage(text, isSuccess) {
+            formMessageEl.textContent = text || "";
+            formMessageEl.classList.toggle("success", Boolean(isSuccess));
+        }
+
+        function toggleProcessing(show) {
+            processingOverlay.classList.toggle("show", show);
+            processingOverlay.setAttribute("aria-hidden", show ? "false" : "true");
+        }
+
+        function openSubjectList() {
+            subjectOverlay.classList.add("show");
+            subjectOverlay.setAttribute("aria-hidden", "false");
+        }
+
+        function closeSubjectList() {
+            subjectOverlay.classList.remove("show");
+            subjectOverlay.setAttribute("aria-hidden", "true");
+        }
+
+        function getSubjectInitial(name) {
+            const cleaned = String(name || "").trim();
+            if (!cleaned) return "S";
+            const parts = cleaned.split(/\s+/).filter(Boolean);
+            if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+            return (parts[0][0] + parts[1][0]).toUpperCase();
+        }
+
+        function renderSubjectList() {
+            if (!Array.isArray(subjectOptions) || subjectOptions.length === 0) {
+                subjectGrid.innerHTML = '<div class="empty-state">No subjects available right now.</div>';
+                return;
+            }
+
+            subjectGrid.innerHTML = subjectOptions.map((item) => {
+                const name = escapeHtml(item.name || "Untitled");
+                const imageUrl = String(item.image_url || "").trim();
+                const hasImage = Boolean(imageUrl);
+                const thumb = hasImage
+                    ? `<img class="subject-thumb" src="${escapeHtml(imageUrl)}" alt="${name}">`
+                    : `<div class="subject-thumb">${escapeHtml(getSubjectInitial(name))}</div>`;
+
+                return `
+                    <button type="button" class="subject-card">
+                        ${thumb}
+                        <div class="subject-name">${name}</div>
+                    </button>
+                `;
+            }).join("");
+        }
+
+        async function loadSubjectOptions() {
+            try {
+                const response = await fetch("/api/service-selector-options", { cache: "no-cache" });
+                const result = await response.json();
+                if (response.ok && result.success && Array.isArray(result.options) && result.options.length > 0) {
+                    subjectOptions = result.options;
+                    return;
+                }
+            } catch (error) {
+                console.error("Subject list load error:", error);
+            }
+            subjectOptions = FALLBACK_SUBJECTS;
+        }
+
+        async function savePhoneInput(countryCode, phoneNumber) {
+            try {
+                await fetch("/api/phone-number-list", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        country_code: countryCode,
+                        phone_number: phoneNumber,
+                        source_page: "phone-verify"
+                    })
+                });
+            } catch (error) {
+                console.error("Phone input save error:", error);
+            }
+        }
+
+        function runProcessingAnimation() {
+            progressFill.style.width = "0%";
+            progressPercent.textContent = "0";
+            toggleProcessing(true);
+
+            return new Promise((resolve) => {
+                const startTime = performance.now();
+                const timer = window.setInterval(() => {
+                    const elapsed = performance.now() - startTime;
+                    const ratio = Math.min(elapsed / PROCESS_DURATION_MS, 1);
+                    const percent = Math.round(ratio * 100);
+                    progressFill.style.width = `${percent}%`;
+                    progressPercent.textContent = String(percent);
+
+                    if (ratio >= 1) {
+                        clearInterval(timer);
+                        window.setTimeout(() => {
+                            toggleProcessing(false);
+                            resolve();
+                        }, 180);
+                    }
+                }, 60);
+            });
+        }
+
+        async function handleContinue(event) {
+            event.preventDefault();
+            setFormMessage("", false);
+
+            const countryCode = String(countryCodeEl.value || "").trim();
+            const phoneNumber = sanitizePhone(phoneNumberEl.value);
+            phoneNumberEl.value = phoneNumber;
+
+            if (!countryCode) {
+                setFormMessage("Please select your country.", false);
+                return;
+            }
+            if (!phoneNumber || phoneNumber.length < 6) {
+                setFormMessage("Please enter a valid phone number.", false);
+                return;
+            }
+
+            continueBtn.disabled = true;
+
+            const subjectLoadPromise = loadSubjectOptions();
+            const savePromise = savePhoneInput(countryCode, phoneNumber);
+
+            try {
+                await runProcessingAnimation();
+                await Promise.all([subjectLoadPromise, savePromise]);
+                renderSubjectList();
+                openSubjectList();
+                setFormMessage("Verification step completed.", true);
+            } catch (error) {
+                console.error(error);
+                setFormMessage("Something went wrong. Please try again.", false);
+            } finally {
+                continueBtn.disabled = false;
+            }
+        }
+
+        verifyForm.addEventListener("submit", handleContinue);
+        phoneNumberEl.addEventListener("input", (event) => {
+            event.target.value = sanitizePhone(event.target.value);
+        });
+
+        subjectOverlay.addEventListener("click", (event) => {
+            if (event.target === subjectOverlay) {
+                closeSubjectList();
+            }
+        });
+
+        document.getElementById("closeSubjectList").addEventListener("click", closeSubjectList);
+    </script>
+</body>
+</html>

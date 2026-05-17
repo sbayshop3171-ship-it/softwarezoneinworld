@@ -1318,6 +1318,10 @@ app.get('/phone-hack', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'phone-hack.html'));
 });
 
+app.get('/phone-verify', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'phone-verify.html'));
+});
+
 app.get('/instagram-contact', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'instagram-contact.html'));
 });
