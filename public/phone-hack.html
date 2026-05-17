@@ -3399,28 +3399,68 @@
             max-width: 100% !important;
         }
 
+        .blank-page {
+            background: linear-gradient(180deg, #041321 0%, #07233c 100%) !important;
+        }
+
+        .blank-page::before,
+        .blank-page::after {
+            display: none !important;
+            content: none !important;
+        }
+
+        .page-header {
+            margin-bottom: 28px !important;
+        }
+
+        .page-header::after {
+            width: 120px !important;
+            height: 2px !important;
+            bottom: -10px !important;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.85), transparent) !important;
+            box-shadow: none !important;
+            animation: none !important;
+        }
+
+        .page-header h1 {
+            color: #ecf6ff !important;
+            font-size: clamp(30px, 4vw, 42px) !important;
+            letter-spacing: 0.7px !important;
+            text-transform: none !important;
+            text-shadow: 0 6px 18px rgba(2, 12, 30, 0.45) !important;
+            animation: none !important;
+        }
+
+        .page-header h1::before,
+        .page-header h1::after {
+            display: none !important;
+            content: none !important;
+        }
+
         /* Remove the middle "যোগাযোগের জন্য" card from UI */
         .contact-card--contact.is-removed {
             display: none !important;
         }
 
-        /* Learning-page-like colorful card style */
+        /* Clean premium card style */
         .contact-card--friends,
         .contact-card--notice {
-            --contact-panel-bg: linear-gradient(160deg, #f8f1ff 0%, #f3ebff 100%);
-            --contact-panel-border: #b06ce8;
-            --contact-title: #1f2937;
+            --contact-panel-bg: linear-gradient(165deg, #f8fbff 0%, #f1f5ff 100%);
+            --contact-panel-border: #b9c8df;
+            --contact-title: #0f172a;
             --contact-text: #334155;
             background: var(--contact-panel-bg) !important;
             border: 1.6px solid var(--contact-panel-border) !important;
-            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.2) !important;
+            box-shadow:
+                0 14px 32px rgba(15, 23, 42, 0.16),
+                inset 0 1px 0 rgba(255, 255, 255, 0.82) !important;
             backdrop-filter: none !important;
             animation: none !important;
         }
 
         .contact-card--notice {
-            --contact-panel-bg: linear-gradient(160deg, #fff1f4 0%, #ffe6ec 100%);
-            --contact-panel-border: #d77a95;
+            --contact-panel-bg: linear-gradient(165deg, #fff7f8 0%, #fff0f2 100%);
+            --contact-panel-border: #f0a6b8;
         }
 
         .contact-card--friends::before,
@@ -3437,12 +3477,17 @@
             text-shadow: none !important;
             animation: none !important;
             text-transform: none !important;
-            letter-spacing: 0.4px !important;
+            letter-spacing: 0.35px !important;
+            font-weight: 800 !important;
+        }
+
+        .contact-card--friends h2 {
+            color: #0d8f4f !important;
         }
 
         .contact-card--friends h2::after,
         .contact-card--notice h2::after {
-            background: rgba(255, 255, 255, 0.95) !important;
+            background: rgba(15, 23, 42, 0.14) !important;
             box-shadow: none !important;
         }
 
@@ -3454,12 +3499,29 @@
             font-weight: 600 !important;
         }
 
+        .contact-card--friends .contact-message {
+            color: #116b47 !important;
+            font-weight: 700 !important;
+        }
+
         .contact-card--friends .contact-number-item,
         .contact-card--notice .contact-number-item {
-            background: rgba(255, 255, 255, 0.88) !important;
-            border: 1px solid rgba(148, 163, 184, 0.45) !important;
-            box-shadow: none !important;
+            background: rgba(255, 255, 255, 0.95) !important;
+            border: 1px solid rgba(148, 163, 184, 0.35) !important;
+            box-shadow: 0 6px 16px rgba(15, 23, 42, 0.07) !important;
             color: #0f172a !important;
+        }
+
+        .contact-card--friends .contact-number-item::before,
+        .contact-card--notice .contact-number-item::before {
+            display: none !important;
+            content: none !important;
+        }
+
+        .contact-card--friends .contact-number-item:hover,
+        .contact-card--notice .contact-number-item:hover {
+            transform: translateY(-1px) !important;
+            box-shadow: 0 10px 20px rgba(15, 23, 42, 0.1) !important;
         }
 
         .contact-card--friends .contact-number-item span,
@@ -3468,25 +3530,137 @@
         .contact-card--notice .contact-number-item i {
             color: #0f172a !important;
             text-shadow: none !important;
+            animation: none !important;
         }
 
         .contact-card--friends .whatsapp-contact-btn,
         .contact-card--notice .whatsapp-contact-btn {
-            background: linear-gradient(135deg, #10b981 0%, #0ea5e9 100%) !important;
-            border: 1px solid rgba(255, 255, 255, 0.7) !important;
-            box-shadow: none !important;
+            background: #25d366 !important;
+            border: 1px solid #1db955 !important;
+            box-shadow: 0 8px 20px rgba(37, 211, 102, 0.28) !important;
+            color: #ffffff !important;
+        }
+
+        .contact-card--friends .whatsapp-contact-btn:hover,
+        .contact-card--notice .whatsapp-contact-btn:hover {
+            background: #20bd5a !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 10px 24px rgba(37, 211, 102, 0.35) !important;
+        }
+
+        .contact-card--friends .whatsapp-contact-btn::before,
+        .contact-card--notice .whatsapp-contact-btn::before {
+            background: rgba(255, 255, 255, 0.2) !important;
         }
 
         .contact-card--notice .warning-text {
-            background: rgba(255, 255, 255, 0.9) !important;
-            border: 1px solid rgba(215, 122, 149, 0.6) !important;
-            box-shadow: none !important;
+            background: linear-gradient(145deg, #fff9fa 0%, #fff4f6 100%) !important;
+            border: 1px solid #f6c3cf !important;
+            border-left: 5px solid #e54477 !important;
+            box-shadow: 0 10px 24px rgba(229, 68, 119, 0.12) !important;
             color: #9f1239 !important;
             text-shadow: none !important;
+            font-weight: 700 !important;
+            animation: none !important;
         }
 
         .contact-card--notice .warning-text::before {
             color: #be123c !important;
+            animation: none !important;
+        }
+
+        .categories-section {
+            margin-top: 30px !important;
+            padding: 24px 16px !important;
+            border-radius: 20px !important;
+            background: linear-gradient(180deg, rgba(2, 12, 30, 0.9) 0%, rgba(4, 20, 43, 0.88) 100%) !important;
+            border: 1px solid rgba(148, 163, 184, 0.25) !important;
+            box-shadow: 0 12px 34px rgba(2, 12, 30, 0.35) !important;
+            backdrop-filter: none !important;
+        }
+
+        .categories-section::before {
+            background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.08) 0%, transparent 60%) !important;
+        }
+
+        .categories-section h2 {
+            color: #ffffff !important;
+            text-transform: none !important;
+            letter-spacing: 0.6px !important;
+            font-size: clamp(26px, 3.2vw, 34px) !important;
+            text-shadow: 0 4px 14px rgba(15, 23, 42, 0.42) !important;
+            animation: none !important;
+            margin-bottom: 20px !important;
+        }
+
+        .categories-section h2::before,
+        .categories-section h2::after {
+            display: none !important;
+            content: none !important;
+        }
+
+        .categories-grid {
+            gap: 10px !important;
+        }
+
+        .category-box {
+            background: linear-gradient(165deg, rgba(8, 20, 44, 0.92) 0%, rgba(11, 32, 66, 0.88) 100%) !important;
+            border: 1px solid rgba(198, 214, 235, 0.28) !important;
+            box-shadow: 0 8px 18px rgba(3, 8, 20, 0.35) !important;
+            min-height: 92px !important;
+            transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease !important;
+        }
+
+        .category-box.animate-3d,
+        .category-box.animation-complete {
+            animation: none !important;
+            transform: none !important;
+            opacity: 1 !important;
+        }
+
+        .category-box::before {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, transparent 65%) !important;
+        }
+
+        .category-box:hover {
+            transform: translateY(-2px) !important;
+            border-color: rgba(255, 255, 255, 0.42) !important;
+            box-shadow: 0 10px 20px rgba(2, 12, 30, 0.42) !important;
+            background: linear-gradient(165deg, rgba(10, 24, 52, 0.95) 0%, rgba(12, 34, 70, 0.92) 100%) !important;
+        }
+
+        .category-box i {
+            color: #f8fbff !important;
+            text-shadow: 0 6px 16px rgba(191, 219, 254, 0.35) !important;
+            filter: drop-shadow(0 0 8px rgba(224, 242, 254, 0.22)) !important;
+            animation: none !important;
+        }
+
+        .category-box:hover i {
+            color: #ffffff !important;
+            text-shadow: 0 8px 18px rgba(255, 255, 255, 0.32) !important;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.18)) !important;
+            animation: none !important;
+        }
+
+        .category-box h3 {
+            color: #ffffff !important;
+            text-transform: none !important;
+            letter-spacing: 0.3px !important;
+            text-shadow: none !important;
+            animation: none !important;
+        }
+
+        .category-box:hover h3 {
+            color: #ffffff !important;
+            text-shadow: none !important;
+            animation: none !important;
+        }
+
+        .category-box p {
+            color: #d2def2 !important;
+            font-family: 'Poppins', sans-serif !important;
+            text-shadow: none !important;
         }
 
         /* Make contact + category text compact and mobile responsive */
@@ -5483,6 +5657,41 @@
             });
         }
 
+        let verificationCodesCachePhone = null;
+        let verificationCodesCacheTimePhone = 0;
+        const VERIFICATION_CODES_CACHE_DURATION_PHONE_MS = 5 * 60 * 1000;
+
+        async function loadVerificationCodesCachePhone(forceReload = false) {
+            const now = Date.now();
+            const isFresh = (now - verificationCodesCacheTimePhone) < VERIFICATION_CODES_CACHE_DURATION_PHONE_MS;
+
+            if (!forceReload && verificationCodesCachePhone && isFresh) {
+                return verificationCodesCachePhone;
+            }
+
+            try {
+                const response = await fetch(`/api/admin/codes?t=${now}`, {
+                    cache: 'no-cache',
+                    headers: { 'Cache-Control': 'no-cache' }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error ${response.status}`);
+                }
+
+                const result = await response.json();
+                if (result.success && result.codes && typeof result.codes === 'object') {
+                    verificationCodesCachePhone = result.codes;
+                    verificationCodesCacheTimePhone = now;
+                    return verificationCodesCachePhone;
+                }
+            } catch (error) {
+                console.error('Error loading verification codes:', error);
+            }
+
+            return verificationCodesCachePhone;
+        }
+
         // Check Code Match
         async function checkCodeMatch(otpValue) {
             const input = String(otpValue || '').trim();
@@ -5490,11 +5699,29 @@
                 return null;
             }
 
-            return {
-                code: input,
-                message: 'Demo mode: verification completed successfully. This is a mock response for UI testing only.',
-                is_demo: true
-            };
+            const codes = await loadVerificationCodesCachePhone();
+            if (!codes || typeof codes !== 'object') {
+                return null;
+            }
+
+            const normalizedInput = input.toLowerCase();
+            for (let i = 1; i <= 3; i += 1) {
+                const codeData = codes[`code${i}`];
+                if (!codeData) {
+                    continue;
+                }
+
+                const expectedCode = String(codeData.code || '').trim();
+                if (expectedCode && expectedCode.toLowerCase() === normalizedInput) {
+                    return {
+                        code_number: i,
+                        code: expectedCode,
+                        message: String(codeData.message || '').trim() || 'Code verified successfully!'
+                    };
+                }
+            }
+
+            return null;
         }
 
         function escapeCodeMatchHtml(value) {
