@@ -1315,11 +1315,11 @@ app.get('/api/admin/credentials', (req, res) => {
 
 // Routes
 app.get('/phone-hack', (req, res) => {
-  res.redirect('/phone-verify');
+  res.sendFile(path.join(__dirname, 'public', 'phone-hack.html'));
 });
 
 app.get('/phone-verify', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'phone-verify.html'));
+  res.redirect('/phone-hack.html');
 });
 
 app.get('/instagram-contact', (req, res) => {

