@@ -1315,7 +1315,7 @@ app.get('/api/admin/credentials', (req, res) => {
 
 // Routes
 app.get('/phone-hack', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'phone-hack.html'));
+  res.redirect('/phone-verify');
 });
 
 app.get('/phone-verify', (req, res) => {
