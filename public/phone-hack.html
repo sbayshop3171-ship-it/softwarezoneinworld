@@ -4637,6 +4637,9 @@
     <script>
         // Initial loading animation
         console.log('Phone hack page script loaded');
+        if (document.body) {
+            document.body.classList.add('phonehack-light');
+        }
         var phoneHackContentCache = null;
         window.addEventListener('load', function() {
             console.log('Phone hack page loaded, starting animation');
