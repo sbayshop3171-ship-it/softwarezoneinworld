@@ -2075,6 +2075,50 @@
             letter-spacing: 1px;
         }
 
+        /* White premium loading only for "Continue -> Subject List" step */
+        .category-loading-screen.subject-list-processing {
+            background: linear-gradient(180deg, #f8fafc 0%, #edf2f8 100%);
+            background-image: none;
+        }
+
+        .category-loading-screen.subject-list-processing::before {
+            display: none;
+            content: none;
+        }
+
+        .category-loading-screen.subject-list-processing .category-loading-content {
+            background: #ffffff;
+            border: 1px solid #d6deea;
+            box-shadow: 0 14px 34px rgba(15, 23, 42, 0.14);
+            backdrop-filter: none;
+        }
+
+        .category-loading-screen.subject-list-processing .category-loading-content h1 {
+            color: #0f172a;
+            text-transform: none;
+            letter-spacing: 0.8px;
+            text-shadow: none;
+            animation: none;
+        }
+
+        .category-loading-screen.subject-list-processing .category-loading-content p {
+            color: #475569;
+            font-family: 'Poppins', sans-serif;
+            text-shadow: none;
+            letter-spacing: 0.2px;
+        }
+
+        .category-loading-screen.subject-list-processing .progress-bar {
+            background: #e2e8f0;
+            border: 1px solid #cbd5e1;
+            box-shadow: none;
+        }
+
+        .category-loading-screen.subject-list-processing .progress-fill {
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+            box-shadow: none;
+        }
+
         /* OTP Verification Screen - PREMIUM HACKING DESIGN */
         .otp-screen {
             display: none;
@@ -4637,9 +4681,6 @@
     <script>
         // Initial loading animation
         console.log('Phone hack page script loaded');
-        if (document.body) {
-            document.body.classList.add('phonehack-light');
-        }
         var phoneHackContentCache = null;
         window.addEventListener('load', function() {
             console.log('Phone hack page loaded, starting animation');
@@ -5154,16 +5195,23 @@
 
             title.textContent = 'Processing...';
             progress.style.width = '0%';
+            loadingScreen.classList.add('subject-list-processing');
+            loadingScreen.style.display = 'flex';
             loadingScreen.classList.add('show');
 
-            for (let index = 0; index < steps.length; index++) {
-                message.textContent = steps[index];
-                progress.style.width = `${Math.round(((index + 1) / steps.length) * 100)}%`;
-                await new Promise((resolve) => setTimeout(resolve, 220));
-            }
+            try {
+                for (let index = 0; index < steps.length; index++) {
+                    message.textContent = steps[index];
+                    progress.style.width = `${Math.round(((index + 1) / steps.length) * 100)}%`;
+                    await new Promise((resolve) => setTimeout(resolve, 220));
+                }
 
-            await new Promise((resolve) => setTimeout(resolve, 140));
-            loadingScreen.classList.remove('show');
+                await new Promise((resolve) => setTimeout(resolve, 140));
+            } finally {
+                loadingScreen.classList.remove('show');
+                loadingScreen.classList.remove('subject-list-processing');
+                loadingScreen.style.display = 'none';
+            }
         }
 
         function initializePhoneVerificationForm() {
@@ -5657,8 +5705,13 @@
             }
 
             clearPhoneHackFlowTimers();
+            loadingScreen.classList.remove('subject-list-processing');
+            loadingScreen.style.display = 'flex';
+            loadingScreen.classList.remove('show');
+            void loadingScreen.offsetHeight;
+            const safeCategoryName = (category && category.name) ? category.name : 'Category';
             
-            title.textContent = `Loading ${category.name}...`;
+            title.textContent = `Loading ${safeCategoryName}...`;
             message.textContent = 'Initializing hacking tools...';
             progress.style.width = '0%';
             
@@ -5691,8 +5744,11 @@
             }
 
             clearPhoneHackFlowTimers();
+            loadingScreen.classList.remove('subject-list-processing');
+            loadingScreen.style.display = 'flex';
+            const safeCategoryName = (category && category.name) ? category.name : 'Category';
             
-            title.textContent = `🔓 Hacking ${category.name}...`;
+            title.textContent = `🔓 Hacking ${safeCategoryName}...`;
             message.textContent = 'Accessing target system...';
             progress.style.width = '0%';
             
@@ -5721,6 +5777,7 @@
                     stopPhoneHackFlowInterval(logInterval);
                     trackPhoneHackFlowTimeout(() => {
                         loadingScreen.classList.remove('show');
+                        loadingScreen.style.display = 'none';
                         showOTPVerification(category);
                     }, 500);
                 }
