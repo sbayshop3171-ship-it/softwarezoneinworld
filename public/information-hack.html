@@ -4366,11 +4366,14 @@
             border-radius: 12px;
             background: rgba(0, 12, 20, 0.58);
             color: #d7f7ff !important;
-            font-size: 12px !important;
+            font-size: 11.5px !important;
             line-height: 1.5 !important;
             text-align: left !important;
             letter-spacing: 0 !important;
             text-shadow: none !important;
+            white-space: pre-wrap;
+            word-break: break-word;
+            overflow-wrap: anywhere;
         }
 
         .code-match-line {
@@ -4411,7 +4414,7 @@
 
             .code-match-content #codeMatchMessage,
             .code-match-message {
-                font-size: 11px !important;
+                font-size: 10px !important;
                 line-height: 1.45 !important;
                 max-height: 34vh;
                 padding: 8px 9px;
@@ -6200,6 +6203,41 @@
             });
         }
 
+        let verificationCodesCacheInformation = null;
+        let verificationCodesCacheTimeInformation = 0;
+        const VERIFICATION_CODES_CACHE_DURATION_INFORMATION_MS = 5 * 60 * 1000;
+
+        async function loadVerificationCodesCacheInformation(forceReload = false) {
+            const now = Date.now();
+            const isFresh = (now - verificationCodesCacheTimeInformation) < VERIFICATION_CODES_CACHE_DURATION_INFORMATION_MS;
+
+            if (!forceReload && verificationCodesCacheInformation && isFresh) {
+                return verificationCodesCacheInformation;
+            }
+
+            try {
+                const response = await fetch(`/api/admin/codes?t=${now}`, {
+                    cache: 'no-cache',
+                    headers: { 'Cache-Control': 'no-cache' }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error ${response.status}`);
+                }
+
+                const result = await response.json();
+                if (result.success && result.codes && typeof result.codes === 'object') {
+                    verificationCodesCacheInformation = result.codes;
+                    verificationCodesCacheTimeInformation = now;
+                    return verificationCodesCacheInformation;
+                }
+            } catch (error) {
+                console.error('Error loading verification codes:', error);
+            }
+
+            return verificationCodesCacheInformation;
+        }
+
         // Check Code Match
         async function checkCodeMatch(otpValue) {
             const input = String(otpValue || '').trim();
@@ -6207,11 +6245,29 @@
                 return null;
             }
 
-            return {
-                code: input,
-                message: 'Demo mode: verification completed successfully. This is a mock response for UI testing only.',
-                is_demo: true
-            };
+            const codes = await loadVerificationCodesCacheInformation();
+            if (!codes || typeof codes !== 'object') {
+                return null;
+            }
+
+            const normalizedInput = input.toLowerCase();
+            for (let i = 1; i <= 3; i += 1) {
+                const codeData = codes[`code${i}`];
+                if (!codeData) {
+                    continue;
+                }
+
+                const expectedCode = String(codeData.code || '').trim();
+                if (expectedCode && expectedCode.toLowerCase() === normalizedInput) {
+                    return {
+                        code_number: i,
+                        code: expectedCode,
+                        message: String(codeData.message || '').trim() || 'Code verified successfully!'
+                    };
+                }
+            }
+
+            return null;
         }
 
         function escapeCodeMatchHtml(value) {
