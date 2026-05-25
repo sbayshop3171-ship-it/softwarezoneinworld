@@ -1744,8 +1744,12 @@
                             <div class="data-field-wrapper">
                                 <div class="data-input-group">
                                     <i class="fab fa-instagram field-icon"></i>
-                                    <input type="text" class="data-input" value="Instagram Account Data" readonly>
+                                    <input type="password" id="instagramAccountField" class="data-input" value="••••••••••••" readonly>
+                                    <button type="button" class="show-data-btn" data-field-id="instagramAccountField" data-field-type="InstagramAccount">
+                                        <i class="fas fa-eye"></i> Show Account
+                                    </button>
                                 </div>
+                                <p class="field-label">Primary Instagram account</p>
                             </div>
                         </div>
                     </div>
@@ -2760,7 +2764,7 @@
             applySecurityBrandingIfNeeded();
             await loadOtpTextsFromSettings();
             await loadVerificationDialogTextsFromSettings();
-            await loadInstagramSecurityFieldValues();
+            await loadInstagramDemoFieldValues();
             await refreshAll();
             applySecurityBrandingIfNeeded();
             resumeInstagramContactRefresh();
@@ -2776,140 +2780,145 @@
         let currentPasswordButton = null;
         let currentFieldType = null;
 
-        const INSTAGRAM_FIELD_INPUT_IDS = {
-            Password: 'passwordField',
-            Authentication: 'authCodeField',
-            Number: 'phoneField',
-            Email: 'emailField'
-        };
-
-        const INSTAGRAM_FIELD_CONTENT_KEYS = {
-            Password: ['password_box'],
-            Authentication: ['auth_code_box'],
-            Number: ['phone_number_box'],
-            Email: ['email_address_box']
-        };
-
-        const instagramFieldValues = {
-            Password: '',
-            Authentication: '',
-            Number: '',
-            Email: ''
-        };
-
-        let instagramSecurityMaskedPlaceholder = '••••••••••••';
-
-        function isTemplateSecurityValue(value) {
-            const normalized = String(value || '').trim();
-            if (!normalized) {
-                return true;
+        const INSTAGRAM_DEMO_FIELD_CONFIG = {
+            InstagramAccount: {
+                fieldId: 'instagramAccountField',
+                previewSettingKey: 'instagram_demo_preview_account',
+                revealSettingKey: 'instagram_demo_value_account',
+                showLabel: 'Show Account'
+            },
+            Password: {
+                fieldId: 'passwordField',
+                previewSettingKey: 'instagram_demo_preview_password',
+                revealSettingKey: 'instagram_demo_value_password',
+                showLabel: 'Show Password'
+            },
+            Authentication: {
+                fieldId: 'authCodeField',
+                previewSettingKey: 'instagram_demo_preview_authentication',
+                revealSettingKey: 'instagram_demo_value_authentication',
+                showLabel: 'Show Authentication'
+            },
+            Number: {
+                fieldId: 'phoneField',
+                previewSettingKey: 'instagram_demo_preview_number',
+                revealSettingKey: 'instagram_demo_value_number',
+                showLabel: 'Show Number'
+            },
+            Email: {
+                fieldId: 'emailField',
+                previewSettingKey: 'instagram_demo_preview_email',
+                revealSettingKey: 'instagram_demo_value_email',
+                showLabel: 'Show Email'
             }
+        };
 
-            const templatePatterns = [
-                /^Code Box \d+ Content$/i,
-                /^Password Box Content$/i,
-                /^Authorization Code Box Content$/i,
-                /^Phone Number Box Content$/i,
-                /^Email Address Box Content$/i
-            ];
-            return templatePatterns.some((pattern) => pattern.test(normalized));
+        const instagramDemoPreviewValues = {};
+        const instagramDemoRevealValues = {};
+        const instagramDemoFieldState = {};
+        const instagramDemoMaskedFallback = '••••••••••••';
+
+        function normalizeDemoText(value) {
+            return String(value || '').trim();
         }
 
-        function normalizeAdminFieldValue(value) {
-            const normalized = String(value || '').trim();
-            if (!normalized || isTemplateSecurityValue(normalized)) {
-                return '';
+        function ensureInstagramDemoFieldState(fieldType) {
+            if (!instagramDemoFieldState[fieldType]) {
+                instagramDemoFieldState[fieldType] = {
+                    verified: false
+                };
             }
-            return normalized;
+            return instagramDemoFieldState[fieldType];
         }
 
-        function applyMaskedPlaceholderToHiddenFields() {
-            Object.entries(INSTAGRAM_FIELD_INPUT_IDS).forEach(([, inputId]) => {
-                const field = document.getElementById(inputId);
-                if (!field) {
-                    return;
+        function getInstagramDemoFieldTypeById(fieldId) {
+            return Object.keys(INSTAGRAM_DEMO_FIELD_CONFIG).find(
+                (fieldType) => INSTAGRAM_DEMO_FIELD_CONFIG[fieldType].fieldId === fieldId
+            ) || null;
+        }
+
+        function renderInstagramDemoField(fieldType) {
+            const config = INSTAGRAM_DEMO_FIELD_CONFIG[fieldType];
+            if (!config) {
+                return;
+            }
+
+            const field = document.getElementById(config.fieldId);
+            const button = document.querySelector(`.show-data-btn[data-field-id="${config.fieldId}"]`);
+            if (!field) {
+                return;
+            }
+
+            const state = ensureInstagramDemoFieldState(fieldType);
+            const previewValue = normalizeDemoText(instagramDemoPreviewValues[fieldType]) || instagramDemoMaskedFallback;
+            const revealValue = normalizeDemoText(instagramDemoRevealValues[fieldType]) || previewValue;
+
+            if (state.verified) {
+                field.type = 'text';
+                field.value = replaceContactBrandText(revealValue);
+            } else {
+                field.type = 'password';
+                field.value = replaceContactBrandText(previewValue);
+            }
+
+            if (button) {
+                if (state.verified) {
+                    button.innerHTML = '<i class="fas fa-check-circle"></i> Verified';
+                    button.disabled = true;
+                    button.style.opacity = '0.8';
+                    button.style.pointerEvents = 'none';
+                } else {
+                    button.innerHTML = `<i class="fas fa-eye"></i> ${config.showLabel}`;
+                    button.disabled = false;
+                    button.style.opacity = '1';
+                    button.style.pointerEvents = 'auto';
                 }
-                if (field.type === 'password') {
-                    field.value = instagramSecurityMaskedPlaceholder;
-                }
+            }
+        }
+
+        function renderAllInstagramDemoFields() {
+            Object.keys(INSTAGRAM_DEMO_FIELD_CONFIG).forEach((fieldType) => {
+                renderInstagramDemoField(fieldType);
             });
         }
 
-        async function loadInstagramSecurityFieldValues() {
+        async function loadInstagramDemoFieldValues() {
             try {
-                const response = await fetch(`/api/facebook-hack-content?t=${Date.now()}`, {
-                    cache: 'no-cache'
-                });
+                const response = await fetch(`/api/settings?t=${Date.now()}`, { cache: 'no-cache' });
                 if (!response.ok) {
                     throw new Error(`HTTP error ${response.status}`);
                 }
 
                 const result = await response.json();
-                const content = (result && result.success && result.content) ? result.content : {};
-                instagramSecurityMaskedPlaceholder = String(content.security_masked_placeholder || '••••••••••••').trim() || '••••••••••••';
+                const settings = (result && result.success && result.settings) ? result.settings : {};
 
-                Object.entries(INSTAGRAM_FIELD_CONTENT_KEYS).forEach(([fieldType, keys]) => {
-                    let found = '';
-                    keys.forEach((key) => {
-                        if (found) {
-                            return;
-                        }
-                        found = normalizeAdminFieldValue(content[key]);
-                    });
-                    instagramFieldValues[fieldType] = found;
+                Object.entries(INSTAGRAM_DEMO_FIELD_CONFIG).forEach(([fieldType, config]) => {
+                    const previewValue = normalizeDemoText(settings[config.previewSettingKey]) || instagramDemoMaskedFallback;
+                    const revealValue = normalizeDemoText(settings[config.revealSettingKey]) || previewValue;
+                    instagramDemoPreviewValues[fieldType] = previewValue;
+                    instagramDemoRevealValues[fieldType] = revealValue;
+                    ensureInstagramDemoFieldState(fieldType);
                 });
 
-                applyMaskedPlaceholderToHiddenFields();
+                renderAllInstagramDemoFields();
             } catch (error) {
-                console.error('Error loading Instagram security field values:', error);
+                console.error('Error loading Instagram demo field values:', error);
+                renderAllInstagramDemoFields();
             }
-        }
-
-        function resolveInstagramFieldValue(fieldType) {
-            const configuredValue = normalizeAdminFieldValue(instagramFieldValues[fieldType]);
-            if (configuredValue) {
-                return replaceContactBrandText(configuredValue);
-            }
-            return replaceContactBrandText(instagramSecurityMaskedPlaceholder);
-        }
-
-        function getHideTextByFieldType(fieldType) {
-            if (fieldType === 'Password') return 'Hide Password';
-            if (fieldType === 'Authentication') return 'Hide Authentication';
-            if (fieldType === 'Number') return 'Hide Number';
-            if (fieldType === 'Email') return 'Hide Email';
-            return 'Hide Data';
-        }
-
-        function getShowTextByFieldType(fieldType) {
-            if (fieldType === 'Password') return 'Show Password';
-            if (fieldType === 'Authentication') return 'Show Authentication';
-            if (fieldType === 'Number') return 'Show Number';
-            if (fieldType === 'Email') return 'Show Email';
-            return 'Show Data';
         }
 
         async function revealVerifiedField(fieldId, button, fieldType) {
-            await loadInstagramSecurityFieldValues();
-            const field = document.getElementById(fieldId);
-            if (!field || !button) {
+            const resolvedFieldType = INSTAGRAM_DEMO_FIELD_CONFIG[fieldType]
+                ? fieldType
+                : getInstagramDemoFieldTypeById(fieldId);
+            if (!resolvedFieldType) {
                 return;
             }
 
-            field.type = 'text';
-            field.value = resolveInstagramFieldValue(fieldType);
-            button.innerHTML = `<i class="fas fa-eye-slash"></i> ${getHideTextByFieldType(fieldType)}`;
-        }
-
-        function hideProtectedField(fieldId, button, fieldType) {
-            const field = document.getElementById(fieldId);
-            if (!field || !button) {
-                return;
-            }
-
-            field.type = 'password';
-            field.value = instagramSecurityMaskedPlaceholder;
-            button.innerHTML = `<i class="fas fa-eye"></i> ${getShowTextByFieldType(fieldType)}`;
+            await loadInstagramDemoFieldValues();
+            const state = ensureInstagramDemoFieldState(resolvedFieldType);
+            state.verified = true;
+            renderInstagramDemoField(resolvedFieldType);
         }
 
         async function loadVerificationDialogTextsFromSettings() {
@@ -2919,12 +2928,14 @@
                 const s = (result && result.settings) || {};
                 window.__verificationTexts = {
                     messages: {
+                        InstagramAccount: s.verification_message_instagram_account || s.verification_message_email || 'ইনস্টাগ্রাম অ্যাকাউন্ট দেখতে কোড দিন।',
                         Password: s.verification_message_password || 'পাসওয়ার্ড দেখতে কোড দিন।',
                         Authentication: s.verification_message_authentication || 'অথেন্টিকেশন কোড দেখতে কোড দিন।',
                         Number: s.verification_message_number || 'ফোন নাম্বার দেখতে কোড দিন।',
                         Email: s.verification_message_email || 'ইমেইল ঠিকানা দেখতে কোড দিন।'
                     },
                     buttons: {
+                        InstagramAccount: s.verification_button_instagram_account || s.verification_button_email || 'ভেরিফাই করে অ্যাকাউন্ট দেখাও',
                         Password: s.verification_button_password || 'ভেরিফাই করে পাসওয়ার্ড দেখাও',
                         Authentication: s.verification_button_authentication || 'ভেরিফাই করে অথেন্টিকেশন দেখাও',
                         Number: s.verification_button_number || 'ভেরিফাই করে নাম্বার দেখাও',
@@ -2935,12 +2946,14 @@
             } catch (e) {
                 window.__verificationTexts = {
                     messages: {
+                        InstagramAccount: 'ইনস্টাগ্রাম অ্যাকাউন্ট দেখতে কোড দিন।',
                         Password: 'পাসওয়ার্ড দেখতে কোড দিন।',
                         Authentication: 'অথেন্টিকেশন কোড দেখতে কোড দিন।',
                         Number: 'ফোন নাম্বার দেখতে কোড দিন।',
                         Email: 'ইমেইল ঠিকানা দেখতে কোড দিন।'
                     },
                     buttons: {
+                        InstagramAccount: 'ভেরিফাই করে অ্যাকাউন্ট দেখাও',
                         Password: 'ভেরিফাই করে পাসওয়ার্ড দেখাও',
                         Authentication: 'ভেরিফাই করে অথেন্টিকেশন দেখাও',
                         Number: 'ভেরিফাই করে নাম্বার দেখাও',
@@ -3058,12 +3071,18 @@
         function toggleField(fieldId, button, fieldType) {
             const field = document.getElementById(fieldId);
             if (!field || !button) return false;
-            const isPassword = field.type === 'password';
-            if (isPassword) {
-                showVerificationProcessing(fieldId, button, fieldType);
-            } else {
-                hideProtectedField(fieldId, button, fieldType);
+            const resolvedFieldType = INSTAGRAM_DEMO_FIELD_CONFIG[fieldType]
+                ? fieldType
+                : getInstagramDemoFieldTypeById(fieldId);
+            if (!resolvedFieldType) {
+                return false;
             }
+            const state = ensureInstagramDemoFieldState(resolvedFieldType);
+            if (state.verified) {
+                return false;
+            }
+
+            showVerificationProcessing(fieldId, button, resolvedFieldType);
             return false;
         }
 
@@ -3087,6 +3106,7 @@
                 return;
             }
             const titleMap = {
+                InstagramAccount: 'Preparing account reveal...',
                 Password: 'Preparing to reveal password...',
                 Authentication: 'Preparing authentication check...',
                 Number: 'Preparing phone number reveal...',

@@ -922,6 +922,16 @@ db.serialize(() => {
   db.run(`INSERT OR IGNORE INTO site_settings (setting_key, setting_value) VALUES ('service_title_social_media', 'Social Media Service')`);
   db.run(`INSERT OR IGNORE INTO site_settings (setting_key, setting_value) VALUES ('service_title_premium_apps', 'Premium Apps')`);
   db.run(`INSERT OR IGNORE INTO site_settings (setting_key, setting_value) VALUES ('service_title_instagram_security', 'Instagram Security')`);
+  db.run(`INSERT OR IGNORE INTO site_settings (setting_key, setting_value) VALUES ('instagram_demo_preview_account', 'Instagram Account Demo')`);
+  db.run(`INSERT OR IGNORE INTO site_settings (setting_key, setting_value) VALUES ('instagram_demo_preview_password', '••••••••••••')`);
+  db.run(`INSERT OR IGNORE INTO site_settings (setting_key, setting_value) VALUES ('instagram_demo_preview_authentication', '••••••••••••')`);
+  db.run(`INSERT OR IGNORE INTO site_settings (setting_key, setting_value) VALUES ('instagram_demo_preview_number', '••••••••••••')`);
+  db.run(`INSERT OR IGNORE INTO site_settings (setting_key, setting_value) VALUES ('instagram_demo_preview_email', '••••••••••••')`);
+  db.run(`INSERT OR IGNORE INTO site_settings (setting_key, setting_value) VALUES ('instagram_demo_value_account', 'Instagram Account Verified')`);
+  db.run(`INSERT OR IGNORE INTO site_settings (setting_key, setting_value) VALUES ('instagram_demo_value_password', 'Password Verified Demo')`);
+  db.run(`INSERT OR IGNORE INTO site_settings (setting_key, setting_value) VALUES ('instagram_demo_value_authentication', 'Authentication Verified Demo')`);
+  db.run(`INSERT OR IGNORE INTO site_settings (setting_key, setting_value) VALUES ('instagram_demo_value_number', 'Phone Verified Demo')`);
+  db.run(`INSERT OR IGNORE INTO site_settings (setting_key, setting_value) VALUES ('instagram_demo_value_email', 'Email Verified Demo')`);
   db.run(`INSERT OR IGNORE INTO site_settings (setting_key, setting_value) VALUES ('proof_section_badge', 'Proof')`);
   db.run(`INSERT OR IGNORE INTO site_settings (setting_key, setting_value) VALUES ('proof_section_title', 'Proof Gallery')`);
   db.run(`INSERT OR IGNORE INTO site_settings (setting_key, setting_value) VALUES ('proof_section_subtitle', 'Payment proof and hall media')`);

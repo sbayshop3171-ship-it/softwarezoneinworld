@@ -2684,6 +2684,54 @@ body.performance-mode .admin-folder.expanded .folder-content {
                                 <input type="text" id="verificationContactPromptInput" placeholder="সঠিক নাম্বার পেতে হলে অবশ্যই নিচে WhatsApp নাম্বারে যোগাযোগ করুন">
                             </div>
                         </div>
+
+                        <div style="margin-top: 20px; border-top: 1px solid rgba(0, 255, 65, 0.2); padding-top: 20px;">
+                            <h3 style="color: #00ff41; margin-bottom: 15px;">Instagram Hidden Preview (Safe Demo)</h3>
+                            <div class="form-group">
+                                <label for="instagramDemoPreviewAccountInput">Account Preview</label>
+                                <input type="text" id="instagramDemoPreviewAccountInput" placeholder="e.g. Instagram Demo Account">
+                            </div>
+                            <div class="form-group">
+                                <label for="instagramDemoPreviewPasswordInput">Password Preview</label>
+                                <input type="text" id="instagramDemoPreviewPasswordInput" placeholder="e.g. Hidden Password Demo">
+                            </div>
+                            <div class="form-group">
+                                <label for="instagramDemoPreviewAuthInput">Authentication Preview</label>
+                                <input type="text" id="instagramDemoPreviewAuthInput" placeholder="e.g. Auth Preview Demo">
+                            </div>
+                            <div class="form-group">
+                                <label for="instagramDemoPreviewNumberInput">Phone Preview</label>
+                                <input type="text" id="instagramDemoPreviewNumberInput" placeholder="e.g. Hidden Number Demo">
+                            </div>
+                            <div class="form-group">
+                                <label for="instagramDemoPreviewEmailInput">Email Preview</label>
+                                <input type="text" id="instagramDemoPreviewEmailInput" placeholder="e.g. Hidden Email Demo">
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 20px; border-top: 1px solid rgba(0, 255, 65, 0.2); padding-top: 20px;">
+                            <h3 style="color: #00ff41; margin-bottom: 15px;">Instagram Verified Values (Safe Demo)</h3>
+                            <div class="form-group">
+                                <label for="instagramDemoValueAccountInput">Account Show Value</label>
+                                <input type="text" id="instagramDemoValueAccountInput" placeholder="e.g. Account Verified Demo">
+                            </div>
+                            <div class="form-group">
+                                <label for="instagramDemoValuePasswordInput">Password Show Value</label>
+                                <input type="text" id="instagramDemoValuePasswordInput" placeholder="e.g. Password Verified Demo">
+                            </div>
+                            <div class="form-group">
+                                <label for="instagramDemoValueAuthInput">Authentication Show Value</label>
+                                <input type="text" id="instagramDemoValueAuthInput" placeholder="e.g. Auth Verified Demo">
+                            </div>
+                            <div class="form-group">
+                                <label for="instagramDemoValueNumberInput">Phone Show Value</label>
+                                <input type="text" id="instagramDemoValueNumberInput" placeholder="e.g. Number Verified Demo">
+                            </div>
+                            <div class="form-group">
+                                <label for="instagramDemoValueEmailInput">Email Show Value</label>
+                                <input type="text" id="instagramDemoValueEmailInput" placeholder="e.g. Email Verified Demo">
+                            </div>
+                        </div>
                     </div>
 
                     <button class="save-btn" onclick="saveServiceTitlesSettings()">
@@ -3346,6 +3394,16 @@ body.performance-mode .admin-folder.expanded .folder-content {
                 setInputValue('verificationButtonNumberInput', s.verification_button_number || 'ভেরিফাই করে নাম্বার দেখাও');
                 setInputValue('verificationButtonEmailInput', s.verification_button_email || 'ভেরিফাই করে ইমেইল দেখাও');
                 setInputValue('verificationContactPromptInput', s.verification_contact_prompt || 'সঠিক নাম্বার পেতে হলে অবশ্যই নিচে WhatsApp নাম্বারে যোগাযোগ করুন');
+                setInputValue('instagramDemoPreviewAccountInput', s.instagram_demo_preview_account || 'Instagram Account Demo');
+                setInputValue('instagramDemoPreviewPasswordInput', s.instagram_demo_preview_password || '••••••••••••');
+                setInputValue('instagramDemoPreviewAuthInput', s.instagram_demo_preview_authentication || '••••••••••••');
+                setInputValue('instagramDemoPreviewNumberInput', s.instagram_demo_preview_number || '••••••••••••');
+                setInputValue('instagramDemoPreviewEmailInput', s.instagram_demo_preview_email || '••••••••••••');
+                setInputValue('instagramDemoValueAccountInput', s.instagram_demo_value_account || 'Instagram Account Verified');
+                setInputValue('instagramDemoValuePasswordInput', s.instagram_demo_value_password || 'Password Verified Demo');
+                setInputValue('instagramDemoValueAuthInput', s.instagram_demo_value_authentication || 'Authentication Verified Demo');
+                setInputValue('instagramDemoValueNumberInput', s.instagram_demo_value_number || 'Phone Verified Demo');
+                setInputValue('instagramDemoValueEmailInput', s.instagram_demo_value_email || 'Email Verified Demo');
             } catch (error) {
                 console.error('Error loading service titles settings:', error);
             }
@@ -3374,7 +3432,17 @@ body.performance-mode .admin-folder.expanded .folder-content {
                 verification_button_authentication: getInputValue('verificationButtonAuthInput', 'ভেরিফাই করে অথেন্টিকেশন দেখাও'),
                 verification_button_number: getInputValue('verificationButtonNumberInput', 'ভেরিফাই করে নাম্বার দেখাও'),
                 verification_button_email: getInputValue('verificationButtonEmailInput', 'ভেরিফাই করে ইমেইল দেখাও'),
-                verification_contact_prompt: getInputValue('verificationContactPromptInput', 'সঠিক নাম্বার পেতে হলে অবশ্যই নিচে WhatsApp নাম্বারে যোগাযোগ করুন')
+                verification_contact_prompt: getInputValue('verificationContactPromptInput', 'সঠিক নাম্বার পেতে হলে অবশ্যই নিচে WhatsApp নাম্বারে যোগাযোগ করুন'),
+                instagram_demo_preview_account: getInputValue('instagramDemoPreviewAccountInput', 'Instagram Account Demo'),
+                instagram_demo_preview_password: getInputValue('instagramDemoPreviewPasswordInput', '••••••••••••'),
+                instagram_demo_preview_authentication: getInputValue('instagramDemoPreviewAuthInput', '••••••••••••'),
+                instagram_demo_preview_number: getInputValue('instagramDemoPreviewNumberInput', '••••••••••••'),
+                instagram_demo_preview_email: getInputValue('instagramDemoPreviewEmailInput', '••••••••••••'),
+                instagram_demo_value_account: getInputValue('instagramDemoValueAccountInput', 'Instagram Account Verified'),
+                instagram_demo_value_password: getInputValue('instagramDemoValuePasswordInput', 'Password Verified Demo'),
+                instagram_demo_value_authentication: getInputValue('instagramDemoValueAuthInput', 'Authentication Verified Demo'),
+                instagram_demo_value_number: getInputValue('instagramDemoValueNumberInput', 'Phone Verified Demo'),
+                instagram_demo_value_email: getInputValue('instagramDemoValueEmailInput', 'Email Verified Demo')
             };
             try {
                 const { response, result } = await requestJson('/api/admin/settings', {
