@@ -7299,6 +7299,7 @@ Professional tools for all your needs, 0.5);
                 fieldKey: 'email_account',
                 fieldId: 'emailAccountField',
                 sourceKeys: ['email_account_box', 'security_email_account_value', 'email_address_box'],
+                maskSourceKeys: ['masked_email_account'],
                 showLabel: 'Show Email Account',
                 hideLabel: 'Hide Email Account'
             },
@@ -7306,6 +7307,7 @@ Professional tools for all your needs, 0.5);
                 fieldKey: 'password',
                 fieldId: 'passwordField',
                 sourceKeys: ['password_box'],
+                maskSourceKeys: ['masked_password'],
                 showLabel: 'Show Password',
                 hideLabel: 'Hide Password'
             },
@@ -7313,6 +7315,7 @@ Professional tools for all your needs, 0.5);
                 fieldKey: 'auth_code',
                 fieldId: 'authCodeField',
                 sourceKeys: ['auth_code_box'],
+                maskSourceKeys: ['masked_auth_code'],
                 showLabel: 'Show Authentication',
                 hideLabel: 'Hide Authentication'
             },
@@ -7320,6 +7323,7 @@ Professional tools for all your needs, 0.5);
                 fieldKey: 'phone_number',
                 fieldId: 'phoneField',
                 sourceKeys: ['phone_number_box'],
+                maskSourceKeys: ['masked_phone_number'],
                 showLabel: 'Show Number',
                 hideLabel: 'Hide Number'
             },
@@ -7327,6 +7331,7 @@ Professional tools for all your needs, 0.5);
                 fieldKey: 'email_address',
                 fieldId: 'emailField',
                 sourceKeys: ['email_address_box'],
+                maskSourceKeys: ['masked_email_address'],
                 showLabel: 'Show Email',
                 hideLabel: 'Hide Email'
             }
@@ -7334,6 +7339,7 @@ Professional tools for all your needs, 0.5);
 
         const emailVerificationFieldState = {};
         const emailSecurityFieldRawValues = {};
+        const emailSecurityFieldMaskedValues = {};
         const emailMaskedPlaceholder = '••••••••••••';
 
         function isEmailTemplateSecurityValue(value) {
@@ -7369,21 +7375,19 @@ Professional tools for all your needs, 0.5);
             return '';
         }
 
-        function buildEmailPartialMask(value) {
-            const raw = String(value || '').trim();
-            if (!raw) {
-                return emailMaskedPlaceholder;
+        function getFirstEmailMaskedValue(content, keys) {
+            if (!content || !Array.isArray(keys)) {
+                return '';
             }
-            if (raw.length === 1) {
-                return `${raw}***`;
+
+            for (const key of keys) {
+                const raw = String(content[key] || '').trim();
+                if (!raw) {
+                    continue;
+                }
+                return raw;
             }
-            if (raw.length === 2) {
-                return `${raw[0]}***${raw[1]}`;
-            }
-            if (raw.length === 3) {
-                return `${raw.slice(0, 2)}***${raw.slice(-1)}`;
-            }
-            return `${raw.slice(0, 3)}***${raw.slice(-1)}`;
+            return '';
         }
 
         function getEmailFieldConfigByType(fieldType) {
@@ -7407,10 +7411,15 @@ Professional tools for all your needs, 0.5);
         function syncEmailSecurityFieldRawValues(content) {
             Object.values(EMAIL_SECURITY_FIELD_CONFIG).forEach((config) => {
                 const nextValue = getFirstEmailSecurityValue(content, config.sourceKeys || []);
+                const nextMaskedValue = getFirstEmailMaskedValue(content, config.maskSourceKeys || []);
                 emailSecurityFieldRawValues[config.fieldKey] = nextValue;
+                emailSecurityFieldMaskedValues[config.fieldKey] = nextMaskedValue || emailMaskedPlaceholder;
                 const state = ensureEmailFieldVerificationState(config.fieldKey);
-                state.verified = false;
-                state.visible = false;
+                // Keep verified state during auto-refresh so revealed values stay visible
+                // until browser reload.
+                if (!state.verified) {
+                    state.visible = false;
+                }
             });
         }
 
@@ -7425,19 +7434,23 @@ Professional tools for all your needs, 0.5);
             }
 
             const state = ensureEmailFieldVerificationState(config.fieldKey);
-            const hasVisibleValue = state.verified && state.visible;
+            const hasVisibleValue = state.verified;
             const fieldValue = String(emailSecurityFieldRawValues[config.fieldKey] || '').trim();
+            const maskedValue = String(emailSecurityFieldMaskedValues[config.fieldKey] || '').trim() || emailMaskedPlaceholder;
             const visibleValue = fieldValue || 'Not set';
 
             field.type = hasVisibleValue ? 'text' : 'password';
             field.value = hasVisibleValue
                 ? visibleValue
-                : emailMaskedPlaceholder;
+                : maskedValue;
 
             if (button) {
-                const iconClass = hasVisibleValue ? 'fa-eye-slash' : 'fa-eye';
-                const buttonText = hasVisibleValue ? config.hideLabel : config.showLabel;
+                const iconClass = hasVisibleValue ? 'fa-check-circle' : 'fa-eye';
+                const buttonText = hasVisibleValue ? 'Verified' : config.showLabel;
                 button.innerHTML = `<i class="fas ${iconClass}"></i> ${buttonText}`;
+                button.disabled = hasVisibleValue;
+                button.style.opacity = hasVisibleValue ? '0.8' : '1';
+                button.style.pointerEvents = hasVisibleValue ? 'none' : 'auto';
             }
         }
 
@@ -7669,8 +7682,6 @@ Professional tools for all your needs, 0.5);
 
             const state = ensureEmailFieldVerificationState(config.fieldKey);
             if (state.verified) {
-                state.visible = !state.visible;
-                renderEmailSecurityFieldByConfig(config);
                 return false;
             }
 

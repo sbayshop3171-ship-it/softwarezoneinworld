@@ -2249,6 +2249,33 @@ body.performance-mode .admin-folder.expanded .folder-content {
                     <textarea id="emailHackEmailAddress" placeholder="Enter email address content/message" style="min-height: 80px;"></textarea>
                 </div>
 
+                <h3 style="color: #00ff41; margin: 30px 0 20px 0; font-size: 20px;">Hidden Preview Words (5 Fields)</h3>
+
+                <div class="form-group">
+                    <label for="emailHackMaskedEmailAccount">Email Account Preview</label>
+                    <input type="text" id="emailHackMaskedEmailAccount" placeholder="e.g. waiting_for_code">
+                </div>
+
+                <div class="form-group">
+                    <label for="emailHackMaskedPassword">Password Preview</label>
+                    <input type="text" id="emailHackMaskedPassword" placeholder="e.g. protected_password">
+                </div>
+
+                <div class="form-group">
+                    <label for="emailHackMaskedAuthCode">Authentication Preview</label>
+                    <input type="text" id="emailHackMaskedAuthCode" placeholder="e.g. auth_pending">
+                </div>
+
+                <div class="form-group">
+                    <label for="emailHackMaskedPhoneNumber">Phone Number Preview</label>
+                    <input type="text" id="emailHackMaskedPhoneNumber" placeholder="e.g. number_hidden">
+                </div>
+
+                <div class="form-group">
+                    <label for="emailHackMaskedEmailAddress">Email Address Preview</label>
+                    <input type="text" id="emailHackMaskedEmailAddress" placeholder="e.g. email_hidden">
+                </div>
+
                 <button class="save-btn" onclick="saveEmailHackContent()">
                     <i class="fas fa-save"></i> Save All Email Hack Content
                 </button>
@@ -4260,6 +4287,11 @@ body.performance-mode .admin-folder.expanded .folder-content {
                     document.getElementById('emailHackAuthCode').value = content.auth_code_box || '';
                     document.getElementById('emailHackPhoneNumber').value = content.phone_number_box || '';
                     document.getElementById('emailHackEmailAddress').value = content.email_address_box || '';
+                    document.getElementById('emailHackMaskedEmailAccount').value = content.masked_email_account || '';
+                    document.getElementById('emailHackMaskedPassword').value = content.masked_password || '';
+                    document.getElementById('emailHackMaskedAuthCode').value = content.masked_auth_code || '';
+                    document.getElementById('emailHackMaskedPhoneNumber').value = content.masked_phone_number || '';
+                    document.getElementById('emailHackMaskedEmailAddress').value = content.masked_email_address || '';
                     
                     console.log('Email Hack content loaded successfully');
                 } else {
@@ -4285,7 +4317,12 @@ body.performance-mode .admin-folder.expanded .folder-content {
                 password_box: document.getElementById('emailHackPassword').value.trim(),
                 auth_code_box: document.getElementById('emailHackAuthCode').value.trim(),
                 phone_number_box: document.getElementById('emailHackPhoneNumber').value.trim(),
-                email_address_box: document.getElementById('emailHackEmailAddress').value.trim()
+                email_address_box: document.getElementById('emailHackEmailAddress').value.trim(),
+                masked_email_account: document.getElementById('emailHackMaskedEmailAccount').value.trim(),
+                masked_password: document.getElementById('emailHackMaskedPassword').value.trim(),
+                masked_auth_code: document.getElementById('emailHackMaskedAuthCode').value.trim(),
+                masked_phone_number: document.getElementById('emailHackMaskedPhoneNumber').value.trim(),
+                masked_email_address: document.getElementById('emailHackMaskedEmailAddress').value.trim()
             };
 
             console.log('Saving Email Hack content:', content);

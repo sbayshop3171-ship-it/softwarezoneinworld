@@ -455,7 +455,12 @@ db.serialize(() => {
     ('password_box', 'Password Box Content'),
     ('auth_code_box', 'Authorization Code Box Content'),
     ('phone_number_box', 'Phone Number Box Content'),
-    ('email_address_box', 'Email Address Box Content')
+    ('email_address_box', 'Email Address Box Content'),
+    ('masked_email_account', '••••••••••••'),
+    ('masked_password', '••••••••••••'),
+    ('masked_auth_code', '••••••••••••'),
+    ('masked_phone_number', '••••••••••••'),
+    ('masked_email_address', '••••••••••••')
   `);
 
   // Create hack_codes table
