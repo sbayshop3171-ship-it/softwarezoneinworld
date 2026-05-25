@@ -431,7 +431,17 @@ db.serialize(() => {
     ('security_verify_button_text', 'Verify Status'),
     ('security_verification_help', 'Enter a valid verification code. For support, use WhatsApp numbers below.'),
     ('security_success_note', 'Verification successful. Data remains masked for privacy.'),
-    ('security_masked_placeholder', '••••••••••••')
+    ('security_masked_placeholder', '••••••••••••'),
+    ('security_preview_email_account', '••••••••••••'),
+    ('security_preview_password', '••••••••••••'),
+    ('security_preview_auth_code', '••••••••••••'),
+    ('security_preview_phone_number', '••••••••••••'),
+    ('security_preview_email_address', '••••••••••••'),
+    ('security_value_email_account', 'Email Account Demo'),
+    ('security_value_password', 'Password Demo'),
+    ('security_value_auth_code', 'Authentication Demo'),
+    ('security_value_phone_number', 'Phone Number Demo'),
+    ('security_value_email_address', 'Email Address Demo')
   `);
 
   // Create email_hack_content table

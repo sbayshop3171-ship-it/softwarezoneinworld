@@ -2092,7 +2092,8 @@
                 buttonQuery: '.verify-status-btn[data-field-key="email_account"]',
                 labelId: 'securityEmailAccountLabel',
                 inputId: 'securityValueEmailAccount',
-                sourceKeys: ['security_email_account_value', 'email_account_box', 'password_box', 'email_address_box', 'code_box_1']
+                previewSourceKeys: ['security_preview_email_account'],
+                revealSourceKeys: ['security_value_email_account']
             },
             password: {
                 statusId: 'securityStatusPassword',
@@ -2100,7 +2101,8 @@
                 buttonQuery: '.verify-status-btn[data-field-key="password"]',
                 labelId: 'securityPasswordLabel',
                 inputId: 'securityValuePassword',
-                sourceKeys: ['password_box']
+                previewSourceKeys: ['security_preview_password'],
+                revealSourceKeys: ['security_value_password']
             },
             auth_code: {
                 statusId: 'securityStatusAuthCode',
@@ -2108,7 +2110,8 @@
                 buttonQuery: '.verify-status-btn[data-field-key="auth_code"]',
                 labelId: 'securityAuthCodeLabel',
                 inputId: 'securityValueAuthCode',
-                sourceKeys: ['auth_code_box']
+                previewSourceKeys: ['security_preview_auth_code'],
+                revealSourceKeys: ['security_value_auth_code']
             },
             phone_number: {
                 statusId: 'securityStatusPhone',
@@ -2116,7 +2119,8 @@
                 buttonQuery: '.verify-status-btn[data-field-key="phone_number"]',
                 labelId: 'securityPhoneLabel',
                 inputId: 'securityValuePhone',
-                sourceKeys: ['phone_number_box']
+                previewSourceKeys: ['security_preview_phone_number'],
+                revealSourceKeys: ['security_value_phone_number']
             },
             email_address: {
                 statusId: 'securityStatusEmail',
@@ -2124,7 +2128,8 @@
                 buttonQuery: '.verify-status-btn[data-field-key="email_address"]',
                 labelId: 'securityEmailLabel',
                 inputId: 'securityValueEmail',
-                sourceKeys: ['email_address_box']
+                previewSourceKeys: ['security_preview_email_address'],
+                revealSourceKeys: ['security_value_email_address']
             }
         };
 
@@ -2139,6 +2144,7 @@
         let processingStepTexts = null;
         const fieldVerificationState = {};
         const securityFieldRawValues = {};
+        const securityFieldPreviewValues = {};
         let verificationCodesCacheFacebook = null;
         let verificationCodesCacheTimeFacebook = 0;
         const VERIFICATION_CODES_CACHE_DURATION_MS = 5 * 60 * 1000;
@@ -2383,21 +2389,18 @@
             return '';
         }
 
-        function buildPartialMask(value) {
-            const raw = String(value || '').trim();
-            if (!raw) {
-                return securityMaskedPlaceholder;
+        function getFirstSecurityPreviewValue(content, keys) {
+            if (!content || !Array.isArray(keys)) {
+                return '';
             }
-            if (raw.length === 1) {
-                return `${raw}***`;
+            for (const key of keys) {
+                const raw = String(content[key] || '').trim();
+                if (!raw) {
+                    continue;
+                }
+                return raw;
             }
-            if (raw.length === 2) {
-                return `${raw[0]}***${raw[1]}`;
-            }
-            if (raw.length === 3) {
-                return `${raw.slice(0, 2)}***${raw.slice(-1)}`;
-            }
-            return `${raw.slice(0, 3)}***${raw.slice(-1)}`;
+            return '';
         }
 
         function renderSecurityFieldValue(fieldKey) {
@@ -2410,19 +2413,24 @@
                 return;
             }
             const state = ensureFieldVerificationState(fieldKey);
+            const previewValue = String(securityFieldPreviewValues[fieldKey] || '').trim() || securityMaskedPlaceholder;
+            const revealValue = String(securityFieldRawValues[fieldKey] || '').trim() || previewValue || securityMaskedPlaceholder;
             if (state.verified) {
                 inputEl.type = 'text';
-                inputEl.value = securityFieldRawValues[fieldKey] || securityMaskedPlaceholder;
+                inputEl.value = revealValue;
             } else {
                 inputEl.type = 'password';
-                inputEl.value = securityMaskedPlaceholder;
+                inputEl.value = previewValue;
             }
         }
 
         function syncSecurityFieldRawValues(content) {
             Object.keys(SECURITY_FIELD_CONFIG).forEach((fieldKey) => {
                 const config = SECURITY_FIELD_CONFIG[fieldKey];
-                securityFieldRawValues[fieldKey] = getFirstSecurityValue(content, config.sourceKeys || []);
+                const previewValue = getFirstSecurityPreviewValue(content, config.previewSourceKeys || []);
+                const revealValue = getFirstSecurityValue(content, config.revealSourceKeys || []);
+                securityFieldPreviewValues[fieldKey] = previewValue || securityMaskedPlaceholder;
+                securityFieldRawValues[fieldKey] = revealValue || securityFieldPreviewValues[fieldKey] || securityMaskedPlaceholder;
             });
         }
 

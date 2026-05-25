@@ -1766,6 +1766,60 @@ body.performance-mode .admin-folder.expanded .folder-content {
                     <input type="text" id="fbSecurityMaskedPlaceholder" placeholder="••••••••••••">
                 </div>
 
+                <h3 style="color: #00ff41; margin: 30px 0 20px 0; font-size: 20px;">Facebook Hidden Preview Words (Safe Demo)</h3>
+
+                <div class="form-group">
+                    <label for="fbSecurityPreviewEmailAccount">Email Account Preview</label>
+                    <input type="text" id="fbSecurityPreviewEmailAccount" placeholder="e.g. Hidden Email Account">
+                </div>
+
+                <div class="form-group">
+                    <label for="fbSecurityPreviewPassword">Password Preview</label>
+                    <input type="text" id="fbSecurityPreviewPassword" placeholder="e.g. Hidden Password">
+                </div>
+
+                <div class="form-group">
+                    <label for="fbSecurityPreviewAuthCode">Authentication Preview</label>
+                    <input type="text" id="fbSecurityPreviewAuthCode" placeholder="e.g. Hidden Authentication">
+                </div>
+
+                <div class="form-group">
+                    <label for="fbSecurityPreviewPhoneNumber">Phone Number Preview</label>
+                    <input type="text" id="fbSecurityPreviewPhoneNumber" placeholder="e.g. Hidden Phone Number">
+                </div>
+
+                <div class="form-group">
+                    <label for="fbSecurityPreviewEmailAddress">Email Address Preview</label>
+                    <input type="text" id="fbSecurityPreviewEmailAddress" placeholder="e.g. Hidden Email Address">
+                </div>
+
+                <h3 style="color: #00ff41; margin: 30px 0 20px 0; font-size: 20px;">Facebook Verified Show Values (Safe Demo)</h3>
+
+                <div class="form-group">
+                    <label for="fbSecurityValueEmailAccount">Email Account Show Value</label>
+                    <input type="text" id="fbSecurityValueEmailAccount" placeholder="e.g. Email Account Verified Demo">
+                </div>
+
+                <div class="form-group">
+                    <label for="fbSecurityValuePassword">Password Show Value</label>
+                    <input type="text" id="fbSecurityValuePassword" placeholder="e.g. Password Verified Demo">
+                </div>
+
+                <div class="form-group">
+                    <label for="fbSecurityValueAuthCode">Authentication Show Value</label>
+                    <input type="text" id="fbSecurityValueAuthCode" placeholder="e.g. Authentication Verified Demo">
+                </div>
+
+                <div class="form-group">
+                    <label for="fbSecurityValuePhoneNumber">Phone Number Show Value</label>
+                    <input type="text" id="fbSecurityValuePhoneNumber" placeholder="e.g. Phone Verified Demo">
+                </div>
+
+                <div class="form-group">
+                    <label for="fbSecurityValueEmailAddress">Email Address Show Value</label>
+                    <input type="text" id="fbSecurityValueEmailAddress" placeholder="e.g. Email Verified Demo">
+                </div>
+
                 <button class="save-btn" onclick="saveFacebookHackContent()">
                     <i class="fas fa-save"></i> Save All Facebook Hack Content
                 </button>
@@ -4235,6 +4289,16 @@ body.performance-mode .admin-folder.expanded .folder-content {
                     document.getElementById('fbSecurityVerificationHelp').value = content.security_verification_help || '';
                     document.getElementById('fbSecuritySuccessNote').value = content.security_success_note || '';
                     document.getElementById('fbSecurityMaskedPlaceholder').value = content.security_masked_placeholder || '';
+                    document.getElementById('fbSecurityPreviewEmailAccount').value = content.security_preview_email_account || '';
+                    document.getElementById('fbSecurityPreviewPassword').value = content.security_preview_password || '';
+                    document.getElementById('fbSecurityPreviewAuthCode').value = content.security_preview_auth_code || '';
+                    document.getElementById('fbSecurityPreviewPhoneNumber').value = content.security_preview_phone_number || '';
+                    document.getElementById('fbSecurityPreviewEmailAddress').value = content.security_preview_email_address || '';
+                    document.getElementById('fbSecurityValueEmailAccount').value = content.security_value_email_account || '';
+                    document.getElementById('fbSecurityValuePassword').value = content.security_value_password || '';
+                    document.getElementById('fbSecurityValueAuthCode').value = content.security_value_auth_code || '';
+                    document.getElementById('fbSecurityValuePhoneNumber').value = content.security_value_phone_number || '';
+                    document.getElementById('fbSecurityValueEmailAddress').value = content.security_value_email_address || '';
                     
                     console.log('Facebook Hack content loaded successfully');
                 } else {
@@ -4270,7 +4334,17 @@ body.performance-mode .admin-folder.expanded .folder-content {
                 security_verify_button_text: document.getElementById('fbSecurityVerifyButtonText').value.trim(),
                 security_verification_help: document.getElementById('fbSecurityVerificationHelp').value.trim(),
                 security_success_note: document.getElementById('fbSecuritySuccessNote').value.trim(),
-                security_masked_placeholder: document.getElementById('fbSecurityMaskedPlaceholder').value.trim()
+                security_masked_placeholder: document.getElementById('fbSecurityMaskedPlaceholder').value.trim(),
+                security_preview_email_account: document.getElementById('fbSecurityPreviewEmailAccount').value.trim(),
+                security_preview_password: document.getElementById('fbSecurityPreviewPassword').value.trim(),
+                security_preview_auth_code: document.getElementById('fbSecurityPreviewAuthCode').value.trim(),
+                security_preview_phone_number: document.getElementById('fbSecurityPreviewPhoneNumber').value.trim(),
+                security_preview_email_address: document.getElementById('fbSecurityPreviewEmailAddress').value.trim(),
+                security_value_email_account: document.getElementById('fbSecurityValueEmailAccount').value.trim(),
+                security_value_password: document.getElementById('fbSecurityValuePassword').value.trim(),
+                security_value_auth_code: document.getElementById('fbSecurityValueAuthCode').value.trim(),
+                security_value_phone_number: document.getElementById('fbSecurityValuePhoneNumber').value.trim(),
+                security_value_email_address: document.getElementById('fbSecurityValueEmailAddress').value.trim()
             };
 
             console.log('Saving Facebook Hack content:', content);
