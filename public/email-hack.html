@@ -7298,7 +7298,7 @@ Professional tools for all your needs, 0.5);
             EmailAccount: {
                 fieldKey: 'email_account',
                 fieldId: 'emailAccountField',
-                sourceKeys: ['security_email_account_value', 'email_account_box', 'password_box', 'email_address_box', 'code_box_1'],
+                sourceKeys: ['email_account_box', 'security_email_account_value', 'email_address_box'],
                 showLabel: 'Show Email Account',
                 hideLabel: 'Hide Email Account'
             },
@@ -7344,6 +7344,7 @@ Professional tools for all your needs, 0.5);
 
             const templatePatterns = [
                 /^Code Box \d+ Content$/i,
+                /^Email Account Box Content$/i,
                 /^Password Box Content$/i,
                 /^Authorization Code Box Content$/i,
                 /^Phone Number Box Content$/i,
@@ -7425,10 +7426,12 @@ Professional tools for all your needs, 0.5);
 
             const state = ensureEmailFieldVerificationState(config.fieldKey);
             const hasVisibleValue = state.verified && state.visible;
+            const fieldValue = String(emailSecurityFieldRawValues[config.fieldKey] || '').trim();
+            const visibleValue = fieldValue || 'Not set';
 
             field.type = hasVisibleValue ? 'text' : 'password';
             field.value = hasVisibleValue
-                ? buildEmailPartialMask(emailSecurityFieldRawValues[config.fieldKey])
+                ? visibleValue
                 : emailMaskedPlaceholder;
 
             if (button) {

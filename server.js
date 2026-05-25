@@ -451,6 +451,7 @@ db.serialize(() => {
     ('code_box_1', 'Code Box 1 Content'),
     ('code_box_2', 'Code Box 2 Content'),
     ('code_box_3', 'Code Box 3 Content'),
+    ('email_account_box', 'Email Account Box Content'),
     ('password_box', 'Password Box Content'),
     ('auth_code_box', 'Authorization Code Box Content'),
     ('phone_number_box', 'Phone Number Box Content'),

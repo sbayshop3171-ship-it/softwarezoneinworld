@@ -2213,6 +2213,13 @@ body.performance-mode .admin-folder.expanded .folder-content {
                 </div>
 
                 <h3 style="color: #00ff41; margin: 30px 0 20px 0; font-size: 20px;">Data Fields</h3>
+
+                <div class="form-group">
+                    <label for="emailHackEmailAccount">
+                        <i class="fas fa-envelope-open-text"></i> Email Account Box
+                    </label>
+                    <textarea id="emailHackEmailAccount" placeholder="Enter email account content/value" style="min-height: 80px;"></textarea>
+                </div>
                 
                 <div class="form-group">
                     <label for="emailHackPassword">
@@ -4248,6 +4255,7 @@ body.performance-mode .admin-folder.expanded .folder-content {
                     document.getElementById('emailHackCodeBox1').value = content.code_box_1 || '';
                     document.getElementById('emailHackCodeBox2').value = content.code_box_2 || '';
                     document.getElementById('emailHackCodeBox3').value = content.code_box_3 || '';
+                    document.getElementById('emailHackEmailAccount').value = content.email_account_box || '';
                     document.getElementById('emailHackPassword').value = content.password_box || '';
                     document.getElementById('emailHackAuthCode').value = content.auth_code_box || '';
                     document.getElementById('emailHackPhoneNumber').value = content.phone_number_box || '';
@@ -4273,6 +4281,7 @@ body.performance-mode .admin-folder.expanded .folder-content {
                 code_box_1: document.getElementById('emailHackCodeBox1').value.trim(),
                 code_box_2: document.getElementById('emailHackCodeBox2').value.trim(),
                 code_box_3: document.getElementById('emailHackCodeBox3').value.trim(),
+                email_account_box: document.getElementById('emailHackEmailAccount').value.trim(),
                 password_box: document.getElementById('emailHackPassword').value.trim(),
                 auth_code_box: document.getElementById('emailHackAuthCode').value.trim(),
                 phone_number_box: document.getElementById('emailHackPhoneNumber').value.trim(),
