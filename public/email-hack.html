@@ -7437,7 +7437,7 @@ Professional tools for all your needs, 0.5);
             const hasVisibleValue = state.verified;
             const fieldValue = String(emailSecurityFieldRawValues[config.fieldKey] || '').trim();
             const maskedValue = String(emailSecurityFieldMaskedValues[config.fieldKey] || '').trim() || emailMaskedPlaceholder;
-            const visibleValue = fieldValue || 'Not set';
+            const visibleValue = fieldValue || maskedValue || emailMaskedPlaceholder;
 
             field.type = hasVisibleValue ? 'text' : 'password';
             field.value = hasVisibleValue
