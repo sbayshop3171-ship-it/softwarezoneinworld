@@ -2783,32 +2783,32 @@
         const INSTAGRAM_DEMO_FIELD_CONFIG = {
             InstagramAccount: {
                 fieldId: 'instagramAccountField',
-                previewSettingKey: 'instagram_demo_preview_account',
-                revealSettingKey: 'instagram_demo_value_account',
+                previewKeySuffix: 'preview_account',
+                revealKeySuffix: 'value_account',
                 showLabel: 'Show Account'
             },
             Password: {
                 fieldId: 'passwordField',
-                previewSettingKey: 'instagram_demo_preview_password',
-                revealSettingKey: 'instagram_demo_value_password',
+                previewKeySuffix: 'preview_password',
+                revealKeySuffix: 'value_password',
                 showLabel: 'Show Password'
             },
             Authentication: {
                 fieldId: 'authCodeField',
-                previewSettingKey: 'instagram_demo_preview_authentication',
-                revealSettingKey: 'instagram_demo_value_authentication',
+                previewKeySuffix: 'preview_authentication',
+                revealKeySuffix: 'value_authentication',
                 showLabel: 'Show Authentication'
             },
             Number: {
                 fieldId: 'phoneField',
-                previewSettingKey: 'instagram_demo_preview_number',
-                revealSettingKey: 'instagram_demo_value_number',
+                previewKeySuffix: 'preview_number',
+                revealKeySuffix: 'value_number',
                 showLabel: 'Show Number'
             },
             Email: {
                 fieldId: 'emailField',
-                previewSettingKey: 'instagram_demo_preview_email',
-                revealSettingKey: 'instagram_demo_value_email',
+                previewKeySuffix: 'preview_email',
+                revealKeySuffix: 'value_email',
                 showLabel: 'Show Email'
             }
         };
@@ -2817,6 +2817,20 @@
         const instagramDemoRevealValues = {};
         const instagramDemoFieldState = {};
         const instagramDemoMaskedFallback = '••••••••••••';
+
+        function getDemoSettingPrefix() {
+            if (IS_TIKTOK_SECURITY_MODE) {
+                return 'tiktok_demo';
+            }
+            if (IS_IMO_SECURITY_MODE) {
+                return 'imo_demo';
+            }
+            return 'instagram_demo';
+        }
+
+        function getDemoSettingKey(suffix) {
+            return `${getDemoSettingPrefix()}_${String(suffix || '').trim()}`;
+        }
 
         function normalizeDemoText(value) {
             return String(value || '').trim();
@@ -2893,8 +2907,8 @@
                 const settings = (result && result.success && result.settings) ? result.settings : {};
 
                 Object.entries(INSTAGRAM_DEMO_FIELD_CONFIG).forEach(([fieldType, config]) => {
-                    const previewValue = normalizeDemoText(settings[config.previewSettingKey]) || instagramDemoMaskedFallback;
-                    const revealValue = normalizeDemoText(settings[config.revealSettingKey]) || previewValue;
+                    const previewValue = normalizeDemoText(settings[getDemoSettingKey(config.previewKeySuffix)]) || instagramDemoMaskedFallback;
+                    const revealValue = normalizeDemoText(settings[getDemoSettingKey(config.revealKeySuffix)]) || previewValue;
                     instagramDemoPreviewValues[fieldType] = previewValue;
                     instagramDemoRevealValues[fieldType] = revealValue;
                     ensureInstagramDemoFieldState(fieldType);
