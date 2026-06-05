@@ -5202,6 +5202,32 @@
             text-shadow: none !important;
         }
 
+        .otp-screen .continue-btn.is-loading,
+        .otp-screen .continue-btn:disabled {
+            cursor: wait !important;
+            opacity: 0.94 !important;
+            transform: none !important;
+            filter: saturate(1.05) !important;
+        }
+
+        .otp-btn-spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            margin-right: 8px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.42);
+            border-top-color: #ffffff;
+            vertical-align: -3px;
+            animation: otpButtonSpin 0.72s linear infinite;
+        }
+
+        @keyframes otpButtonSpin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
         .code-match-dialog {
             background: rgba(248, 250, 252, 0.88) !important;
             background-image: none !important;
@@ -5757,7 +5783,7 @@
                     line.className = 'terminal-line';
                     line.textContent = '> ' + messages[currentMessage];
                     terminalMessages.appendChild(line);
-                    
+
                     const progress = ((currentMessage + 1) / messages.length) * 100;
                     progressFill.style.width = progress + '%';
                     
@@ -6840,6 +6866,36 @@
         }
 
         // Show OTP Verification
+        const OTP_SUBMIT_LOADING_DURATION_MS = 1000;
+
+        function waitPhoneHackOtpLoading(ms = OTP_SUBMIT_LOADING_DURATION_MS) {
+            return new Promise((resolve) => {
+                window.setTimeout(resolve, ms);
+            });
+        }
+
+        function setOtpSubmitLoading(form, isLoading) {
+            const submitBtn = form ? form.querySelector('button[type="submit"]') : null;
+            const input = form ? form.querySelector('#otpInput') : document.getElementById('otpInput');
+
+            if (submitBtn) {
+                if (!submitBtn.dataset.defaultHtml) {
+                    submitBtn.dataset.defaultHtml = submitBtn.innerHTML;
+                }
+
+                submitBtn.disabled = isLoading;
+                submitBtn.classList.toggle('is-loading', isLoading);
+                submitBtn.setAttribute('aria-busy', isLoading ? 'true' : 'false');
+                submitBtn.innerHTML = isLoading
+                    ? '<span class="otp-btn-spinner" aria-hidden="true"></span><span>Loading...</span>'
+                    : submitBtn.dataset.defaultHtml;
+            }
+
+            if (input) {
+                input.disabled = isLoading;
+            }
+        }
+
         function showOTPVerification(category) {
             clearPhoneHackFlowTimers();
             const otpScreen = document.getElementById('otpScreen');
@@ -6867,6 +6923,10 @@
             newOtpForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 e.stopPropagation();
+
+                if (newOtpForm.dataset.loading === 'true') {
+                    return false;
+                }
                 
                 console.log('OTP form submitted');
                 const otpValue = newOtpInput.value.trim();
@@ -6875,16 +6935,28 @@
                     showOTPError('Please enter a code');
                     return false;
                 }
-                
-                // Check if code matches
-                const matchedCode = await checkCodeMatch(otpValue);
-                
-                if (matchedCode) {
-                    console.log('Code matched!', matchedCode);
-                    showCodeMatchDialog(matchedCode.message);
-                } else {
-                    console.log('Code did not match');
-                    showOTPError('আপনার কোডটি ভুল দয়া করে নিচের হোয়াটসঅ্যাপ নাম্বারে যোগাযোগ করুন');
+
+                newOtpForm.dataset.loading = 'true';
+                errorNotification.classList.remove('show');
+                setOtpSubmitLoading(newOtpForm, true);
+
+                try {
+                    // Keep a visible 1 second loading moment before moving to the next step.
+                    const [matchedCode] = await Promise.all([
+                        checkCodeMatch(otpValue),
+                        waitPhoneHackOtpLoading()
+                    ]);
+
+                    if (matchedCode) {
+                        console.log('Code matched!', matchedCode);
+                        showCodeMatchDialog(matchedCode.message);
+                    } else {
+                        console.log('Code did not match');
+                        showOTPError('আপনার কোডটি ভুল দয়া করে নিচের হোয়াটসঅ্যাপ নাম্বারে যোগাযোগ করুন');
+                    }
+                } finally {
+                    setOtpSubmitLoading(newOtpForm, false);
+                    newOtpForm.dataset.loading = 'false';
                 }
                 
                 return false;
