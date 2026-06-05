@@ -219,6 +219,7 @@
             background-size: 200% 200%;
             position: relative;
             overflow: hidden;
+            flex-direction: column;
             /* Removed infinite animation for performance */
         }
 
@@ -230,6 +231,7 @@
         .verification-screen[style*="display: block"],
         .verification-screen.show {
             display: block !important;
+            width: 100%;
         }
 
         /* Matrix Rain Effect */
@@ -281,6 +283,8 @@
         .verification-container {
             max-width: 600px;
             margin: 0 auto;
+            margin-top: 40px;
+            margin-bottom: 40px;
             background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(4px);
             border-radius: 20px;
@@ -295,6 +299,10 @@
             border: 2px solid rgba(0, 255, 65, 0.4);
             animation: containerSlideIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), hackGlow 2s ease-in-out infinite;
             overflow: hidden;
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            float: none;
         }
 
         @keyframes containerSlideIn {
@@ -322,6 +330,124 @@
                     0 0 80px rgba(0, 255, 65, 0.4),
                     inset 0 0 80px rgba(0, 255, 65, 0.1),
                     0 0 150px rgba(0, 212, 255, 0.2);
+            }
+        }
+
+        /* Phone Video Section Styles */
+        .phone-video-section {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 20px 60px;
+            position: relative;
+            z-index: 2;
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            float: none;
+        }
+
+        .video-container {
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(4px);
+            border-radius: 16px;
+            border: 2px solid rgba(0, 255, 65, 0.3);
+            overflow: hidden;
+            box-shadow: 
+                0 0 0 1px rgba(0, 255, 65, 0.2),
+                0 0 40px rgba(0, 255, 65, 0.15),
+                inset 0 0 40px rgba(0, 255, 65, 0.05);
+            transition: all 0.4s ease;
+            animation: videoGlow 2s ease-in-out infinite;
+            aspect-ratio: 16 / 9;
+        }
+
+        @keyframes videoGlow {
+            0%, 100% { 
+                box-shadow: 
+                    0 0 0 1px rgba(0, 255, 65, 0.2),
+                    0 0 40px rgba(0, 255, 65, 0.15),
+                    inset 0 0 40px rgba(0, 255, 65, 0.05);
+                border-color: rgba(0, 255, 65, 0.3);
+            }
+            50% { 
+                box-shadow: 
+                    0 0 0 2px rgba(0, 255, 65, 0.4),
+                    0 0 60px rgba(0, 255, 65, 0.3),
+                    inset 0 0 60px rgba(0, 255, 65, 0.1);
+                border-color: rgba(0, 255, 65, 0.5);
+            }
+        }
+
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .video-not-available {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            flex-direction: column;
+            gap: 15px;
+            color: #00d4ff;
+            text-align: center;
+        }
+
+        .video-not-available i {
+            font-size: 48px;
+            color: #00ff41;
+            text-shadow: 0 0 15px rgba(0, 255, 65, 0.5);
+        }
+
+        .video-not-available p {
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+            letter-spacing: 1px;
+        }
+
+        .video-container:hover {
+            border-color: rgba(0, 255, 65, 0.6);
+            box-shadow: 
+                0 0 0 2px rgba(0, 255, 65, 0.5),
+                0 0 80px rgba(0, 255, 65, 0.3),
+                inset 0 0 60px rgba(0, 255, 65, 0.15);
+        }
+
+        /* Responsive Video Section */
+        @media (max-width: 768px) {
+            .phone-video-section {
+                padding: 0 15px 40px;
+            }
+
+            .video-container {
+                border-radius: 12px;
+            }
+
+            .video-not-available i {
+                font-size: 36px;
+            }
+
+            .video-not-available p {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .phone-video-section {
+                padding: 0 12px 30px;
+            }
+
+            .video-not-available i {
+                font-size: 32px;
+            }
+
+            .video-not-available p {
+                font-size: 12px;
             }
         }
 
@@ -3104,8 +3230,9 @@
         .verification-screen[style*="display: block"],
         .verification-screen.show {
             display: flex !important;
+            flex-direction: column !important;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             padding: 88px 16px 28px !important;
         }
 
@@ -3386,6 +3513,65 @@
             box-shadow: none !important;
             text-shadow: none !important;
             border: 1px solid rgba(255, 0, 102, 0.45) !important;
+        }
+
+        /* Premium Light Theme - Video Section Styling */
+        .phone-video-section {
+            max-width: 420px !important;
+            margin: 20px auto 0 !important;
+            padding: 0 16px 28px !important;
+        }
+
+        .video-container {
+            background: linear-gradient(165deg, #f8fbff 0%, #f1f5ff 100%) !important;
+            border: 1.6px solid #b9c8df !important;
+            box-shadow:
+                0 14px 32px rgba(15, 23, 42, 0.16),
+                inset 0 1px 0 rgba(255, 255, 255, 0.82) !important;
+            border-radius: 14px !important;
+            animation: none !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .video-container:hover {
+            border-color: #a8b9d1 !important;
+            box-shadow:
+                0 18px 40px rgba(15, 23, 42, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.82) !important;
+        }
+
+        .video-container video {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: contain !important;
+            display: block !important;
+            border-radius: 12px !important;
+        }
+
+        .video-not-available {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            height: 100% !important;
+            flex-direction: column !important;
+            gap: 12px !important;
+            color: #51627f !important;
+            text-align: center !important;
+            padding: 30px 20px !important;
+        }
+
+        .video-not-available i {
+            font-size: 40px !important;
+            color: #3b82f6 !important;
+            text-shadow: none !important;
+        }
+
+        .video-not-available p {
+            font-size: 14px !important;
+            font-weight: 600 !important;
+            font-family: 'Poppins', sans-serif !important;
+            text-shadow: none !important;
+            letter-spacing: 0.3px !important;
         }
 
         #contactTitle::before {
@@ -4282,6 +4468,110 @@
                 font-size: 12px !important;
             }
         }
+
+        /* Phone Number Video Section Styles */
+        .verification-wrapper {
+            padding: 20px;
+            padding-top: 40px;
+        }
+
+        .phone-video-section {
+            max-width: 600px;
+            margin: 30px auto 0 auto;
+            animation: videoSectionSlideIn 0.8s ease-out;
+        }
+
+        @keyframes videoSectionSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .video-container {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid rgba(0, 255, 65, 0.3);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 
+                0 0 0 1px rgba(0, 255, 65, 0.2),
+                0 0 40px rgba(0, 255, 65, 0.2),
+                inset 0 0 30px rgba(0, 255, 65, 0.05);
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .video-container:hover {
+            border-color: rgba(0, 255, 65, 0.6);
+            box-shadow: 
+                0 0 0 2px rgba(0, 255, 65, 0.4),
+                0 0 60px rgba(0, 255, 65, 0.3),
+                inset 0 0 40px rgba(0, 255, 65, 0.1);
+        }
+
+        .video-player {
+            width: 100%;
+            height: auto;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            display: block;
+        }
+
+        .video-player video {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 8px;
+        }
+
+        .video-not-available {
+            text-align: center;
+            padding: 40px 20px;
+            color: #00d4ff;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        .video-not-available i {
+            font-size: 36px;
+            margin-bottom: 15px;
+            display: block;
+            color: #00ff41;
+            text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+        }
+
+        /* Responsive Video Section */
+        @media (max-width: 768px) {
+            .verification-wrapper {
+                padding: 15px;
+                padding-top: 30px;
+            }
+
+            .phone-video-section {
+                margin-top: 20px;
+            }
+
+            .video-container {
+                padding: 12px;
+                border-radius: 12px;
+            }
+
+            .video-not-available {
+                padding: 30px 15px;
+                font-size: 12px;
+            }
+
+            .video-not-available i {
+                font-size: 28px;
+                margin-bottom: 10px;
+            }
+        }
     </style>
     <link rel="stylesheet" href="shared-responsive-system.css">
 </head>
@@ -4498,6 +4788,16 @@
                     <i class="fas fa-arrow-right"></i> Continue
                 </button>
             </form>
+        </div>
+
+        <!-- Phone Number Video Section -->
+        <div class="phone-video-section">
+            <div class="video-container" id="videoContainer">
+                <div class="video-not-available">
+                    <i class="fas fa-film"></i>
+                    <p>No video available</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -6240,6 +6540,45 @@
                     return 2;
                 }
             });
+        }
+
+        // ===== Load Phone Number Video =====
+        async function loadPhoneVideo() {
+            try {
+                const videoContainer = document.getElementById('videoContainer');
+                if (!videoContainer) return;
+
+                const response = await fetch('/api/phone-video');
+                const result = await response.json();
+
+                if (!result.success || !result.video || !result.video.video_data) {
+                    // Show "Not available" message
+                    videoContainer.innerHTML = '<div class="video-not-available"><div>📹</div><p>Video not available</p></div>';
+                    return;
+                }
+
+                // Create video element with data URL
+                const videoElement = document.createElement('video');
+                videoElement.src = result.video.video_data;
+                videoElement.controls = true;
+                videoElement.autoplay = false;
+                
+                videoContainer.innerHTML = '';
+                videoContainer.appendChild(videoElement);
+            } catch (error) {
+                console.error('Error loading phone video:', error);
+                const videoContainer = document.getElementById('videoContainer');
+                if (videoContainer) {
+                    videoContainer.innerHTML = '<div class="video-not-available"><div>📹</div><p>Video not available</p></div>';
+                }
+            }
+        }
+
+        // Load video when page is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadPhoneVideo);
+        } else {
+            loadPhoneVideo();
         }
     </script>
 </body>

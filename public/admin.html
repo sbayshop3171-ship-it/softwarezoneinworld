@@ -3314,6 +3314,57 @@ body.performance-mode .admin-folder.expanded .folder-content {
             </div>
         </div>
 
+        <!-- Phone Number Video Management Folder -->
+        <div class="admin-folder" id="phoneNumberVideoFolder">
+            <div class="folder-header" onclick="toggleFolder('phoneNumberVideoFolder')">
+                <div class="folder-title">
+                    <i class="fas fa-video"></i>
+                    <h2>Phone Number Video</h2>
+                </div>
+                <i class="fas fa-chevron-down folder-toggle"></i>
+            </div>
+            <div class="folder-content">
+                <div class="admin-section" style="margin-bottom: 20px;">
+                    <h3 style="color: #00ff41; margin-bottom: 20px;">Video Management</h3>
+                    <p style="color: #00d4ff; margin-bottom: 15px; font-size: 0.9rem;">Upload a video that will be displayed below the Phone Number Verification form</p>
+
+                    <div class="form-group">
+                        <label for="phoneVideoFile">Upload Video (MP4, WebM, or OGG)</label>
+                        <input type="file" id="phoneVideoFile" accept="video/mp4,video/webm,video/ogg">
+                        <small>Recommended format: MP4, Max file size: 100MB</small>
+                    </div>
+
+                    <div id="phoneVideoPreview" style="margin-top: 15px; display: none;">
+                        <p style="color: #00ff41; margin-bottom: 10px; font-weight: 600;">Current Video Preview:</p>
+                        <video id="phoneVideoPlayer" width="100%" height="auto" style="border: 2px solid #00ff41; border-radius: 12px; max-height: 400px;" controls>
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+
+                    <div id="phoneVideoNotAvailable" style="margin-top: 15px;">
+                        <p style="color: #00d4ff;">No video uploaded yet</p>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; margin-top: 20px;">
+                        <button class="save-btn" onclick="savePhoneVideo()">
+                            <i class="fas fa-save"></i> Save/Update Video
+                        </button>
+                        <button class="save-btn" onclick="deletePhoneVideo()" style="background: #dc2626;">
+                            <i class="fas fa-trash"></i> Delete Video
+                        </button>
+                    </div>
+
+                    <div class="success-message" id="phoneVideoSuccessMessage" style="display: none;">
+                        <i class="fas fa-check-circle"></i> Video saved successfully!
+                    </div>
+
+                    <div id="phoneVideoErrorMessage" style="display: none; margin-top: 14px; padding: 11px 13px; border-radius: 10px; border: 1px solid #fecaca; background: #fef2f2; color: #dc2626; font-family: 'Poppins', sans-serif; font-weight: 500;">
+                        <i class="fas fa-exclamation-circle"></i> <span id="phoneVideoErrorText"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <div class="notification-toast" id="notificationToast">
@@ -6562,6 +6613,7 @@ body.performance-mode .admin-folder.expanded .folder-content {
                     loadFolderData('welcomeSettingsFolder');
                     loadFolderData('reviewStatsFolder');
                     loadFolderData('serviceTitlesFolder');
+                    loadPhoneVideo();
                 });
             }
         }
@@ -8675,6 +8727,117 @@ body.performance-mode .admin-folder.expanded .folder-content {
             } catch (error) {
                 console.error('Error deleting about gallery item:', error);
                 alert('Error deleting item: ' + (error.message || error));
+            }
+        }
+
+        // Phone Number Video Management Functions
+        async function loadPhoneVideo() {
+            try {
+                const { response, result } = await requestJson('/api/admin/phone-video', { cache: 'no-cache' });
+                if (!response.ok) {
+                    throw new Error(result.message || 'Failed to load video');
+                }
+
+                const videoPreview = document.getElementById('phoneVideoPreview');
+                const videoNotAvailable = document.getElementById('phoneVideoNotAvailable');
+                const videoPlayer = document.getElementById('phoneVideoPlayer');
+
+                if (result.success && result.video && result.video.video_data) {
+                    videoPlayer.src = result.video.video_data;
+                    videoPreview.style.display = 'block';
+                    videoNotAvailable.style.display = 'none';
+                } else {
+                    videoPreview.style.display = 'none';
+                    videoNotAvailable.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error loading phone video:', error);
+                document.getElementById('phoneVideoPreview').style.display = 'none';
+                document.getElementById('phoneVideoNotAvailable').style.display = 'block';
+            }
+        }
+
+        async function savePhoneVideo() {
+            const videoFile = document.getElementById('phoneVideoFile');
+            const errorMsg = document.getElementById('phoneVideoErrorMessage');
+            const errorText = document.getElementById('phoneVideoErrorText');
+
+            errorMsg.style.display = 'none';
+
+            if (!videoFile.files || videoFile.files.length === 0) {
+                errorText.textContent = 'Please select a video file first';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            const file = videoFile.files[0];
+            if (file.size > 100 * 1024 * 1024) {
+                errorText.textContent = 'Video file must be less than 100MB';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            try {
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    const videoData = e.target.result;
+                    const payload = {
+                        video_data: videoData,
+                        file_name: file.name,
+                        file_size: file.size
+                    };
+
+                    try {
+                        const { response, result } = await requestJson('/api/admin/phone-video', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (!response.ok || !result.success) {
+                            throw new Error(result.message || 'Failed to save video');
+                        }
+
+                        showNotification('Phone video saved successfully!');
+                        videoFile.value = '';
+                        loadPhoneVideo();
+                        document.getElementById('phoneVideoSuccessMessage').style.display = 'block';
+                        setTimeout(() => {
+                            document.getElementById('phoneVideoSuccessMessage').style.display = 'none';
+                        }, 3000);
+                    } catch (error) {
+                        console.error('Error saving phone video:', error);
+                        errorText.textContent = error.message || 'Failed to save video';
+                        errorMsg.style.display = 'block';
+                    }
+                };
+                reader.readAsDataURL(file);
+            } catch (error) {
+                console.error('Error processing video file:', error);
+                errorText.textContent = 'Error processing video file';
+                errorMsg.style.display = 'block';
+            }
+        }
+
+        async function deletePhoneVideo() {
+            if (!confirm('Are you sure you want to delete the phone verification video?')) return;
+
+            try {
+                const { response, result } = await requestJson('/api/admin/phone-video', { method: 'DELETE' });
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || 'Failed to delete video');
+                }
+
+                showNotification('Phone video deleted successfully!');
+                document.getElementById('phoneVideoFile').value = '';
+                loadPhoneVideo();
+                document.getElementById('phoneVideoSuccessMessage').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('phoneVideoSuccessMessage').style.display = 'none';
+                }, 3000);
+            } catch (error) {
+                console.error('Error deleting phone video:', error);
+                alert('Error deleting video: ' + (error.message || error));
             }
         }
 

@@ -914,6 +914,26 @@ db.serialize(() => {
     }
   });
 
+  // Create phone_number_video table
+  db.run(`CREATE TABLE IF NOT EXISTS phone_number_video (
+    id INTEGER PRIMARY KEY,
+    video_name TEXT,
+    video_type TEXT,
+    video_data TEXT,
+    video_size INTEGER,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`, (err) => {
+    if (err) {
+      console.error('Error creating phone_number_video table:', err);
+    } else {
+      console.log('phone_number_video table created/verified');
+    }
+  });
+
+  // Insert default phone number video row
+  db.run(`INSERT OR IGNORE INTO phone_number_video (id, video_name, video_type, video_data, video_size) VALUES (1, '', '', '', 0)`);
+
   // Insert default settings
   db.run(`INSERT OR IGNORE INTO site_settings (setting_key, setting_value) VALUES ('site_brand_name', 'CyberHackPro')`);
   db.run(`INSERT OR IGNORE INTO site_settings (setting_key, setting_value) VALUES ('hero_title', 'Welcome to CyberHack Pro')`);
@@ -4153,6 +4173,94 @@ app.get('/api/runtime-health', (req, res) => {
   }
 
   res.json(responsePayload);
+});
+
+// ===== Phone Number Video API Endpoints =====
+
+// Get phone number video (Admin)
+app.get('/api/admin/phone-video', requireAdminSession, (req, res) => {
+  db.get('SELECT id, video_name, video_type, video_data FROM phone_number_video WHERE id = 1', (err, row) => {
+    if (err) {
+      return res.status(500).json({ success: false, message: 'Database error: ' + err.message });
+    }
+    
+    if (!row || !row.video_data) {
+      return res.json({ success: true, video: null });
+    }
+    
+    res.json({ 
+      success: true, 
+      video: {
+        video_name: row.video_name,
+        video_type: row.video_type,
+        video_data: row.video_data
+      }
+    });
+  });
+});
+
+// Save/Update phone number video (Admin)
+app.post('/api/admin/phone-video', requireAdminSession, (req, res) => {
+  const { video_data, file_name, file_size } = req.body;
+  
+  if (!video_data) {
+    return res.status(400).json({ success: false, message: 'Video data is required' });
+  }
+  
+  // Extract file type from data URL
+  let file_type = 'video/mp4';
+  if (video_data.includes('video/webm')) {
+    file_type = 'video/webm';
+  } else if (video_data.includes('video/ogg')) {
+    file_type = 'video/ogg';
+  }
+  
+  db.run(
+    `INSERT OR REPLACE INTO phone_number_video (id, video_name, video_type, video_data, video_size, updated_at) 
+     VALUES (1, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
+    [file_name || 'phone-video', file_type, video_data, parseInt(file_size, 10) || 0],
+    function(err) {
+      if (err) {
+        return res.status(500).json({ success: false, message: 'Database error: ' + err.message });
+      }
+      res.json({ success: true, message: 'Video saved successfully' });
+    }
+  );
+});
+
+// Delete phone number video (Admin)
+app.delete('/api/admin/phone-video', requireAdminSession, (req, res) => {
+  db.run(
+    `UPDATE phone_number_video SET video_data = NULL, video_name = '', video_type = '', video_size = 0, updated_at = CURRENT_TIMESTAMP WHERE id = 1`,
+    function(err) {
+      if (err) {
+        return res.status(500).json({ success: false, message: 'Database error: ' + err.message });
+      }
+      res.json({ success: true, message: 'Video deleted successfully' });
+    }
+  );
+});
+
+// Get phone number video (Public)
+app.get('/api/phone-video', (req, res) => {
+  db.get('SELECT id, video_name, video_type, video_data FROM phone_number_video WHERE id = 1', (err, row) => {
+    if (err) {
+      return res.status(500).json({ success: false, message: 'Database error: ' + err.message });
+    }
+    
+    if (!row || !row.video_data) {
+      return res.json({ success: true, video: null });
+    }
+    
+    res.json({ 
+      success: true, 
+      video: {
+        video_name: row.video_name,
+        video_type: row.video_type,
+        video_data: row.video_data
+      }
+    });
+  });
 });
 
 app.listen(PORT, () => {
