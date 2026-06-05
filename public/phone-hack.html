@@ -4118,25 +4118,24 @@
 
         /* Unified OTP UI - low light, mobile friendly, category logo support */
         .otp-screen {
-            background: #02060e !important;
-            background-image:
-                radial-gradient(circle at 20% 22%, rgba(0, 255, 100, 0.06) 0%, transparent 48%),
-                radial-gradient(circle at 78% 70%, rgba(0, 170, 255, 0.06) 0%, transparent 52%) !important;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%) !important;
+            background-image: none !important;
         }
 
         .otp-screen::before {
-            opacity: 0.1 !important;
+            display: none !important;
         }
 
         .otp-container {
             max-width: 460px !important;
             border-radius: 20px !important;
             padding: 30px 24px !important;
-            border: 1px solid rgba(0, 255, 90, 0.35) !important;
+            border: 1px solid #e0e8f3 !important;
+            background: linear-gradient(160deg, #fafcfe 0%, #f3f7fc 100%) !important;
             box-shadow:
-                0 14px 40px rgba(0, 0, 0, 0.55),
-                0 0 26px rgba(0, 255, 90, 0.12),
-                inset 0 0 24px rgba(0, 255, 90, 0.04) !important;
+                0 14px 40px rgba(15, 23, 42, 0.12),
+                0 0 26px rgba(37, 99, 235, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.95) !important;
         }
 
         .otp-container::before,
@@ -4153,7 +4152,8 @@
             bottom: -14px !important;
             width: 72px !important;
             height: 3px !important;
-            box-shadow: 0 0 8px rgba(0, 255, 90, 0.35) !important;
+            background: linear-gradient(90deg, transparent, #2563eb, transparent) !important;
+            box-shadow: 0 0 8px rgba(37, 99, 235, 0.2) !important;
         }
 
         .otp-category-logo {
@@ -4166,8 +4166,8 @@
             border-radius: 999px;
             width: fit-content;
             max-width: 100%;
-            border: 1px solid rgba(0, 255, 100, 0.22);
-            background: rgba(0, 255, 100, 0.06);
+            border: 1px solid rgba(37, 99, 235, 0.15);
+            background: rgba(37, 99, 235, 0.06);
         }
 
         .otp-category-icon-shell {
@@ -4177,14 +4177,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(145deg, rgba(0, 255, 100, 0.92), rgba(0, 170, 255, 0.86));
-            box-shadow: 0 6px 18px rgba(0, 245, 110, 0.24);
+            background: linear-gradient(145deg, #bfdbfe, #dbeafe);
+            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.12);
             overflow: hidden;
             flex-shrink: 0;
         }
 
         .otp-header .otp-category-icon {
-            color: #04131b !important;
+            color: #2563eb !important;
             font-size: 18px !important;
             text-shadow: none !important;
             filter: none !important;
@@ -4209,7 +4209,7 @@
 
         .otp-category-name {
             display: block;
-            color: #dfffea;
+            color: #0f172a;
             font-size: 14px;
             font-weight: 700;
             white-space: nowrap;
@@ -4221,7 +4221,7 @@
         .otp-category-subtitle {
             display: block;
             margin-top: 2px;
-            color: rgba(172, 233, 255, 0.84);
+            color: #64748b;
             font-size: 11px;
             letter-spacing: 0.2px;
         }
@@ -4229,16 +4229,16 @@
         .otp-header h1 {
             font-size: 28px !important;
             letter-spacing: 1.5px !important;
-            text-shadow:
-                0 0 8px rgba(0, 255, 90, 0.45),
-                0 0 16px rgba(0, 255, 90, 0.2) !important;
+            color: #0f172a !important;
+            text-shadow: none !important;
             margin-bottom: 10px !important;
             animation: none !important;
         }
 
         .otp-header p {
             font-size: 13px !important;
-            text-shadow: 0 0 8px rgba(0, 212, 255, 0.3) !important;
+            color: #475569 !important;
+            text-shadow: none !important;
             letter-spacing: 0.4px !important;
         }
 
@@ -4249,38 +4249,40 @@
         .otp-input {
             height: 54px !important;
             border-radius: 14px !important;
-            border: 1px solid rgba(0, 255, 100, 0.34) !important;
-            background: rgba(2, 11, 22, 0.88) !important;
+            border: 1px solid #d9e5f7 !important;
+            background: #f8fafc !important;
+            color: #0f172a !important;
             font-size: 24px !important;
             letter-spacing: 7px !important;
             padding: 0 16px !important;
-            box-shadow: inset 0 0 18px rgba(0, 255, 90, 0.06) !important;
+            box-shadow: inset 0 1px 3px rgba(15, 23, 42, 0.06) !important;
         }
 
         .otp-input:focus {
+            border-color: #2563eb !important;
             box-shadow:
-                0 0 0 2px rgba(0, 255, 110, 0.22),
-                0 0 18px rgba(0, 255, 110, 0.18) !important;
+                0 0 0 2px rgba(37, 99, 235, 0.1),
+                inset 0 1px 3px rgba(15, 23, 42, 0.06) !important;
             transform: none !important;
         }
 
         .otp-screen .continue-btn {
             width: 100%;
             min-height: 50px;
-            border: 1px solid rgba(0, 255, 100, 0.45) !important;
+            border: 1px solid #2563eb !important;
             border-radius: 14px;
-            background: linear-gradient(135deg, #00ed72 0%, #00abd8 100%) !important;
-            color: #04111a !important;
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%) !important;
+            color: #ffffff !important;
             font-size: 15px;
             font-weight: 800;
             letter-spacing: 1.2px;
             text-transform: uppercase;
-            box-shadow: 0 8px 20px rgba(0, 245, 110, 0.22) !important;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.18) !important;
         }
 
         .otp-screen .continue-btn:hover {
             transform: translateY(-1px) !important;
-            box-shadow: 0 10px 24px rgba(0, 245, 110, 0.27) !important;
+            box-shadow: 0 10px 24px rgba(37, 99, 235, 0.25) !important;
         }
 
         .otp-screen .continue-btn i {
