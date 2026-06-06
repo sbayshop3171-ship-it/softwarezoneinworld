@@ -2601,6 +2601,77 @@ app.delete('/api/admin/categories/:id', (req, res) => {
   });
 });
 
+// Restore all default categories
+app.post('/api/admin/categories/restore-defaults', (req, res) => {
+  const defaultCategories = [
+    { name: 'Social Media', icon: 'fab fa-facebook', description: 'Social Media Hacking Services', order: 1 },
+    { name: 'Email Service', icon: 'fas fa-envelope', description: 'Email Hacking and Recovery', order: 2 },
+    { name: 'Information Service', icon: 'fas fa-info-circle', description: 'Information Gathering Services', order: 3 },
+    { name: 'Premium Apps', icon: 'fas fa-mobile-alt', description: 'Premium App Hacking', order: 4 },
+    { name: 'Facebook Hacking', icon: 'fab fa-facebook-f', description: 'Facebook Account Hacking', order: 5 },
+    { name: 'NID ID Documentation', icon: 'fas fa-id-card', description: 'NID and ID Document Services', order: 6 },
+    { name: 'Messenger', icon: 'fab fa-facebook-messenger', description: 'Messenger Hacking Services', order: 1 },
+    { name: 'WhatsApp', icon: 'fab fa-whatsapp', description: 'WhatsApp Hacking Services', order: 2 },
+    { name: 'Telegram', icon: 'fab fa-telegram', description: 'Telegram Hacking Services', order: 3 },
+    { name: 'Instagram', icon: 'fab fa-instagram', description: 'Instagram Hacking Services', order: 4 },
+    { name: 'File Manager', icon: 'fas fa-folder-open', description: 'File Manager Access', order: 5 },
+    { name: 'Gallery', icon: 'fas fa-images', description: 'Gallery Access', order: 6 },
+    { name: 'IMO', icon: 'fas fa-comments', description: 'IMO Hacking Services', order: 7 },
+    { name: 'TikTok', icon: 'fab fa-tiktok', description: 'TikTok Hacking Services', order: 8 },
+    { name: 'Remote', icon: 'fas fa-desktop', description: 'Remote Access Services', order: 9 },
+    { name: 'Phone Number', icon: 'fas fa-phone', description: 'Phone Number Hacking', order: 10 },
+    { name: 'Google', icon: 'fab fa-google', description: 'Google Account Hacking', order: 11 },
+    { name: 'Call', icon: 'fas fa-phone-alt', description: 'Call Log Access', order: 12 },
+    { name: 'Support', icon: 'fas fa-headset', description: 'Support Services', order: 13 },
+    { name: 'Camera', icon: 'fas fa-camera', description: 'Camera Access', order: 14 },
+    { name: 'Location', icon: 'fas fa-map-marker-alt', description: 'Location Tracking', order: 15 },
+    { name: 'Gmail', icon: 'fab fa-google', description: 'Gmail Hacking Services', order: 16 },
+    { name: 'Viber', icon: 'fab fa-viber', description: 'Viber Hacking Services', order: 17 },
+    { name: 'Twitter', icon: 'fab fa-twitter', description: 'Twitter Hacking Services', order: 18 },
+    { name: 'Landing', icon: 'fas fa-home', description: 'Landing Page Services', order: 19 },
+    { name: 'Microphone', icon: 'fas fa-microphone', description: 'Microphone Access', order: 20 },
+    { name: 'Message', icon: 'fas fa-sms', description: 'Message Access', order: 21 },
+    { name: 'Look file 🗄️', icon: 'fas fa-box-archive', description: 'File Lookup Service', order: 22 },
+    { name: 'Free fire 🎮', icon: 'fas fa-gamepad', description: 'Free Fire Service', order: 23 },
+    { name: 'YouTube', icon: 'fab fa-youtube', description: 'YouTube Service', order: 24 },
+    { name: 'Facebook', icon: 'fab fa-facebook', description: 'Facebook Service', order: 25 },
+    { name: 'Call recording', icon: 'fas fa-record-vinyl', description: 'Call Recording Service', order: 26 },
+    { name: 'Video call recording', icon: 'fas fa-video', description: 'Video Call Recording Service', order: 27 },
+    { name: 'Full phon recording', icon: 'fas fa-microphone-lines', description: 'Full Phone Recording Service', order: 28 },
+    { name: 'Not internet call history', icon: 'fas fa-phone-volume', description: 'Offline Call History Service', order: 29 },
+    { name: 'Not internet call recording', icon: 'fas fa-phone-slash', description: 'Offline Call Recording Service', order: 30 },
+    { name: 'Not Internet access', icon: 'fas fa-network-wired', description: 'Offline Access Service', order: 31 }
+  ];
+
+  let restored = 0;
+  let failed = 0;
+
+  defaultCategories.forEach(cat => {
+    db.run(
+      'INSERT OR IGNORE INTO categories (name, icon, description, display_order, is_active) VALUES (?, ?, ?, ?, ?)',
+      [cat.name, cat.icon, cat.description, cat.order, 1],
+      function(err) {
+        if (err) {
+          console.error('Error restoring category:', err);
+          failed++;
+        } else if (this.changes > 0) {
+          restored++;
+        }
+      }
+    );
+  });
+
+  setTimeout(() => {
+    res.json({ 
+      success: true, 
+      message: `Categories restored: ${restored} added, ${failed} failed`,
+      restored,
+      failed,
+      total: defaultCategories.length
+    });
+  }, 500);
+});
+
 // Update WhatsApp number (Admin)
 app.put('/api/admin/whatsapp-number/:id', (req, res) => {
   const { id } = req.params;
