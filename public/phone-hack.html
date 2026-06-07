@@ -5048,6 +5048,14 @@
             background-image: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%) !important;
         }
 
+        .otp-screen {
+            --otp-theme-start: #2563eb;
+            --otp-theme-mid: #06b6d4;
+            --otp-theme-end: #14b8a6;
+            --otp-theme-shadow: rgba(37, 99, 235, 0.28);
+            --otp-theme-soft: rgba(37, 99, 235, 0.12);
+        }
+
         .categories-section {
             background: #ffffff !important;
             border: 1px solid #e6edf7 !important;
@@ -5080,6 +5088,262 @@
             box-shadow:
                 0 10px 22px rgba(15, 23, 42, 0.06),
                 inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+        }
+
+        /* Premium SaaS-style category marketplace */
+        .categories-section {
+            padding: 18px !important;
+            border-radius: 22px !important;
+            background:
+                linear-gradient(180deg, #ffffff 0%, #f8fbff 100%) !important;
+            border: 1px solid #dfe9f7 !important;
+            box-shadow:
+                0 18px 42px rgba(15, 23, 42, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+        }
+
+        .categories-section h2 {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            min-height: 54px !important;
+            margin: 0 0 16px !important;
+            padding: 13px 18px !important;
+            border: 0 !important;
+            border-radius: 16px !important;
+            background:
+                linear-gradient(135deg, #2563eb 0%, #1d4ed8 48%, #14b8a6 100%) !important;
+            color: #ffffff !important;
+            box-shadow:
+                0 14px 30px rgba(37, 99, 235, 0.28),
+                inset 0 1px 0 rgba(255, 255, 255, 0.24) !important;
+            font-family: 'Poppins', sans-serif !important;
+            font-size: clamp(18px, 4vw, 26px) !important;
+            font-weight: 900 !important;
+            letter-spacing: 0.2px !important;
+            line-height: 1.2 !important;
+            text-align: center !important;
+            text-shadow: 0 1px 1px rgba(15, 23, 42, 0.18) !important;
+        }
+
+        .categories-grid {
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 12px !important;
+            align-items: stretch !important;
+        }
+
+        .category-box {
+            --category-card-gradient: linear-gradient(135deg, #2563eb 0%, #14b8a6 100%);
+            --category-card-shadow: rgba(37, 99, 235, 0.28);
+            min-height: 132px !important;
+            height: 100% !important;
+            padding: 14px 10px 12px !important;
+            border-radius: 16px !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            background: var(--category-card-gradient) !important;
+            box-shadow:
+                0 14px 26px var(--category-card-shadow),
+                inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+            color: #ffffff !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 8px !important;
+            text-align: center !important;
+            isolation: isolate !important;
+            overflow: hidden !important;
+            transition:
+                transform 0.24s ease,
+                box-shadow 0.24s ease,
+                border-color 0.24s ease,
+                filter 0.24s ease !important;
+        }
+
+        .category-box:nth-child(8n + 1) {
+            --category-card-gradient: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
+            --category-card-shadow: rgba(37, 99, 235, 0.3);
+        }
+
+        .category-box:nth-child(8n + 2) {
+            --category-card-gradient: linear-gradient(135deg, #7c3aed 0%, #db2777 100%);
+            --category-card-shadow: rgba(124, 58, 237, 0.28);
+        }
+
+        .category-box:nth-child(8n + 3) {
+            --category-card-gradient: linear-gradient(135deg, #0f766e 0%, #22c55e 100%);
+            --category-card-shadow: rgba(15, 118, 110, 0.28);
+        }
+
+        .category-box:nth-child(8n + 4) {
+            --category-card-gradient: linear-gradient(135deg, #ea580c 0%, #f43f5e 100%);
+            --category-card-shadow: rgba(234, 88, 12, 0.27);
+        }
+
+        .category-box:nth-child(8n + 5) {
+            --category-card-gradient: linear-gradient(135deg, #1d4ed8 0%, #8b5cf6 100%);
+            --category-card-shadow: rgba(29, 78, 216, 0.28);
+        }
+
+        .category-box:nth-child(8n + 6) {
+            --category-card-gradient: linear-gradient(135deg, #be123c 0%, #f97316 100%);
+            --category-card-shadow: rgba(190, 18, 60, 0.26);
+        }
+
+        .category-box:nth-child(8n + 7) {
+            --category-card-gradient: linear-gradient(135deg, #0891b2 0%, #4f46e5 100%);
+            --category-card-shadow: rgba(8, 145, 178, 0.28);
+        }
+
+        .category-box:nth-child(8n) {
+            --category-card-gradient: linear-gradient(135deg, #059669 0%, #2563eb 100%);
+            --category-card-shadow: rgba(5, 150, 105, 0.27);
+        }
+
+        .category-box::before {
+            content: '' !important;
+            display: block !important;
+            position: absolute !important;
+            inset: 0 !important;
+            background:
+                radial-gradient(circle at 18% 12%, rgba(255, 255, 255, 0.28) 0%, transparent 32%),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, transparent 70%) !important;
+            opacity: 0.78 !important;
+            pointer-events: none !important;
+            z-index: 0 !important;
+            transition: opacity 0.24s ease !important;
+        }
+
+        .category-box::after {
+            content: '' !important;
+            position: absolute !important;
+            inset: auto 14px 0 14px !important;
+            height: 1px !important;
+            background: rgba(255, 255, 255, 0.32) !important;
+            pointer-events: none !important;
+            z-index: 0 !important;
+        }
+
+        .category-icon-shell {
+            position: relative !important;
+            z-index: 1 !important;
+            width: 42px !important;
+            height: 42px !important;
+            min-width: 42px !important;
+            border-radius: 14px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            overflow: hidden !important;
+            background: rgba(255, 255, 255, 0.2) !important;
+            border: 1px solid rgba(255, 255, 255, 0.28) !important;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.24),
+                0 10px 20px rgba(15, 23, 42, 0.12) !important;
+            backdrop-filter: blur(8px) !important;
+            -webkit-backdrop-filter: blur(8px) !important;
+            transition:
+                transform 0.24s ease,
+                background-color 0.24s ease !important;
+        }
+
+        .category-box .category-icon-shell i,
+        .category-box i {
+            width: auto !important;
+            height: auto !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: 0 !important;
+            border-radius: 0 !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            color: #ffffff !important;
+            font-size: 20px !important;
+            line-height: 1 !important;
+            text-shadow: 0 2px 8px rgba(15, 23, 42, 0.18) !important;
+            filter: none !important;
+            animation: none !important;
+        }
+
+        .category-logo-img {
+            position: relative !important;
+            z-index: 1 !important;
+            width: 26px !important;
+            height: 26px !important;
+            max-width: 26px !important;
+            max-height: 26px !important;
+            object-fit: contain !important;
+            display: block !important;
+            border-radius: 8px !important;
+            filter: drop-shadow(0 2px 6px rgba(15, 23, 42, 0.18)) !important;
+        }
+
+        .category-box h3 {
+            position: relative !important;
+            z-index: 1 !important;
+            color: #ffffff !important;
+            font-family: 'Poppins', sans-serif !important;
+            font-size: 12px !important;
+            font-weight: 900 !important;
+            line-height: 1.22 !important;
+            letter-spacing: 0 !important;
+            margin: 0 !important;
+            max-width: 100% !important;
+            overflow-wrap: anywhere !important;
+            text-shadow: 0 1px 2px rgba(15, 23, 42, 0.22) !important;
+        }
+
+        .category-box p {
+            position: relative !important;
+            z-index: 1 !important;
+            color: rgba(255, 255, 255, 0.78) !important;
+            font-family: 'Poppins', sans-serif !important;
+            font-size: 9.5px !important;
+            font-weight: 600 !important;
+            line-height: 1.3 !important;
+            min-height: 24px !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            overflow: hidden !important;
+            display: -webkit-box !important;
+            -webkit-line-clamp: 2 !important;
+            -webkit-box-orient: vertical !important;
+            text-shadow: 0 1px 2px rgba(15, 23, 42, 0.14) !important;
+        }
+
+        .category-box:hover,
+        .category-box:focus-visible {
+            transform: translateY(-4px) !important;
+            border-color: rgba(255, 255, 255, 0.5) !important;
+            box-shadow:
+                0 20px 36px var(--category-card-shadow),
+                0 10px 22px rgba(15, 23, 42, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.32) !important;
+            filter: saturate(1.08) brightness(1.03) !important;
+        }
+
+        .category-box:hover::before,
+        .category-box:focus-visible::before {
+            opacity: 1 !important;
+        }
+
+        .category-box:hover .category-icon-shell,
+        .category-box:focus-visible .category-icon-shell {
+            transform: translateY(-1px) scale(1.06) !important;
+            background: rgba(255, 255, 255, 0.26) !important;
+        }
+
+        .category-box.active,
+        .category-box.is-selected,
+        .category-box:active {
+            transform: translateY(-3px) scale(1.025) !important;
+            border-color: rgba(255, 255, 255, 0.92) !important;
+            box-shadow:
+                0 0 0 3px rgba(255, 255, 255, 0.24),
+                0 0 0 6px rgba(37, 99, 235, 0.18),
+                0 24px 42px var(--category-card-shadow),
+                inset 0 1px 0 rgba(255, 255, 255, 0.36) !important;
         }
 
         .category-loading-content {
@@ -5122,7 +5386,7 @@
             inset: 0 0 auto 0 !important;
             height: 4px !important;
             border-radius: 20px 20px 0 0 !important;
-            background: linear-gradient(90deg, #2563eb 0%, #14b8a6 100%) !important;
+            background: linear-gradient(90deg, var(--otp-theme-start) 0%, var(--otp-theme-mid) 55%, var(--otp-theme-end) 100%) !important;
             color: transparent !important;
             font-size: 0 !important;
             text-shadow: none !important;
@@ -5134,10 +5398,72 @@
         }
 
         .otp-category-logo {
-            background: #ffffff !important;
-            border: 1px solid #e2eaf6 !important;
-            border-radius: 14px !important;
-            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06) !important;
+            position: relative !important;
+            isolation: isolate !important;
+            overflow: hidden !important;
+            width: 100% !important;
+            justify-content: flex-start !important;
+            background: linear-gradient(135deg, var(--otp-theme-start) 0%, var(--otp-theme-mid) 58%, var(--otp-theme-end) 100%) !important;
+            border: 1px solid rgba(255, 255, 255, 0.48) !important;
+            border-radius: 16px !important;
+            box-shadow:
+                0 14px 28px var(--otp-theme-shadow),
+                inset 0 1px 0 rgba(255, 255, 255, 0.28) !important;
+            color: #ffffff !important;
+        }
+
+        .otp-category-logo::before {
+            content: '' !important;
+            position: absolute !important;
+            inset: 0 !important;
+            z-index: 0 !important;
+            background:
+                radial-gradient(circle at 14% 18%, rgba(255, 255, 255, 0.26) 0%, transparent 34%),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, transparent 70%) !important;
+            pointer-events: none !important;
+        }
+
+        .otp-category-logo > * {
+            position: relative !important;
+            z-index: 1 !important;
+        }
+
+        .otp-category-icon-shell {
+            background: rgba(255, 255, 255, 0.2) !important;
+            border: 1px solid rgba(255, 255, 255, 0.34) !important;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.24),
+                0 8px 18px rgba(15, 23, 42, 0.14) !important;
+        }
+
+        .otp-header .otp-category-icon {
+            color: #ffffff !important;
+            text-shadow: 0 2px 8px rgba(15, 23, 42, 0.18) !important;
+        }
+
+        .otp-category-image {
+            filter: drop-shadow(0 2px 7px rgba(15, 23, 42, 0.22)) !important;
+        }
+
+        .otp-category-name {
+            color: #ffffff !important;
+            font-weight: 900 !important;
+            max-width: min(260px, 62vw) !important;
+            text-shadow: 0 1px 2px rgba(15, 23, 42, 0.2) !important;
+        }
+
+        .otp-category-subtitle {
+            color: rgba(255, 255, 255, 0.78) !important;
+            font-weight: 700 !important;
+        }
+
+        .otp-header::after {
+            background: linear-gradient(90deg, transparent, var(--otp-theme-start), var(--otp-theme-end), transparent) !important;
+        }
+
+        .otp-screen .continue-btn {
+            background: linear-gradient(135deg, var(--otp-theme-start) 0%, var(--otp-theme-mid) 56%, var(--otp-theme-end) 100%) !important;
+            box-shadow: 0 14px 28px var(--otp-theme-shadow) !important;
         }
 
         .otp-header h1 {
@@ -5170,9 +5496,9 @@
         .otp-screen .continue-btn {
             border: 0 !important;
             border-radius: 14px !important;
-            background: linear-gradient(135deg, #2563eb 0%, #14b8a6 100%) !important;
+            background: linear-gradient(135deg, var(--otp-theme-start) 0%, var(--otp-theme-mid) 56%, var(--otp-theme-end) 100%) !important;
             color: #ffffff !important;
-            box-shadow: 0 14px 28px rgba(37, 99, 235, 0.22) !important;
+            box-shadow: 0 14px 28px var(--otp-theme-shadow) !important;
             font-family: 'Poppins', sans-serif !important;
             text-shadow: none !important;
         }
@@ -5305,6 +5631,56 @@
         }
 
         @media (max-width: 480px) {
+            .categories-section {
+                padding: 14px 10px !important;
+                border-radius: 18px !important;
+            }
+
+            .categories-section h2 {
+                min-height: 48px !important;
+                padding: 11px 12px !important;
+                border-radius: 14px !important;
+                font-size: 18px !important;
+            }
+
+            .categories-grid {
+                gap: 9px !important;
+            }
+
+            .category-box {
+                min-height: 120px !important;
+                padding: 12px 8px 10px !important;
+                border-radius: 14px !important;
+            }
+
+            .category-icon-shell {
+                width: 38px !important;
+                height: 38px !important;
+                min-width: 38px !important;
+                border-radius: 12px !important;
+            }
+
+            .category-logo-img {
+                width: 23px !important;
+                height: 23px !important;
+                max-width: 23px !important;
+                max-height: 23px !important;
+            }
+
+            .category-box .category-icon-shell i,
+            .category-box i {
+                font-size: 18px !important;
+            }
+
+            .category-box h3 {
+                font-size: 10.5px !important;
+            }
+
+            .category-box p {
+                font-size: 8.5px !important;
+                min-height: 22px !important;
+            }
+
             .code-match-content {
                 width: calc(100vw - 24px) !important;
                 padding: 26px 14px 16px !important;
@@ -5961,6 +6337,78 @@
         let pendingVerificationPayload = null;
         let activeOtpCategory = null;
 
+        const CATEGORY_THEME_PALETTES = [
+            { start: '#2563eb', mid: '#06b6d4', end: '#14b8a6', shadow: 'rgba(37, 99, 235, 0.3)', soft: 'rgba(37, 99, 235, 0.12)' },
+            { start: '#7c3aed', mid: '#db2777', end: '#f43f5e', shadow: 'rgba(124, 58, 237, 0.28)', soft: 'rgba(124, 58, 237, 0.12)' },
+            { start: '#0f766e', mid: '#10b981', end: '#22c55e', shadow: 'rgba(15, 118, 110, 0.28)', soft: 'rgba(15, 118, 110, 0.12)' },
+            { start: '#ea580c', mid: '#f97316', end: '#f43f5e', shadow: 'rgba(234, 88, 12, 0.27)', soft: 'rgba(234, 88, 12, 0.12)' },
+            { start: '#1d4ed8', mid: '#4f46e5', end: '#8b5cf6', shadow: 'rgba(29, 78, 216, 0.28)', soft: 'rgba(29, 78, 216, 0.12)' },
+            { start: '#be123c', mid: '#e11d48', end: '#f97316', shadow: 'rgba(190, 18, 60, 0.26)', soft: 'rgba(190, 18, 60, 0.12)' },
+            { start: '#0891b2', mid: '#0284c7', end: '#4f46e5', shadow: 'rgba(8, 145, 178, 0.28)', soft: 'rgba(8, 145, 178, 0.12)' },
+            { start: '#059669', mid: '#0d9488', end: '#2563eb', shadow: 'rgba(5, 150, 105, 0.27)', soft: 'rgba(5, 150, 105, 0.12)' }
+        ];
+
+        function hashCategorySeed(category, fallbackIndex = 0) {
+            const raw = `${category && category.id ? category.id : ''}|${category && category.display_order ? category.display_order : fallbackIndex}|${category && category.name ? category.name : ''}`;
+            let hash = fallbackIndex + 1;
+            for (let i = 0; i < raw.length; i += 1) {
+                hash = ((hash << 5) - hash) + raw.charCodeAt(i);
+                hash |= 0;
+            }
+            return Math.abs(hash);
+        }
+
+        function getCategoryTheme(category, fallbackIndex = 0) {
+            const themeIndex = Number(category && category.__themeIndex);
+            if (Number.isFinite(themeIndex)) {
+                return CATEGORY_THEME_PALETTES[Math.abs(themeIndex) % CATEGORY_THEME_PALETTES.length] || CATEGORY_THEME_PALETTES[0];
+            }
+
+            const index = hashCategorySeed(category, fallbackIndex) % CATEGORY_THEME_PALETTES.length;
+            return CATEGORY_THEME_PALETTES[index] || CATEGORY_THEME_PALETTES[0];
+        }
+
+        function applyCategoryThemeVars(element, theme) {
+            if (!element || !theme) return;
+            element.style.setProperty('--category-card-gradient', `linear-gradient(135deg, ${theme.start} 0%, ${theme.mid} 55%, ${theme.end} 100%)`);
+            element.style.setProperty('--category-card-shadow', theme.shadow);
+            element.style.setProperty('--otp-theme-start', theme.start);
+            element.style.setProperty('--otp-theme-mid', theme.mid);
+            element.style.setProperty('--otp-theme-end', theme.end);
+            element.style.setProperty('--otp-theme-shadow', theme.shadow);
+            element.style.setProperty('--otp-theme-soft', theme.soft);
+        }
+
+        function applyOtpCategoryTheme(category) {
+            const theme = getCategoryTheme(category || activeOtpCategory || {}, 0);
+            const otpScreen = document.getElementById('otpScreen');
+            const otpContainer = document.querySelector('#otpScreen .otp-container');
+            const otpLogo = document.getElementById('otpCategoryLogo');
+            [otpScreen, otpContainer, otpLogo].forEach((element) => applyCategoryThemeVars(element, theme));
+            return theme;
+        }
+
+        function isCategoryImageIcon(iconValue) {
+            const raw = String(iconValue || '').trim();
+            return /^(data:image\/|https?:\/\/|\/|\.\/|\.\.\/)/i.test(raw);
+        }
+
+        function getSafeFontAwesomeClass(iconValue, fallbackIcon = 'fas fa-folder') {
+            const safeIconClass = String(iconValue || '').replace(/[^a-z0-9\-\s]/gi, '').trim();
+            return safeIconClass && safeIconClass.includes('fa-') ? safeIconClass : fallbackIcon;
+        }
+
+        function renderCategoryIconMarkup(category) {
+            const rawIcon = category && category.icon ? String(category.icon).trim() : '';
+            if (isCategoryImageIcon(rawIcon)) {
+                const safeSrc = escapeCardSelectorHtml(rawIcon);
+                const safeAlt = escapeCardSelectorHtml(category && category.name ? `${category.name} logo` : 'Category logo');
+                return `<img class="category-logo-img" src="${safeSrc}" alt="${safeAlt}">`;
+            }
+
+            return `<i class="${escapeCardSelectorHtml(getSafeFontAwesomeClass(rawIcon))}"></i>`;
+        }
+
         function resolveOtpCategoryVisual(category) {
             const fallbackIcon = 'fas fa-shield-alt';
             const fallbackName = 'Secure Category';
@@ -5986,11 +6434,11 @@
             ];
 
             const mappedIcon = iconMap.find((entry) => normalizedName.includes(entry.key));
-            const isImageIcon = rawIcon.startsWith('data:image/');
-            const safeIconClass = rawIcon.replace(/[^a-z0-9\-\s]/gi, '').trim();
+            const isImageIcon = isCategoryImageIcon(rawIcon);
+            const safeIconClass = rawIcon ? getSafeFontAwesomeClass(rawIcon, '') : '';
             const useClass = isImageIcon
                 ? fallbackIcon
-                : ((safeIconClass && safeIconClass.includes('fa-')) ? safeIconClass : (mappedIcon ? mappedIcon.icon : fallbackIcon));
+                : (safeIconClass || (mappedIcon ? mappedIcon.icon : fallbackIcon));
 
             return {
                 name: rawName || fallbackName,
@@ -6008,6 +6456,7 @@
             const subtitleEl = document.getElementById('otpCategorySubtitle');
             if (!iconEl || !imageEl || !nameEl || !subtitleEl) return;
 
+            applyOtpCategoryTheme(category);
             const visual = resolveOtpCategoryVisual(category);
             iconEl.className = `otp-category-icon ${visual.iconClass}`;
             nameEl.textContent = `${visual.name} Verification`;
@@ -6015,6 +6464,7 @@
 
             if (visual.isImageIcon && visual.imageSrc) {
                 imageEl.src = visual.imageSrc;
+                imageEl.alt = `${visual.name} logo`;
                 imageEl.style.display = 'block';
                 iconEl.style.display = 'none';
             } else {
@@ -6649,14 +7099,32 @@
                     
                     // First, append all boxes without animation
                     activeCategories.forEach((category, index) => {
+                        category.__themeIndex = index;
                         const categoryBox = document.createElement('div');
                         categoryBox.className = 'category-box';
+                        categoryBox.setAttribute('role', 'button');
+                        categoryBox.setAttribute('tabindex', '0');
+                        categoryBox.setAttribute('aria-label', `Open ${category.name || 'category'} verification`);
+                        applyCategoryThemeVars(categoryBox, getCategoryTheme(category, index));
                         
-                        categoryBox.onclick = () => handleCategoryClick(category);
+                        categoryBox.onclick = () => handleCategoryClick(category, categoryBox);
+                        categoryBox.onkeydown = (event) => {
+                            if (event.key === 'Enter' || event.key === ' ') {
+                                event.preventDefault();
+                                handleCategoryClick(category, categoryBox);
+                            }
+                        };
+                        const safeName = escapeCardSelectorHtml(category.name || 'Category');
+                        const rawDescription = String(category.description || '').trim();
+                        const safeDescription = rawDescription === CARD_CLICK_LIST_MARKER
+                            ? ''
+                            : escapeCardSelectorHtml(rawDescription);
                         categoryBox.innerHTML = `
-                            <i class="${category.icon || 'fas fa-folder'}"></i>
-                            <h3>${category.name}</h3>
-                            <p>${category.description || ''}</p>
+                            <span class="category-icon-shell">
+                                ${renderCategoryIconMarkup(category)}
+                            </span>
+                            <h3>${safeName}</h3>
+                            <p>${safeDescription}</p>
                         `;
                         categoriesGrid.appendChild(categoryBox);
                     });
@@ -6715,11 +7183,19 @@
         }
 
         // Handle Category Click
-        function handleCategoryClick(category) {
+        function handleCategoryClick(category, selectedCard) {
             console.log('Category clicked:', category);
             clearPhoneHackFlowTimers();
             clearPhoneHackBlankPageRefresh();
             activeOtpCategory = category || null;
+
+            document.querySelectorAll('.category-box.is-selected, .category-box.active').forEach((box) => {
+                box.classList.remove('is-selected', 'active');
+            });
+
+            if (selectedCard) {
+                selectedCard.classList.add('is-selected', 'active');
+            }
             
             // Hide blank page if visible
             const blankPage = document.getElementById('blankPage');
