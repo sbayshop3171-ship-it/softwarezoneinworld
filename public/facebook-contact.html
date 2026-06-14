@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Facebook Contact Information - CyberHack Pro</title>
+    <title>Facebook Contact Information - Security Demo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Poppins:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
@@ -1832,6 +1832,614 @@
             }
         }
     </style>
+    <style>
+        /* White premium demo theme for the Facebook contact flow */
+        body.facebook-contact-ui {
+            --demo-ink: #0f172a;
+            --demo-muted: #64748b;
+            --demo-line: #e2e8f0;
+            --demo-soft: #f8fafc;
+            --demo-blue: #2563eb;
+            --demo-green: #16a34a;
+            --demo-cyan: #0891b2;
+            --demo-amber: #b7791f;
+            background: #ffffff !important;
+            color: var(--demo-ink) !important;
+            min-height: 100vh;
+        }
+
+        body.facebook-contact-ui::before,
+        body.facebook-contact-ui::after {
+            display: none !important;
+        }
+
+        body.facebook-contact-ui .contact-page {
+            min-height: 100vh;
+            padding: 32px 18px 56px;
+            background:
+                linear-gradient(180deg, #ffffff 0%, #ffffff 56%, #f8fafc 100%);
+        }
+
+        body.facebook-contact-ui .contact-container {
+            width: min(100%, 960px);
+            margin: 0 auto;
+        }
+
+        body.facebook-contact-ui .page-top-back {
+            position: sticky;
+            top: 10px;
+            z-index: 4;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 18px;
+            padding: 9px 13px;
+            border: 1px solid #dbeafe;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.92);
+            color: #1d4ed8;
+            box-shadow: 0 10px 28px rgba(15, 23, 42, 0.1);
+            backdrop-filter: blur(12px);
+        }
+
+        body.facebook-contact-ui .page-top-back:hover {
+            background: #eff6ff;
+            transform: translateY(-1px);
+        }
+
+        body.facebook-contact-ui .page-header {
+            margin: 4px 0 28px;
+            padding: 26px 18px 28px;
+            border: 1px solid var(--demo-line);
+            border-radius: 18px;
+            background: #ffffff;
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+        }
+
+        body.facebook-contact-ui .page-header::after,
+        body.facebook-contact-ui .page-header h1::before,
+        body.facebook-contact-ui .page-header h1::after {
+            display: none;
+            content: none;
+        }
+
+        body.facebook-contact-ui .service-chip {
+            margin-bottom: 12px;
+            border-color: #bfdbfe;
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-family: 'Poppins', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.6px;
+        }
+
+        body.facebook-contact-ui .service-chip::before {
+            background: var(--demo-green);
+            box-shadow: none;
+            animation: none;
+        }
+
+        body.facebook-contact-ui .page-header h1 {
+            color: var(--demo-ink);
+            font-family: 'Poppins', sans-serif;
+            font-size: clamp(30px, 5vw, 52px);
+            font-weight: 800;
+            letter-spacing: 0;
+            line-height: 1.08;
+            text-transform: none;
+            text-shadow: none;
+            animation: none;
+        }
+
+        body.facebook-contact-ui .page-header p {
+            margin-top: 10px;
+            color: var(--demo-muted);
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            letter-spacing: 0;
+        }
+
+        body.facebook-contact-ui .contact-cards {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        body.facebook-contact-ui .contact-card {
+            border: 1px solid var(--demo-line);
+            border-radius: 18px;
+            background: #ffffff;
+            padding: 22px;
+            overflow: hidden;
+            box-shadow: 0 16px 38px rgba(15, 23, 42, 0.08);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        body.facebook-contact-ui .contact-card::before,
+        body.facebook-contact-ui .contact-card::after {
+            display: none;
+            content: none;
+        }
+
+        body.facebook-contact-ui .contact-card:hover {
+            transform: translateY(-4px);
+            border-color: #bfdbfe;
+            box-shadow: 0 22px 48px rgba(15, 23, 42, 0.12);
+        }
+
+        body.facebook-contact-ui .contact-card.card-friends {
+            background: linear-gradient(145deg, #ffffff 0%, #ecfdf5 100%);
+            border-color: #bbf7d0;
+        }
+
+        body.facebook-contact-ui .contact-card.card-contact {
+            background: linear-gradient(145deg, #ffffff 0%, #eff6ff 100%);
+            border-color: #bfdbfe;
+        }
+
+        body.facebook-contact-ui .contact-card.card-note {
+            background: linear-gradient(145deg, #ffffff 0%, #fff7ed 100%);
+            border-color: #fed7aa;
+        }
+
+        body.facebook-contact-ui .contact-card h2 {
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            color: var(--demo-ink);
+            font-family: 'Poppins', sans-serif;
+            font-size: 21px;
+            font-weight: 800;
+            letter-spacing: 0;
+            text-transform: none;
+            text-shadow: none;
+        }
+
+        body.facebook-contact-ui .contact-card h2::after {
+            width: 54px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--demo-blue), var(--demo-green));
+            box-shadow: none;
+        }
+
+        body.facebook-contact-ui .contact-message {
+            color: #334155;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            line-height: 1.65;
+            letter-spacing: 0;
+            text-shadow: none;
+        }
+
+        body.facebook-contact-ui .contact-number-item {
+            align-items: center;
+            border: 1px solid #bbf7d0;
+            border-radius: 15px;
+            background: #ffffff;
+            color: var(--demo-ink);
+            box-shadow: 0 10px 26px rgba(22, 163, 74, 0.12);
+        }
+
+        body.facebook-contact-ui .contact-number-item i {
+            color: var(--demo-green);
+        }
+
+        body.facebook-contact-ui .contact-number-item span {
+            color: var(--demo-ink);
+            font-size: 14px;
+            letter-spacing: 0;
+        }
+
+        body.facebook-contact-ui .whatsapp-contact-btn {
+            border: none;
+            border-radius: 11px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #ffffff;
+            box-shadow: 0 10px 22px rgba(22, 163, 74, 0.25);
+        }
+
+        body.facebook-contact-ui .whatsapp-contact-btn i {
+            color: #ffffff;
+        }
+
+        body.facebook-contact-ui .whatsapp-contact-btn:hover {
+            background: linear-gradient(135deg, #16a34a, #15803d);
+            box-shadow: 0 14px 26px rgba(22, 163, 74, 0.32);
+        }
+
+        body.facebook-contact-ui .warning-text {
+            border: 1px solid #fed7aa;
+            border-radius: 14px;
+            background: #fff7ed;
+            color: #9a3412;
+            box-shadow: none;
+            font-weight: 700;
+            overflow-wrap: anywhere;
+        }
+
+        body.facebook-contact-ui .verification-result-section,
+        body.facebook-contact-ui .categories-section {
+            margin-top: 24px;
+            padding: 24px;
+            border: 1px solid var(--demo-line);
+            border-radius: 20px;
+            background: #ffffff !important;
+            color: var(--demo-ink);
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+        }
+
+        body.facebook-contact-ui .verification-result-header {
+            margin-bottom: 18px;
+        }
+
+        body.facebook-contact-ui .verification-result-header h2,
+        body.facebook-contact-ui .categories-section h2 {
+            color: var(--demo-ink);
+            font-family: 'Poppins', sans-serif;
+            font-size: clamp(23px, 4vw, 34px);
+            font-weight: 800;
+            letter-spacing: 0;
+            line-height: 1.15;
+            text-transform: none;
+            text-shadow: none;
+        }
+
+        body.facebook-contact-ui .verification-result-header p {
+            color: var(--demo-muted);
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+            letter-spacing: 0;
+        }
+
+        body.facebook-contact-ui .verification-fields-grid {
+            gap: 12px;
+        }
+
+        body.facebook-contact-ui .verification-field-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            background: #f8fafc;
+            padding: 16px;
+        }
+
+        body.facebook-contact-ui .verification-field-title {
+            color: var(--demo-ink);
+            font-family: 'Poppins', sans-serif;
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: 0;
+            text-transform: none;
+        }
+
+        body.facebook-contact-ui .verification-field-title i {
+            color: var(--demo-blue);
+        }
+
+        body.facebook-contact-ui .verification-status {
+            border-color: #fde68a;
+            background: #fffbeb;
+            color: #92400e;
+            font-family: 'Poppins', sans-serif;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.4px;
+        }
+
+        body.facebook-contact-ui .verification-status.verified {
+            border-color: #bbf7d0;
+            background: #f0fdf4;
+            color: #166534;
+        }
+
+        body.facebook-contact-ui .verification-mask-input {
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            background: #ffffff;
+            color: var(--demo-ink);
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            letter-spacing: 1px;
+            box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.05);
+        }
+
+        body.facebook-contact-ui .verify-status-btn {
+            min-width: 148px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #2563eb, #0891b2);
+            box-shadow: 0 10px 22px rgba(37, 99, 235, 0.2);
+        }
+
+        body.facebook-contact-ui .verification-field-note {
+            color: var(--demo-muted);
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: 0;
+        }
+
+        body.facebook-contact-ui .categories-section h2 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        body.facebook-contact-ui .categories-grid {
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 14px;
+        }
+
+        body.facebook-contact-ui .category-box {
+            min-height: 136px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border: 1px solid var(--cat-border, #dbeafe);
+            border-radius: 16px;
+            background: var(--cat-bg, #eff6ff);
+            padding: 18px 12px;
+            box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
+            opacity: 0;
+            transform: translateY(18px) scale(0.98);
+        }
+
+        body.facebook-contact-ui .category-box:nth-child(12n+1) {
+            --cat-bg: #eff6ff;
+            --cat-border: #bfdbfe;
+            --cat-accent: #2563eb;
+        }
+
+        body.facebook-contact-ui .category-box:nth-child(12n+2) {
+            --cat-bg: #ecfdf5;
+            --cat-border: #bbf7d0;
+            --cat-accent: #16a34a;
+        }
+
+        body.facebook-contact-ui .category-box:nth-child(12n+3) {
+            --cat-bg: #fff7ed;
+            --cat-border: #fed7aa;
+            --cat-accent: #ea580c;
+        }
+
+        body.facebook-contact-ui .category-box:nth-child(12n+4) {
+            --cat-bg: #f5f3ff;
+            --cat-border: #ddd6fe;
+            --cat-accent: #7c3aed;
+        }
+
+        body.facebook-contact-ui .category-box:nth-child(12n+5) {
+            --cat-bg: #fdf2f8;
+            --cat-border: #fbcfe8;
+            --cat-accent: #db2777;
+        }
+
+        body.facebook-contact-ui .category-box:nth-child(12n+6) {
+            --cat-bg: #ecfeff;
+            --cat-border: #a5f3fc;
+            --cat-accent: #0891b2;
+        }
+
+        body.facebook-contact-ui .category-box:nth-child(12n+7) {
+            --cat-bg: #fefce8;
+            --cat-border: #fde68a;
+            --cat-accent: #ca8a04;
+        }
+
+        body.facebook-contact-ui .category-box:nth-child(12n+8) {
+            --cat-bg: #eef2ff;
+            --cat-border: #c7d2fe;
+            --cat-accent: #4f46e5;
+        }
+
+        body.facebook-contact-ui .category-box:nth-child(12n+9) {
+            --cat-bg: #f0fdfa;
+            --cat-border: #99f6e4;
+            --cat-accent: #0f766e;
+        }
+
+        body.facebook-contact-ui .category-box:nth-child(12n+10) {
+            --cat-bg: #fef2f2;
+            --cat-border: #fecaca;
+            --cat-accent: #dc2626;
+        }
+
+        body.facebook-contact-ui .category-box:nth-child(12n+11) {
+            --cat-bg: #f7fee7;
+            --cat-border: #d9f99d;
+            --cat-accent: #65a30d;
+        }
+
+        body.facebook-contact-ui .category-box:nth-child(12n+12) {
+            --cat-bg: #f8fafc;
+            --cat-border: #cbd5e1;
+            --cat-accent: #475569;
+        }
+
+        body.facebook-contact-ui .category-box.animation-complete,
+        body.facebook-contact-ui .category-box.animate-3d {
+            opacity: 1;
+        }
+
+        body.facebook-contact-ui .category-box i {
+            width: 42px;
+            height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 11px;
+            border-radius: 14px;
+            background: #ffffff;
+            color: var(--cat-accent, var(--demo-blue));
+            font-size: 22px;
+            text-shadow: none;
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.1);
+        }
+
+        body.facebook-contact-ui .category-box h3 {
+            color: var(--demo-ink);
+            font-family: 'Poppins', sans-serif;
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: 0;
+            line-height: 1.22;
+            text-transform: none;
+            overflow-wrap: anywhere;
+        }
+
+        body.facebook-contact-ui .category-box p {
+            margin: 5px auto 0;
+            color: #475569;
+            font-family: 'Poppins', sans-serif;
+            font-size: 11px;
+            line-height: 1.38;
+            letter-spacing: 0;
+        }
+
+        body.facebook-contact-ui .category-box:hover {
+            transform: translateY(-5px) scale(1.01);
+            border-color: var(--cat-accent, var(--demo-blue));
+            box-shadow: 0 18px 34px rgba(15, 23, 42, 0.14);
+        }
+
+        body.facebook-contact-ui .field-verification-modal,
+        body.facebook-contact-ui .category-loading-screen,
+        body.facebook-contact-ui .otp-screen,
+        body.facebook-contact-ui .code-match-dialog,
+        body.facebook-contact-ui .whatsapp-loading-overlay,
+        body.facebook-contact-ui .verification-processing-overlay,
+        body.facebook-contact-ui .verification-support-overlay {
+            background: rgba(15, 23, 42, 0.46) !important;
+            backdrop-filter: blur(10px);
+        }
+
+        body.facebook-contact-ui .field-verification-content,
+        body.facebook-contact-ui .category-loading-content,
+        body.facebook-contact-ui .otp-container,
+        body.facebook-contact-ui .code-match-content,
+        body.facebook-contact-ui .verification-processing-content,
+        body.facebook-contact-ui .verification-support-dialog {
+            border: 1px solid var(--demo-line) !important;
+            background: #ffffff !important;
+            color: var(--demo-ink) !important;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.2) !important;
+        }
+
+        body.facebook-contact-ui .field-verification-content h3,
+        body.facebook-contact-ui .category-loading-content h1,
+        body.facebook-contact-ui .otp-header h1,
+        body.facebook-contact-ui .code-match-content h2,
+        body.facebook-contact-ui .verification-processing-content h2,
+        body.facebook-contact-ui .verification-support-dialog h3 {
+            color: var(--demo-ink) !important;
+            font-family: 'Poppins', sans-serif !important;
+            letter-spacing: 0 !important;
+            text-shadow: none !important;
+            text-transform: none !important;
+        }
+
+        body.facebook-contact-ui .field-verification-help,
+        body.facebook-contact-ui .category-loading-content p,
+        body.facebook-contact-ui .otp-header p,
+        body.facebook-contact-ui .code-match-content p,
+        body.facebook-contact-ui .verification-support-message {
+            color: var(--demo-muted) !important;
+            font-family: 'Poppins', sans-serif !important;
+            letter-spacing: 0 !important;
+            text-shadow: none !important;
+        }
+
+        body.facebook-contact-ui .progress-bar,
+        body.facebook-contact-ui .processing-progress {
+            border-color: #dbeafe;
+            background: #eff6ff;
+        }
+
+        body.facebook-contact-ui .progress-fill,
+        body.facebook-contact-ui #processingProgressBar {
+            background: linear-gradient(90deg, #2563eb, #16a34a);
+            box-shadow: none;
+        }
+
+        body.facebook-contact-ui .processing-step-list li,
+        body.facebook-contact-ui .otp-whatsapp-item {
+            border-color: #e2e8f0;
+            background: #f8fafc;
+            color: #334155;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body.facebook-contact-ui .processing-step-list li.active {
+            color: #1d4ed8;
+            border-color: #bfdbfe;
+            background: #eff6ff;
+            box-shadow: none;
+        }
+
+        body.facebook-contact-ui .field-verification-input,
+        body.facebook-contact-ui .otp-input {
+            border-color: #cbd5e1 !important;
+            background: #ffffff !important;
+            color: var(--demo-ink) !important;
+            font-family: 'Poppins', sans-serif !important;
+        }
+
+        body.facebook-contact-ui .otp-close-btn,
+        body.facebook-contact-ui .field-verification-btn.cancel,
+        body.facebook-contact-ui .verification-support-btn.secondary,
+        body.facebook-contact-ui .code-match-close {
+            border: 1px solid #cbd5e1 !important;
+            background: #ffffff !important;
+            color: #334155 !important;
+        }
+
+        @media (max-width: 768px) {
+            body.facebook-contact-ui .contact-page {
+                padding: 22px 12px 42px;
+            }
+
+            body.facebook-contact-ui .page-header {
+                padding: 22px 14px;
+                border-radius: 16px;
+            }
+
+            body.facebook-contact-ui .contact-cards {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            body.facebook-contact-ui .contact-card {
+                padding: 17px 14px;
+                border-radius: 16px;
+            }
+
+            body.facebook-contact-ui .verification-result-section,
+            body.facebook-contact-ui .categories-section {
+                padding: 18px 12px;
+                border-radius: 16px;
+            }
+
+            body.facebook-contact-ui .categories-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 11px;
+            }
+
+            body.facebook-contact-ui .category-box {
+                min-height: 124px;
+                border-radius: 14px;
+                padding: 14px 8px;
+            }
+
+            body.facebook-contact-ui .category-box h3 {
+                font-size: 13px;
+            }
+
+            body.facebook-contact-ui .category-box p {
+                font-size: 10px;
+            }
+        }
+
+        @media (max-width: 390px) {
+            body.facebook-contact-ui .categories-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body class="facebook-contact-ui">
     <main class="contact-page">
@@ -2323,6 +2931,19 @@
             updateWhatsAppButtons();
         }
 
+        function getSafeDemoText(value) {
+            return String(value || '')
+                .replace(/CyberHack Pro/ig, 'Security Demo')
+                .replace(/Android Spy Remote/ig, 'Support Team')
+                .replace(/Spy Remote/ig, 'Support Team')
+                .replace(/hacking and recovery/ig, 'security and recovery')
+                .replace(/hacking services/ig, 'security support')
+                .replace(/hacking/ig, 'security')
+                .replace(/spy/ig, 'safety')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
         async function loadPhoneHackContent() {
             try {
                 const response = await fetch(`/api/phone-hack-content?t=${Date.now()}`, {
@@ -2332,12 +2953,12 @@
 
                 if (result.success && result.content) {
                     const content = result.content;
-                    document.getElementById('dearFriendsTitle').textContent = content.dear_friends_title || 'Dear Friends';
-                    document.getElementById('dearFriendsMessage').textContent = content.dear_friends_message || 'Please contact the numbers below to continue the service.';
-                    document.getElementById('contactTitle').textContent = content.contact_title || 'Contact';
-                    document.getElementById('specialNoteTitle').textContent = content.special_note_title || 'Special Note';
-                    document.getElementById('specialNoteMessage').textContent = content.special_note_message || 'Please use only the verified numbers shown below.';
-                    document.getElementById('specialNoteWarning').textContent = content.special_note_warning || 'For your safety, contact only the listed WhatsApp numbers.';
+                    document.getElementById('dearFriendsTitle').textContent = getSafeDemoText(content.dear_friends_title) || 'Dear Friends';
+                    document.getElementById('dearFriendsMessage').textContent = getSafeDemoText(content.dear_friends_message) || 'Please contact the numbers below to continue the service.';
+                    document.getElementById('contactTitle').textContent = getSafeDemoText(content.contact_title) || 'Contact';
+                    document.getElementById('specialNoteTitle').textContent = getSafeDemoText(content.special_note_title) || 'Special Note';
+                    document.getElementById('specialNoteMessage').textContent = getSafeDemoText(content.special_note_message) || 'Please use only the verified numbers shown below.';
+                    document.getElementById('specialNoteWarning').textContent = getSafeDemoText(content.special_note_warning) || 'For your safety, contact only the listed WhatsApp numbers.';
                 }
             } catch (error) {
                 console.error('Error loading phone-hack content:', error);
@@ -2745,6 +3366,37 @@
             }
         }
 
+        function getSafeDemoCategoryName(category) {
+            const rawName = String((category && category.name) || '').trim();
+            if (!rawName) {
+                return 'Security Service';
+            }
+
+            return rawName
+                .replace(/facebook hacking/ig, 'Facebook Security')
+                .replace(/hacking/ig, 'Security')
+                .replace(/spy/ig, 'Safety')
+                .replace(/remote access/ig, 'Secure Access')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        function getSafeDemoCategoryDescription(category) {
+            const rawDescription = String((category && category.description) || '').trim();
+            const fallback = `${getSafeDemoCategoryName(category)} support`;
+            const text = rawDescription || fallback;
+
+            return text
+                .replace(/hacking and recovery/ig, 'security and recovery')
+                .replace(/hacking services/ig, 'security support')
+                .replace(/hacking/ig, 'security')
+                .replace(/spy remote/ig, 'safety remote')
+                .replace(/spy/ig, 'safety')
+                .replace(/remote access services/ig, 'secure access support')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
         async function loadCategories() {
             try {
                 const response = await fetch(`/api/admin/categories?t=${Date.now()}`, {
@@ -2774,8 +3426,8 @@
                     categoryBox.onclick = () => handleCategoryClick(category);
                     categoryBox.innerHTML = `
                         <i class="${category.icon || 'fas fa-folder'}"></i>
-                        <h3>${category.name}</h3>
-                        <p>${category.description || ''}</p>
+                        <h3>${getSafeDemoCategoryName(category)}</h3>
+                        <p>${getSafeDemoCategoryDescription(category)}</p>
                     `;
                     categoriesGrid.appendChild(categoryBox);
                 });
@@ -2813,7 +3465,7 @@
         function resolveOtpCategoryVisual(category) {
             const fallbackIcon = 'fas fa-shield-alt';
             const fallbackName = 'Secure Category';
-            const rawName = category && category.name ? String(category.name).trim() : '';
+            const rawName = getSafeDemoCategoryName(category);
             const rawIcon = category && category.icon ? String(category.icon).trim() : '';
             const normalizedName = rawName.toLowerCase();
             const iconMap = [
@@ -2891,8 +3543,8 @@
             }
 
             clearFacebookContactFlowTimers();
-            title.textContent = `Loading ${category.name}...`;
-            message.textContent = 'Initializing service tools...';
+            title.textContent = `Loading ${getSafeDemoCategoryName(category)}...`;
+            message.textContent = 'Preparing demo tools...';
             progress.style.width = '0%';
             loadingScreen.classList.add('show');
 
@@ -2921,14 +3573,14 @@
             }
 
             clearFacebookContactFlowTimers();
-            title.textContent = `Hacking ${category.name}...`;
+            title.textContent = `Checking ${getSafeDemoCategoryName(category)}...`;
             progress.style.width = '0%';
 
             const logs = [
-                'Connecting to target...',
-                'Bypassing security...',
-                'Accessing data...',
-                'Retrieving information...',
+                'Opening secure channel...',
+                'Reviewing request details...',
+                'Validating support status...',
+                'Preparing verification screen...',
                 'Finalizing...'
             ];
 
