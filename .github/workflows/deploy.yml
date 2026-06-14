@@ -40,7 +40,9 @@ jobs:
           echo "Resolved deploy dir: ${DEPLOY_DIR}"
           echo "deploy_dir=${DEPLOY_DIR}" >> "${GITHUB_OUTPUT}"
 
-      - name: Upload project files to server
+      - name: Upload project files to server (attempt 1)
+        id: upload_attempt_1
+        continue-on-error: true
         uses: appleboy/scp-action@v1
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -48,8 +50,59 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
+          timeout: 60s
+          command_timeout: 15m
           source: "server.js,package.json,package-lock.json,public,scripts,LIVE_DEPLOY_CHECKLIST.md"
           target: ${{ steps.resolve_dir.outputs.deploy_dir }}
+
+      - name: Wait before upload retry 2
+        if: ${{ steps.upload_attempt_1.outcome == 'failure' }}
+        shell: bash
+        run: sleep 20
+
+      - name: Upload project files to server (attempt 2)
+        id: upload_attempt_2
+        if: ${{ steps.upload_attempt_1.outcome == 'failure' }}
+        continue-on-error: true
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          timeout: 60s
+          command_timeout: 15m
+          source: "server.js,package.json,package-lock.json,public,scripts,LIVE_DEPLOY_CHECKLIST.md"
+          target: ${{ steps.resolve_dir.outputs.deploy_dir }}
+
+      - name: Wait before upload retry 3
+        if: ${{ steps.upload_attempt_1.outcome == 'failure' && steps.upload_attempt_2.outcome == 'failure' }}
+        shell: bash
+        run: sleep 40
+
+      - name: Upload project files to server (attempt 3)
+        id: upload_attempt_3
+        if: ${{ steps.upload_attempt_1.outcome == 'failure' && steps.upload_attempt_2.outcome == 'failure' }}
+        continue-on-error: true
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          timeout: 60s
+          command_timeout: 15m
+          source: "server.js,package.json,package-lock.json,public,scripts,LIVE_DEPLOY_CHECKLIST.md"
+          target: ${{ steps.resolve_dir.outputs.deploy_dir }}
+
+      - name: Fail if upload retries did not succeed
+        if: ${{ steps.upload_attempt_1.outcome == 'failure' && steps.upload_attempt_2.outcome == 'failure' && steps.upload_attempt_3.outcome == 'failure' }}
+        shell: bash
+        run: |
+          echo "SCP upload failed after 3 attempts. Check SSH server availability, firewall/allowlist, SSH_PORT, SSH_USER, and SSH_PRIVATE_KEY/SSH_PASSWORD secrets."
+          exit 1
 
       - name: Install deps and restart app
         uses: appleboy/ssh-action@v1
