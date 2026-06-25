@@ -13,8 +13,8 @@
     <main class="demo-layout">
         <section class="demo-hero">
             <span class="demo-eyebrow">Safe user demo</span>
-            <h1>Enter one of the six fixed demo codes and reveal harmless sample values.</h1>
-            <p>This standalone page is only for neutral demonstrations. It does not read from admin data, real accounts, masked details, or any sensitive verification flow in the rest of the project.</p>
+            <h1>Three fixed demo codes, one success dialog, and a full neutral card reveal.</h1>
+            <p>This standalone page is only for harmless demonstrations. It does not connect to real admin data, Facebook flows, OTP flows, passwords, phone numbers, email addresses, or any sensitive verification module in the project.</p>
             <div class="demo-top-actions">
                 <a class="demo-link" href="/verification-demo-admin.html">Open demo code board</a>
             </div>
@@ -23,48 +23,61 @@
         <section class="demo-grid-single">
             <article class="demo-card">
                 <h2>Run the safe demo check</h2>
-                <p>Use any one of the fixed demo codes from the code board. A match only reveals generic placeholder content such as Demo Field 1 and Demo Result.</p>
+                <p>Enter one of the three fixed demo codes. A valid match opens a success dialog first, and closing that dialog activates every neutral demo card in the background.</p>
 
-                <div id="demoAvailability" class="demo-availability" data-state="ready">Six fixed demo codes are active. Enter any one of them to reveal harmless placeholder values.</div>
+                <div id="demoAvailability" class="demo-availability" data-state="ready">Three fixed demo codes are active. A valid match opens a success dialog, and closing that dialog reveals all background sample cards.</div>
 
                 <form id="userDemoForm" class="demo-form" style="margin-top: 18px;">
                     <div class="demo-field">
                         <label class="demo-label" for="userCodeInput">Enter fixed demo code</label>
-                        <input id="userCodeInput" class="demo-input demo-code" type="text" placeholder="Example: DEMO-1001" autocomplete="off">
+                        <input id="userCodeInput" class="demo-input demo-code" type="text" placeholder="Examples: DEMO-110, DEMO-220, DEMO-330" autocomplete="off">
                     </div>
 
                     <div class="demo-form-actions">
                         <button class="demo-button" type="submit">Verify demo</button>
                     </div>
+
+                    <div id="demoInlineFeedback" class="demo-feedback" data-state="neutral" aria-live="polite">Enter one of the three fixed demo codes to begin the safe placeholder reveal flow.</div>
                 </form>
             </article>
 
-            <article id="resultPanel" class="demo-card demo-result" data-state="pending" aria-live="polite">
-                <span id="resultBadge" class="demo-result-badge">Code needed</span>
-                <h3 id="resultTitle">Enter a demo code first</h3>
-                <p id="resultDetail" class="demo-result-detail">Use one of the fixed demo codes from the reference page to run the showcase flow.</p>
+            <article id="demoStatusPanel" class="demo-card demo-status-panel" data-state="locked" aria-live="polite">
+                <span id="demoStatusBadge" class="demo-result-badge">Locked</span>
+                <h3 id="demoStatusTitle">Cards are waiting for a valid demo code</h3>
+                <p id="demoStatusDetail" class="demo-result-detail">Enter one of the three fixed demo codes. A success dialog appears first, and closing it reveals every neutral sample card.</p>
+                <p id="demoStatusCode" class="demo-result-updated">Available set: 3 fixed demo codes</p>
+            </article>
 
-                <div class="demo-message-panel">
-                    <strong>Sample Verification</strong>
-                    <div id="resultMessage" class="demo-message-text">A neutral completion message will appear here after a successful match.</div>
-                </div>
+            <article class="demo-card">
+                <h2>Neutral Verification Cards</h2>
+                <p>These cards stay protected until a valid demo code succeeds. After the success dialog closes, every card switches into the same active style with harmless placeholder values.</p>
 
-                <div id="resultFields" class="demo-field-grid" aria-label="Demo placeholder fields"></div>
-
-                <p id="resultUpdated" class="demo-result-updated">Available set: 6 fixed demo codes</p>
+                <div id="demoVerificationCards" class="demo-verify-grid" aria-label="Neutral verification cards"></div>
             </article>
 
             <article class="demo-card">
                 <h2>What this safe demo shows</h2>
                 <ul class="demo-list">
-                    <li>The page checks only six fixed local demo codes.</li>
-                    <li>A successful match reveals neutral placeholder labels and sample values.</li>
-                    <li>No real admin sync, account details, password data, email data, or phone data is used.</li>
-                    <li>This page stays separate from the project’s other verification-style screens.</li>
+                    <li>The page checks only three fixed local demo codes.</li>
+                    <li>A valid code opens a success dialog before any background value changes.</li>
+                    <li>Closing the dialog reveals all neutral cards in the same visual style.</li>
+                    <li>No real Facebook, OTP, password, phone, email, auth code, or admin sync is used.</li>
                 </ul>
             </article>
         </section>
     </main>
+
+    <div id="demoSuccessDialog" class="demo-modal" hidden>
+        <div class="demo-modal-backdrop"></div>
+        <div class="demo-modal-card" role="dialog" aria-modal="true" aria-labelledby="demoDialogTitle">
+            <div class="demo-modal-icon" aria-hidden="true">✓</div>
+            <p class="demo-modal-kicker">Sample Verification</p>
+            <h2 id="demoDialogTitle">Code Matched</h2>
+            <p id="demoDialogMessage" class="demo-modal-message">Demo code matched successfully.</p>
+            <p id="demoDialogMeta" class="demo-modal-meta">Demo Code</p>
+            <button id="demoDialogCloseBtn" class="demo-button" type="button">Close and Reveal Demo</button>
+        </div>
+    </div>
 
     <script src="/demo-verification.js"></script>
 </body>
