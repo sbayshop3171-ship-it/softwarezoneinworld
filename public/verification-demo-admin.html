@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verification Demo Admin</title>
+    <title>Safe Demo Code Board</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
@@ -12,9 +12,9 @@
 <body class="demo-shell" data-demo-page="admin">
     <main class="demo-layout">
         <section class="demo-hero">
-            <span class="demo-eyebrow">Local demo admin</span>
-            <h1>Save the code and completion message for a safe verification demo.</h1>
-            <p>This page stores a demo code and a success message in this browser only. It does not connect to the existing Facebook, security, OTP, or hack-related pages in this project.</p>
+            <span class="demo-eyebrow">Safe demo board</span>
+            <h1>Six fixed demo codes for a neutral standalone verification showcase.</h1>
+            <p>This page is a read-only reference board. The demo codes are hardcoded in the safe demo script and do not connect to real admin storage, account fields, or sensitive verification flows anywhere else in the project.</p>
             <div class="demo-top-actions">
                 <a class="demo-link" href="/verification-demo.html">Open user demo</a>
             </div>
@@ -22,52 +22,34 @@
 
         <section class="demo-grid">
             <article class="demo-card">
-                <h2>Admin setup</h2>
-                <p>Choose the exact code users need to enter, then write the message that should appear when the match succeeds.</p>
-
-                <form id="adminDemoForm" class="demo-form">
-                    <div class="demo-field">
-                        <label class="demo-label" for="demoCodeInput">Demo code</label>
-                        <input id="demoCodeInput" class="demo-input demo-code" type="text" placeholder="Example: DEMO-2026" autocomplete="off" required>
-                    </div>
-
-                    <div class="demo-field">
-                        <label class="demo-label" for="demoMessageInput">Completion message</label>
-                        <textarea id="demoMessageInput" class="demo-textarea" placeholder="Example: Verification completed successfully. You can continue to the next demo step." required></textarea>
-                    </div>
-
-                    <div class="demo-form-actions">
-                        <button class="demo-button" type="submit">Save demo</button>
-                        <button id="clearDemoBtn" class="demo-button-secondary" type="button">Clear demo</button>
-                    </div>
-
-                    <div id="adminFeedback" class="demo-feedback" data-state="neutral" aria-live="polite">Save a code and message to activate the user demo.</div>
-                </form>
+                <h2>Fixed code board</h2>
+                <p>Share any of these six codes during a safe product walkthrough. Each code reveals a different harmless placeholder result on the user demo page.</p>
+                <div id="demoCodeCatalog" class="demo-code-grid" aria-live="polite"></div>
             </article>
 
             <article class="demo-card">
-                <h2>Current saved state</h2>
-                <p>This preview updates from the same browser storage that the user demo reads.</p>
+                <h2>Safety notes</h2>
+                <p>This demo stays intentionally generic and separate from the project’s risky verification-style screens.</p>
 
                 <div class="demo-stat">
-                    <span class="demo-stat-label">Status</span>
-                    <span id="savedStatePill" class="demo-pill" data-state="idle">Not configured</span>
+                    <span class="demo-stat-label">Mode</span>
+                    <span class="demo-pill" data-state="ready">Fixed local demo</span>
                 </div>
                 <div class="demo-stat">
-                    <span class="demo-stat-label">Saved code</span>
-                    <span id="savedCodeValue" class="demo-stat-value demo-code">No code saved</span>
+                    <span class="demo-stat-label">Codes available</span>
+                    <span class="demo-stat-value">6 fixed demo codes</span>
                 </div>
                 <div class="demo-stat">
-                    <span class="demo-stat-label">Saved message</span>
-                    <span id="savedMessageValue" class="demo-stat-value">No message saved</span>
+                    <span class="demo-stat-label">Reveal content</span>
+                    <span class="demo-stat-value">Demo Field 1, Demo Field 2, Demo Field 3, Demo Result</span>
                 </div>
                 <div class="demo-stat">
-                    <span class="demo-stat-label">Last updated</span>
-                    <span id="savedUpdatedValue" class="demo-stat-value">Waiting for setup</span>
+                    <span class="demo-stat-label">No connection to</span>
+                    <span class="demo-stat-value">Real admin sync, account labels, passwords, emails, auth codes, or phone details</span>
                 </div>
 
                 <div class="demo-note" style="margin-top: 18px;">
-                    Use this for internal demos, training, or harmless prototypes where you only need: admin saves message, user enters code, match shows success.
+                    If you need to change the six codes later, update the fixed entries inside <span class="demo-code">public/demo-verification.js</span>.
                 </div>
             </article>
         </section>

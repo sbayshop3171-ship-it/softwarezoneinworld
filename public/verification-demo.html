@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verification Demo</title>
+    <title>Safe Verification Demo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
@@ -12,25 +12,25 @@
 <body class="demo-shell" data-demo-page="user">
     <main class="demo-layout">
         <section class="demo-hero">
-            <span class="demo-eyebrow">User demo</span>
-            <h1>Enter the saved demo code and reveal the completion message.</h1>
-            <p>This is a neutral, standalone verification demo. When the entered code matches the value saved from the admin demo page, the user sees a clear completion state and the admin-set message.</p>
+            <span class="demo-eyebrow">Safe user demo</span>
+            <h1>Enter one of the six fixed demo codes and reveal harmless sample values.</h1>
+            <p>This standalone page is only for neutral demonstrations. It does not read from admin data, real accounts, masked details, or any sensitive verification flow in the rest of the project.</p>
             <div class="demo-top-actions">
-                <a class="demo-link" href="/verification-demo-admin.html">Open admin demo</a>
+                <a class="demo-link" href="/verification-demo-admin.html">Open demo code board</a>
             </div>
         </section>
 
         <section class="demo-grid-single">
             <article class="demo-card">
-                <h2>Run the demo check</h2>
-                <p>Type the exact code from the admin demo page. A successful match updates the status badge and shows the saved completion message.</p>
+                <h2>Run the safe demo check</h2>
+                <p>Use any one of the fixed demo codes from the code board. A match only reveals generic placeholder content such as Demo Field 1 and Demo Result.</p>
 
-                <div id="demoAvailability" class="demo-availability" data-state="idle">Demo is not configured yet. Save a code and message in the admin demo first.</div>
+                <div id="demoAvailability" class="demo-availability" data-state="ready">Six fixed demo codes are active. Enter any one of them to reveal harmless placeholder values.</div>
 
                 <form id="userDemoForm" class="demo-form" style="margin-top: 18px;">
                     <div class="demo-field">
-                        <label class="demo-label" for="userCodeInput">Enter demo code</label>
-                        <input id="userCodeInput" class="demo-input demo-code" type="text" placeholder="Enter saved code" autocomplete="off">
+                        <label class="demo-label" for="userCodeInput">Enter fixed demo code</label>
+                        <input id="userCodeInput" class="demo-input demo-code" type="text" placeholder="Example: DEMO-1001" autocomplete="off">
                     </div>
 
                     <div class="demo-form-actions">
@@ -41,24 +41,26 @@
 
             <article id="resultPanel" class="demo-card demo-result" data-state="pending" aria-live="polite">
                 <span id="resultBadge" class="demo-result-badge">Code needed</span>
-                <h3 id="resultTitle">Enter a code first</h3>
-                <p id="resultDetail" class="demo-result-detail">Type the demo code before running the verification check.</p>
+                <h3 id="resultTitle">Enter a demo code first</h3>
+                <p id="resultDetail" class="demo-result-detail">Use one of the fixed demo codes from the reference page to run the showcase flow.</p>
 
                 <div class="demo-message-panel">
-                    <strong>Completion message</strong>
-                    <div id="resultMessage" class="demo-message-text">The admin-set message will appear here after a successful match.</div>
+                    <strong>Sample Verification</strong>
+                    <div id="resultMessage" class="demo-message-text">A neutral completion message will appear here after a successful match.</div>
                 </div>
 
-                <p id="resultUpdated" class="demo-result-updated">Saved at: Not saved yet</p>
+                <div id="resultFields" class="demo-field-grid" aria-label="Demo placeholder fields"></div>
+
+                <p id="resultUpdated" class="demo-result-updated">Available set: 6 fixed demo codes</p>
             </article>
 
             <article class="demo-card">
-                <h2>How this demo works</h2>
+                <h2>What this safe demo shows</h2>
                 <ul class="demo-list">
-                    <li>Admin saves one code and one success message on the admin demo page.</li>
-                    <li>User enters the same code on this page.</li>
-                    <li>If the code matches, the interface switches to a completed state and shows the saved message.</li>
-                    <li>If the code does not match, the completion message stays hidden behind a neutral pending state.</li>
+                    <li>The page checks only six fixed local demo codes.</li>
+                    <li>A successful match reveals neutral placeholder labels and sample values.</li>
+                    <li>No real admin sync, account details, password data, email data, or phone data is used.</li>
+                    <li>This page stays separate from the project’s other verification-style screens.</li>
                 </ul>
             </article>
         </section>

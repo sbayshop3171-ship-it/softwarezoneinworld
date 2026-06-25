@@ -1,158 +1,152 @@
 (function (global) {
     'use strict';
 
-    var STORAGE_KEY = 'safeVerificationDemoConfig';
-    var memoryStore = {};
-    var channel = null;
-
-    function getStorage() {
-        if (global.localStorage && typeof global.localStorage.getItem === 'function') {
-            return global.localStorage;
+    var DEMO_CODES = [
+        {
+            slot: 'Demo Code 1',
+            code: 'DEMO-1001',
+            title: 'Sample Verification A',
+            message: 'Sample verification completed. This result stays inside the standalone demo flow.',
+            fields: [
+                { label: 'Demo Field 1', value: 'Ready for showcase' },
+                { label: 'Demo Field 2', value: 'Stage Alpha' },
+                { label: 'Demo Field 3', value: 'Placeholder Value 210' },
+                { label: 'Demo Result', value: 'Sample verification passed' }
+            ]
+        },
+        {
+            slot: 'Demo Code 2',
+            code: 'DEMO-2002',
+            title: 'Sample Verification B',
+            message: 'Neutral placeholder values are now visible for this fixed demo code.',
+            fields: [
+                { label: 'Demo Field 1', value: 'Preview unlocked' },
+                { label: 'Demo Field 2', value: 'Stage Beta' },
+                { label: 'Demo Field 3', value: 'Placeholder Value 320' },
+                { label: 'Demo Result', value: 'Sample verification complete' }
+            ]
+        },
+        {
+            slot: 'Demo Code 3',
+            code: 'DEMO-3003',
+            title: 'Sample Verification C',
+            message: 'This code demonstrates a successful match without using any real account data.',
+            fields: [
+                { label: 'Demo Field 1', value: 'Workflow active' },
+                { label: 'Demo Field 2', value: 'Stage Gamma' },
+                { label: 'Demo Field 3', value: 'Placeholder Value 430' },
+                { label: 'Demo Result', value: 'Harmless sample revealed' }
+            ]
+        },
+        {
+            slot: 'Demo Code 4',
+            code: 'DEMO-4004',
+            title: 'Sample Verification D',
+            message: 'A second neutral result set is available for training, QA, or client walkthroughs.',
+            fields: [
+                { label: 'Demo Field 1', value: 'Review in progress' },
+                { label: 'Demo Field 2', value: 'Stage Delta' },
+                { label: 'Demo Field 3', value: 'Placeholder Value 540' },
+                { label: 'Demo Result', value: 'Demo response delivered' }
+            ]
+        },
+        {
+            slot: 'Demo Code 5',
+            code: 'DEMO-5005',
+            title: 'Sample Verification E',
+            message: 'The fixed code matched and loaded another safe placeholder combination.',
+            fields: [
+                { label: 'Demo Field 1', value: 'Training mode' },
+                { label: 'Demo Field 2', value: 'Stage Epsilon' },
+                { label: 'Demo Field 3', value: 'Placeholder Value 650' },
+                { label: 'Demo Result', value: 'Safe demo state confirmed' }
+            ]
+        },
+        {
+            slot: 'Demo Code 6',
+            code: 'DEMO-6006',
+            title: 'Sample Verification F',
+            message: 'This is the final fixed demo code in the standalone neutral verification set.',
+            fields: [
+                { label: 'Demo Field 1', value: 'Presentation ready' },
+                { label: 'Demo Field 2', value: 'Stage Zeta' },
+                { label: 'Demo Field 3', value: 'Placeholder Value 760' },
+                { label: 'Demo Result', value: 'Safe demo workflow finished' }
+            ]
         }
+    ];
 
-        return {
-            getItem: function (key) {
-                return Object.prototype.hasOwnProperty.call(memoryStore, key) ? memoryStore[key] : null;
-            },
-            setItem: function (key, value) {
-                memoryStore[key] = String(value);
-            },
-            removeItem: function (key) {
-                delete memoryStore[key];
-            }
-        };
+    function normalizeCode(value) {
+        return String(value || '').trim().toUpperCase();
     }
 
-    function getChannel() {
-        if (channel || typeof global.BroadcastChannel !== 'function') {
-            return channel;
-        }
-
-        try {
-            channel = new global.BroadcastChannel('safe-verification-demo');
-        } catch (error) {
-            channel = null;
-        }
-
-        return channel;
-    }
-
-    function normalizeConfig(raw) {
-        if (!raw || typeof raw !== 'object') {
-            return null;
-        }
-
-        var code = String(raw.code || '').trim();
-        var message = String(raw.message || '').trim();
-        var updatedAt = String(raw.updatedAt || '').trim();
-
-        if (!code || !message) {
-            return null;
-        }
-
-        return {
-            code: code,
-            message: message,
-            updatedAt: updatedAt || new Date().toISOString()
-        };
-    }
-
-    function readConfig() {
-        try {
-            var rawValue = getStorage().getItem(STORAGE_KEY);
-            if (!rawValue) {
-                return null;
-            }
-            return normalizeConfig(JSON.parse(rawValue));
-        } catch (error) {
-            return null;
-        }
-    }
-
-    function broadcast(type, payload) {
-        var activeChannel = getChannel();
-        if (!activeChannel) {
-            return;
-        }
-
-        try {
-            activeChannel.postMessage({ type: type, payload: payload || null });
-        } catch (error) {
-            // Ignore sync issues in unsupported environments.
-        }
-    }
-
-    function saveConfig(code, message) {
-        var config = normalizeConfig({
-            code: code,
-            message: message,
-            updatedAt: new Date().toISOString()
+    function cloneFields(fields) {
+        return (fields || []).map(function (field) {
+            return {
+                label: String(field.label || '').trim(),
+                value: String(field.value || '').trim()
+            };
         });
-
-        if (!config) {
-            throw new Error('Both code and message are required.');
-        }
-
-        getStorage().setItem(STORAGE_KEY, JSON.stringify(config));
-        broadcast('config-saved', config);
-        return config;
     }
 
-    function clearConfig() {
-        getStorage().removeItem(STORAGE_KEY);
-        broadcast('config-cleared', null);
+    function getDemoCodes() {
+        return DEMO_CODES.map(function (item) {
+            return {
+                slot: item.slot,
+                code: item.code,
+                title: item.title,
+                message: item.message,
+                fields: cloneFields(item.fields)
+            };
+        });
+    }
+
+    function findDemoCode(inputCode) {
+        var normalized = normalizeCode(inputCode);
+        if (!normalized) {
+            return null;
+        }
+
+        for (var index = 0; index < DEMO_CODES.length; index += 1) {
+            var item = DEMO_CODES[index];
+            if (normalizeCode(item.code) === normalized) {
+                return {
+                    slot: item.slot,
+                    code: item.code,
+                    title: item.title,
+                    message: item.message,
+                    fields: cloneFields(item.fields)
+                };
+            }
+        }
+
+        return null;
     }
 
     function verifyCode(inputCode) {
-        var config = readConfig();
-        var normalizedInput = String(inputCode || '').trim();
-
-        if (!config) {
-            return {
-                ok: false,
-                reason: 'missing-config',
-                message: '',
-                config: null
-            };
-        }
-
+        var normalizedInput = normalizeCode(inputCode);
         if (!normalizedInput) {
             return {
                 ok: false,
                 reason: 'missing-input',
-                message: '',
-                config: config
+                match: null
             };
         }
 
-        if (normalizedInput !== config.code) {
+        var matched = findDemoCode(normalizedInput);
+        if (!matched) {
             return {
                 ok: false,
                 reason: 'mismatch',
-                message: '',
-                config: config
+                match: null
             };
         }
 
         return {
             ok: true,
             reason: 'matched',
-            message: config.message,
-            config: config
+            match: matched
         };
-    }
-
-    function formatDate(value) {
-        if (!value) {
-            return 'Not saved yet';
-        }
-
-        var date = new Date(value);
-        if (Number.isNaN(date.getTime())) {
-            return 'Not saved yet';
-        }
-
-        return date.toLocaleString();
     }
 
     function setText(node, value) {
@@ -161,48 +155,84 @@
         }
     }
 
-    function renderAdminState(doc) {
-        var config = readConfig();
-        var codeValue = doc.getElementById('savedCodeValue');
-        var messageValue = doc.getElementById('savedMessageValue');
-        var updatedValue = doc.getElementById('savedUpdatedValue');
-        var statePill = doc.getElementById('savedStatePill');
+    function createFieldCard(doc, label, value) {
+        var card = doc.createElement('div');
+        card.className = 'demo-field-card';
 
-        if (!config) {
-            setText(codeValue, 'No code saved');
-            setText(messageValue, 'No message saved');
-            setText(updatedValue, 'Waiting for setup');
-            setText(statePill, 'Not configured');
-            if (statePill) {
-                statePill.dataset.state = 'idle';
-            }
+        var heading = doc.createElement('strong');
+        heading.textContent = label;
+
+        var content = doc.createElement('span');
+        content.textContent = value;
+
+        card.appendChild(heading);
+        card.appendChild(content);
+        return card;
+    }
+
+    function renderFieldGrid(doc, fields, isSuccess) {
+        var container = doc.getElementById('resultFields');
+        if (!container) {
             return;
         }
 
-        setText(codeValue, config.code);
-        setText(messageValue, config.message);
-        setText(updatedValue, formatDate(config.updatedAt));
-        setText(statePill, 'Ready');
-        if (statePill) {
-            statePill.dataset.state = 'ready';
+        container.innerHTML = '';
+        if (isSuccess) {
+            (fields || []).forEach(function (field) {
+                container.appendChild(createFieldCard(doc, field.label, field.value));
+            });
+            return;
         }
+
+        container.appendChild(
+            createFieldCard(doc, 'Demo Field 1', 'Hidden until a fixed demo code matches')
+        );
+        container.appendChild(
+            createFieldCard(doc, 'Demo Result', 'Sample values appear here after a successful match')
+        );
+    }
+
+    function renderAdminCatalog(doc) {
+        var container = doc.getElementById('demoCodeCatalog');
+        if (!container) {
+            return;
+        }
+
+        container.innerHTML = '';
+        getDemoCodes().forEach(function (item) {
+            var card = doc.createElement('article');
+            card.className = 'demo-code-card';
+
+            var slot = doc.createElement('span');
+            slot.className = 'demo-code-slot';
+            slot.textContent = item.slot;
+
+            var title = doc.createElement('h3');
+            title.textContent = item.title;
+
+            var code = doc.createElement('div');
+            code.className = 'demo-code-value';
+            code.textContent = item.code;
+
+            var message = doc.createElement('p');
+            message.textContent = item.message;
+
+            card.appendChild(slot);
+            card.appendChild(title);
+            card.appendChild(code);
+            card.appendChild(message);
+            container.appendChild(card);
+        });
     }
 
     function renderUserAvailability(doc) {
-        var config = readConfig();
         var availability = doc.getElementById('demoAvailability');
         if (!availability) {
             return;
         }
 
-        if (!config) {
-            availability.dataset.state = 'idle';
-            availability.textContent = 'Demo is not configured yet. Save a code and message in the admin demo first.';
-            return;
-        }
-
         availability.dataset.state = 'ready';
-        availability.textContent = 'Demo is ready. Enter the saved code to reveal the completion message.';
+        availability.textContent = 'Six fixed demo codes are active. Enter any one of them to reveal harmless placeholder values.';
     }
 
     function renderUserResult(doc, result) {
@@ -219,88 +249,38 @@
 
         panel.hidden = false;
 
-        if (result.ok) {
+        if (result.ok && result.match) {
             panel.dataset.state = 'success';
-            setText(badge, 'Completed');
-            setText(title, 'Verification completed');
-            setText(detail, 'The entered code matched the current demo configuration.');
-            setText(message, result.message);
-            setText(updated, 'Saved at: ' + formatDate(result.config && result.config.updatedAt));
+            setText(badge, 'Matched');
+            setText(title, result.match.title);
+            setText(detail, 'The entered code matched one of the six fixed demo configurations.');
+            setText(message, result.match.message);
+            setText(updated, result.match.slot + ' | ' + result.match.code);
+            renderFieldGrid(doc, result.match.fields, true);
             return;
         }
 
         panel.dataset.state = 'pending';
-
-        if (result.reason === 'missing-config') {
-            setText(badge, 'Setup needed');
-            setText(title, 'Demo not configured');
-            setText(detail, 'Open the admin demo page, save a code and a success message, then try again.');
-            setText(message, 'No completion message is available yet.');
-            setText(updated, 'Saved at: Not saved yet');
-            return;
-        }
+        renderFieldGrid(doc, [], false);
 
         if (result.reason === 'missing-input') {
             setText(badge, 'Code needed');
-            setText(title, 'Enter a code first');
-            setText(detail, 'Type the demo code before running the verification check.');
-            setText(message, 'The admin-set message will appear here after a successful match.');
-            setText(updated, 'Saved at: ' + formatDate(result.config && result.config.updatedAt));
+            setText(title, 'Enter a demo code first');
+            setText(detail, 'Use one of the fixed demo codes from the reference page to run the showcase flow.');
+            setText(message, 'A neutral completion message will appear here after a successful match.');
+            setText(updated, 'Available set: 6 fixed demo codes');
             return;
         }
 
         setText(badge, 'Not matched');
-        setText(title, 'Verification pending');
-        setText(detail, 'The entered code did not match the saved demo code.');
-        setText(message, 'No completion message is shown until the code matches.');
-        setText(updated, 'Saved at: ' + formatDate(result.config && result.config.updatedAt));
+        setText(title, 'Try another demo code');
+        setText(detail, 'The entered code did not match any fixed demo code in this standalone showcase.');
+        setText(message, 'No placeholder values are revealed until a fixed demo code matches.');
+        setText(updated, 'Available set: 6 fixed demo codes');
     }
 
     function initAdminPage(doc) {
-        var form = doc.getElementById('adminDemoForm');
-        var codeInput = doc.getElementById('demoCodeInput');
-        var messageInput = doc.getElementById('demoMessageInput');
-        var feedback = doc.getElementById('adminFeedback');
-        var clearButton = doc.getElementById('clearDemoBtn');
-        var currentConfig = readConfig();
-
-        if (!form || !codeInput || !messageInput) {
-            return;
-        }
-
-        if (currentConfig) {
-            codeInput.value = currentConfig.code;
-            messageInput.value = currentConfig.message;
-        }
-
-        renderAdminState(doc);
-
-        form.addEventListener('submit', function (event) {
-            event.preventDefault();
-
-            try {
-                var config = saveConfig(codeInput.value, messageInput.value);
-                feedback.textContent = 'Demo saved. Matching code will now show the success message.';
-                feedback.dataset.state = 'success';
-                codeInput.value = config.code;
-                messageInput.value = config.message;
-                renderAdminState(doc);
-            } catch (error) {
-                feedback.textContent = error.message || 'Unable to save the demo right now.';
-                feedback.dataset.state = 'error';
-            }
-        });
-
-        if (clearButton) {
-            clearButton.addEventListener('click', function () {
-                clearConfig();
-                codeInput.value = '';
-                messageInput.value = '';
-                feedback.textContent = 'Demo cleared. The user page will wait for a new setup.';
-                feedback.dataset.state = 'neutral';
-                renderAdminState(doc);
-            });
-        }
+        renderAdminCatalog(doc);
     }
 
     function initUserPage(doc) {
@@ -316,21 +296,8 @@
 
         form.addEventListener('submit', function (event) {
             event.preventDefault();
-            renderUserAvailability(doc);
             renderUserResult(doc, verifyCode(input.value));
         });
-    }
-
-    function refreshDocumentState(doc) {
-        var pageType = doc.body && doc.body.dataset ? doc.body.dataset.demoPage : '';
-        if (pageType === 'admin') {
-            renderAdminState(doc);
-        }
-        if (pageType === 'user') {
-            var input = doc.getElementById('userCodeInput');
-            renderUserAvailability(doc);
-            renderUserResult(doc, verifyCode(input ? input.value : ''));
-        }
     }
 
     function initDocument(doc) {
@@ -343,40 +310,15 @@
         }
     }
 
-    function attachRealtimeSync(doc) {
-        if (typeof global.addEventListener === 'function') {
-            global.addEventListener('storage', function (event) {
-                if (!event || event.key !== STORAGE_KEY) {
-                    return;
-                }
-                refreshDocumentState(doc);
-            });
-        }
-
-        var activeChannel = getChannel();
-        if (activeChannel) {
-            activeChannel.addEventListener('message', function () {
-                refreshDocumentState(doc);
-            });
-        }
-    }
-
-    var api = {
-        storageKey: STORAGE_KEY,
-        readConfig: readConfig,
-        saveConfig: saveConfig,
-        clearConfig: clearConfig,
+    global.SafeVerificationDemo = {
+        getDemoCodes: getDemoCodes,
         verifyCode: verifyCode,
-        formatDate: formatDate,
         initDocument: initDocument
     };
-
-    global.SafeVerificationDemo = api;
 
     if (typeof document !== 'undefined') {
         document.addEventListener('DOMContentLoaded', function () {
             initDocument(document);
-            attachRealtimeSync(document);
         });
     }
 }(typeof window !== 'undefined' ? window : globalThis));
